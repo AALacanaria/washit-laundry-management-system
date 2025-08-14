@@ -282,14 +282,20 @@ function renderTimeSlots() {
     timeSlotsTitle.style.fontWeight = "600";
     timeSlotsContainer.appendChild(timeSlotsTitle);
     
-    const slotsGrid = document.createElement("div");
-    slotsGrid.className = "time-slots";
+    // Wrapper for stacked AM and PM groups
+    const wrapper = document.createElement("div");
+    wrapper.className = "time-slots-wrapper";
+    
+    const amGroup = document.createElement("div");
+    amGroup.className = "time-slots-group am-group";
+    
+    const pmGroup = document.createElement("div");
+    pmGroup.className = "time-slots-group pm-group";
     
     // Filter time slots based on booking type
     let availableTimeSlots = {};
     
     if (bookingType === "rush") {
-        // For rush booking, show all time slots but with limited availability
         availableTimeSlots = {
             "09:00": { available: 1, label: "9:00 AM" },
             "10:00": { available: 1, label: "10:00 AM" },
@@ -301,15 +307,16 @@ function renderTimeSlots() {
             "17:00": { available: 1, label: "5:00 PM" }
         };
     } else {
-        // For normal booking, show regular time slots
         availableTimeSlots = timeSlots;
     }
     
-    Object.entries(availableTimeSlots).forEach(([time, slot]) => {
+    // Ensure predictable order by sorting keys (HH:MM)
+    const entries = Object.entries(availableTimeSlots).sort((a, b) => a[0].localeCompare(b[0]));
+    
+    entries.forEach(([time, slot]) => {
         const slotElement = document.createElement("div");
         slotElement.className = "time-slot";
         
-        // Add AM/PM class based on time
         const hour = parseInt(time.split(':')[0]);
         if (hour < 12) {
             slotElement.classList.add("am");
@@ -328,10 +335,45 @@ function renderTimeSlots() {
             slotElement.classList.add("unavailable");
         }
         
-        slotsGrid.appendChild(slotElement);
+        if (hour < 12) {
+            amGroup.appendChild(slotElement);
+        } else {
+            pmGroup.appendChild(slotElement);
+        }
     });
     
-    timeSlotsContainer.appendChild(slotsGrid);
+    // Create and append AM divider above the AM group (always add divider first)
+    const amDivider = document.createElement("div");
+    amDivider.className = "am-pm-divider";
+    amDivider.innerHTML = '<span>AM</span>';
+    if (amGroup.children.length > 0) {
+        wrapper.appendChild(amDivider);
+        wrapper.appendChild(amGroup);
+    } else {
+        // If no AM slots, show a small note but still keep AM divider above it
+        wrapper.appendChild(amDivider);
+        const noAm = document.createElement("div");
+        noAm.className = "time-slots-note";
+        noAm.textContent = "No AM slots available";
+        wrapper.appendChild(noAm);
+    }
+    
+    // If PM group exists, add a divider then PM group
+    if (pmGroup.children.length > 0) {
+        const pmDivider = document.createElement("div");
+        pmDivider.className = "am-pm-divider";
+        pmDivider.innerHTML = '<span>PM</span>';
+        wrapper.appendChild(pmDivider);
+        wrapper.appendChild(pmGroup);
+    } else {
+        const noPm = document.createElement("div");
+        noPm.className = "time-slots-note";
+        noPm.textContent = "No PM slots available";
+        // Only append if AM exists — keep layout consistent
+        if (amGroup.children.length > 0) wrapper.appendChild(noPm);
+    }
+    
+    timeSlotsContainer.appendChild(wrapper);
 }
 
 function selectTimeSlot(time, element) {

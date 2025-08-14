@@ -291,68 +291,76 @@ select:focus {
     border: 2px solid #007bff;
 }
 
-/* Time Slots */
-.time-slots {
+/* Time Slots - wrapper with stacked groups (AM above, divider, PM below) */
+.time-slots-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Each group uses a grid of slots */
+.time-slots-group {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-top: 15px;
-    max-width: 100%;
-    width: 100%;
-    justify-content: center;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.time-slots-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 0;
     width: 100%;
 }
 
-#timeSlots {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .time-slots {
+    .time-slots-group {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
-    .time-slots {
+    .time-slots-group {
         grid-template-columns: repeat(1, 1fr);
     }
 }
 
-.time-slots h4 {
-    grid-column: 1 / -1;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 1.1rem;
+/* Divider between AM and PM groups */
+.am-pm-divider {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0;
+    height: 20px;
+}
+.am-pm-divider::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: #ddd;
+    z-index: 0;
+}
+.am-pm-divider span {
+    position: relative;
+    z-index: 1;
+    padding: 0 10px;
+    background: white;
+    color: #666;
     font-weight: 600;
-    text-align: center;
+    font-size: 0.95rem;
 }
 
-/* Please select date message styling */
-.time-slots p {
-    grid-column: 1 / -1;
+/* Small note when no slots in a group */
+.time-slots-note {
     text-align: center;
     color: #666;
     font-style: italic;
-    padding: 40px 20px;
-    background: #f8f9fa;
+    padding: 12px;
     border-radius: 8px;
-    border: 2px dashed #ddd;
-    font-size: 1rem;
-    margin: 0;
+    background: #fafafa;
+    border: 1px dashed #eee;
 }
 
+/* Time slot base (unchanged) */
 .time-slot {
     padding: 12px 8px;
     text-align: center;
@@ -369,48 +377,46 @@ select:focus {
     width: 100%;
 }
 
-/* AM Time Slots - Morning theme */
+/* AM Time Slots - Morning theme (updated gradient) */
 .time-slot.am {
-    background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
-    border-color: #81c784;
-    color: #2e7d32;
+    background: linear-gradient(to bottom, #4b91e2 0%, #50e2c3 50%, #f5a524 100%);
+    border-color: rgba(0,0,0,0.06);
+    color: #072a4a;
 }
 
 .time-slot.am:hover {
-    background: linear-gradient(135deg, #c8e6c9 0%, #e8f5e8 100%);
-    border-color: #66bb6a;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 6px 14px rgba(75,145,226,0.18);
 }
 
+/* AM selected state */
 .time-slot.am.selected {
-    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-    color: white;
-    border-color: #388e3c;
+    background: linear-gradient(to bottom, #2b6fb3 0%, #1fa887 50%, #d18a1f 100%);
+    color: #fff;
+    border-color: rgba(0,0,0,0.12);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(56, 142, 60, 0.4);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
-/* PM Time Slots - Afternoon theme */
+/* PM Time Slots - Afternoon / Evening theme (updated gradient) */
 .time-slot.pm {
-    background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
-    border-color: #f48fb1;
-    color: #c2185b;
+    background: linear-gradient(to bottom, #f5a524 0%, #f8e61b 50%, #cf021a 100%);
+    border-color: rgba(0,0,0,0.06);
+    color: #40100e;
 }
 
 .time-slot.pm:hover {
-    background: linear-gradient(135deg, #f8bbd9 0%, #fce4ec 100%);
-    border-color: #f06292;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(233, 30, 99, 0.2);
+    box-shadow: 0 6px 14px rgba(207,2,26,0.14);
 }
 
+/* PM selected state */
 .time-slot.pm.selected {
-    background: linear-gradient(135deg, #d81b60 0%, #c2185b 100%);
-    color: white;
-    border-color: #d81b60;
+    background: linear-gradient(to bottom, #b06b16 0%, #a38f12 50%, #8a010e 100%);
+    color: #fff;
+    border-color: rgba(0,0,0,0.12);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(216, 27, 96, 0.4);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
 /* Bold time styling */
