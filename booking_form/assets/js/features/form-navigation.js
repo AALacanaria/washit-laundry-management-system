@@ -32,7 +32,25 @@ class FormNavigation {
                         return val !== '';
                     });
                 },
-                elementSelector: '[data-section="confirmSection"]'
+                elementSelector: '[data-section="confirmSection"]',
+                onComplete: () => {
+                    // Auto-scroll to Confirm Booking section and make button green
+                    setTimeout(() => {
+                        const confirmSection = document.querySelector('[data-section="confirmSection"]');
+                        const submitBtn = document.querySelector('.submit-btn');
+                        
+                        if (confirmSection) {
+                            confirmSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        
+                        if (submitBtn) {
+                            submitBtn.style.backgroundColor = '#28a745';
+                            submitBtn.style.borderColor = '#28a745';
+                            submitBtn.style.color = 'white';
+                            submitBtn.textContent = '✓ Ready to Book!';
+                        }
+                    }, 500);
+                }
             }
         ];
     }
@@ -45,6 +63,11 @@ class FormNavigation {
             if (!part.isComplete()) {
                 // Current part is incomplete, stay here (don't scroll)
                 return;
+            }
+            
+            // Current part is complete, trigger onComplete callback if it exists
+            if (part.onComplete) {
+                part.onComplete();
             }
             
             // Current part is complete, check if we should move to next

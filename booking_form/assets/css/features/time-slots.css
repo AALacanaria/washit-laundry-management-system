@@ -79,46 +79,20 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+    color: #333;
 }
 
-/* AM Time Slots - Morning Theme */
-.time-slot.am {
-    background: linear-gradient(to bottom, #4b91e2 0%, #50e2c3 50%, #f5a524 100%);
-    border-color: rgba(0,0,0,0.06);
-    color: #072a4a;
+.time-slot:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
 }
 
-.time-slot.am:hover {
+.time-slot.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
     transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(75,145,226,0.18);
-}
-
-.time-slot.am.selected {
-    background: linear-gradient(to bottom, #323E66 0%, #3C7FA6 50%, #709FBA 100%);
-    color: #fff;
-    border-color: rgba(0,0,0,0.12);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
-}
-
-/* PM Time Slots - Afternoon/Evening Theme */
-.time-slot.pm {
-    background: linear-gradient(to bottom, #f5a524 0%, #f8e61b 50%, #cf021a 100%);
-    border-color: rgba(0,0,0,0.06);
-    color: #40100e;
-}
-
-.time-slot.pm:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(207,2,26,0.14);
-}
-
-.time-slot.pm.selected {
-    background: linear-gradient(to bottom, #FDECA7 0%, #F1A57F 50%, #DB6356 100%);
-    color: #000;
-    border-color: rgba(0,0,0,0.12);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.2);
 }
 
 /* Time Slot Content */

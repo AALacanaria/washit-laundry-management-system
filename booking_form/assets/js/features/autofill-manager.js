@@ -13,11 +13,13 @@ class AutoFillManager {
         
         console.log('AutoFillManager: Initializing auto-fill system');
         
-        // Check if we have saved data
+        // Check if we have saved data and auto-fill silently
         const savedData = this.loadUserData();
         if (savedData && Object.keys(savedData).length > 0) {
-            console.log('AutoFillManager: Found saved data:', savedData);
-            this.showAutoFillBanner(savedData);
+            console.log('AutoFillManager: Found saved data, auto-filling silently:', savedData);
+            setTimeout(() => {
+                this.fillFormSilently(savedData);
+            }, 500);
         } else {
             console.log('AutoFillManager: No saved data found');
         }
@@ -65,14 +67,6 @@ class AutoFillManager {
                         this.saveFieldData(fieldId, field.value.trim());
                     }
                 });
-
-                // Show auto-fill banner when clicking on empty fields (if we have data)
-                field.addEventListener('click', () => {
-                    const savedData = this.loadUserData();
-                    if (!this.bannerShown && savedData && Object.keys(savedData).length > 0) {
-                        this.showAutoFillBanner(savedData);
-                    }
-                });
             }
         });
     }
@@ -84,42 +78,54 @@ class AutoFillManager {
         this.saveUserData(currentData);
     }
 
-    // Show auto-fill banner
+    // Fill form silently with saved data
+    fillFormSilently(data) {
+        console.log('AutoFillManager: Filling form silently with data:', data);
+
+        this.fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && data[fieldId] && !field.value.trim()) {
+                field.value = data[fieldId];
+                
+                // Trigger validation if available
+                if (typeof validateText === 'function' && fieldId !== 'email') {
+                    validateText(field);
+                } else if (typeof validateEmail === 'function' && fieldId === 'email') {
+                    validateEmail(field);
+                }
+
+                // Trigger any change events
+                field.dispatchEvent(new Event('change', { bubbles: true }));
+                field.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+
+        // Force re-check visibility of address field for rush bookings
+        setTimeout(() => {
+            const addressField = document.getElementById('address');
+            const currentBookingType = window.bookingType || bookingType;
+            
+            if (addressField && data.address) {
+                // Ensure address field is properly filled regardless of booking type
+                if (!addressField.value.trim()) {
+                    addressField.value = data.address;
+                    if (typeof validateText === 'function') {
+                        validateText(addressField);
+                    }
+                }
+                
+                console.log('AutoFillManager: Address field filled for booking type:', currentBookingType);
+            }
+        }, 200);
+
+        console.log('AutoFillManager: Form filled silently');
+    }
+
+    // Show auto-fill banner (kept for backward compatibility)
     showAutoFillBanner(data) {
-        if (this.bannerShown) return;
-
-        const customerSection = document.querySelector('[data-section="customerSection"]');
-        if (!customerSection) return;
-
-        // Create banner element
-        const banner = document.createElement('div');
-        banner.className = 'auto-fill-banner';
-        banner.innerHTML = `
-            <div class="auto-fill-content">
-                <div class="auto-fill-icon">💾</div>
-                <div class="auto-fill-text">
-                    <strong>Auto-fill detected!</strong><br>
-                    We found your previous information. Would you like to fill the form automatically?
-                </div>
-                <div class="auto-fill-actions">
-                    <button type="button" class="auto-fill-btn" onclick="autoFillManager.fillForm()">
-                        ✓ Fill Form
-                    </button>
-                    <button type="button" class="auto-fill-btn dismiss" onclick="autoFillManager.dismissBanner()">
-                        ✗ Dismiss
-                    </button>
-                </div>
-            </div>
-        `;
-
-        // Insert banner at the beginning of customer section
-        const firstChild = customerSection.firstElementChild;
-        customerSection.insertBefore(banner, firstChild);
-
-        this.bannerShown = true;
-        this.savedDataForFill = data;
-
-        console.log('AutoFillManager: Auto-fill banner displayed');
+        // Banner functionality removed - auto-fill now works silently
+        console.log('AutoFillManager: Silent auto-fill enabled, banner not shown');
+        return;
     }
 
     // Fill form with saved data

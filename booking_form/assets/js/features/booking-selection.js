@@ -56,6 +56,14 @@ class BookingSelection {
         
         // Auto-scroll to service section
         this.autoScrollToService();
+        
+        // Re-trigger auto-fill after booking type selection
+        setTimeout(() => {
+            if (typeof autoFillManager !== 'undefined' && autoFillManager.isAutoFillAvailable()) {
+                console.log('BookingSelection: Re-triggering auto-fill for booking type:', type);
+                autoFillManager.initializeAutoFill();
+            }
+        }, 800);
     }
 
     // Clear selection and collapse form
@@ -137,16 +145,25 @@ class BookingSelection {
         }
         if (bookingIndicator) bookingIndicator.classList.remove("hidden");
 
-        // Handle rush-specific fields
+        // Handle rush-specific fields - address is now always visible
         if (type === CONFIG.BOOKING_TYPES.RUSH) {
-            if (rushFieldsEl) rushFieldsEl.classList.remove("hidden");
             const addr = document.getElementById("address");
             if (addr) addr.required = true;
         } else {
-            if (rushFieldsEl) rushFieldsEl.classList.add("hidden");
             const addr = document.getElementById("address");
-            if (addr) addr.required = false;
+            if (addr) addr.required = true; // Address is always required now
         }
+        
+        // Trigger auto-fill after DOM changes
+        setTimeout(() => {
+            if (typeof autoFillManager !== 'undefined') {
+                const savedData = autoFillManager.loadUserData();
+                if (savedData && Object.keys(savedData).length > 0) {
+                    console.log('BookingSelection: Auto-filling after form element changes');
+                    autoFillManager.fillFormSilently(savedData);
+                }
+            }
+        }, 300);
     }
 
     // Auto-scroll to service details section

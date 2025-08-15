@@ -29,20 +29,22 @@
     <h2>Book Your Laundry Service</h2>
 
     <!-- Step 1: Booking Type -->
-    <div id="step1">
-        <p>Select booking type:</p>
-        <button id="btnNormal" class="btn btn-primary booking-toggle" onclick="selectBookingType('normal')">
-            Normal Booking <span class="arrow">▼</span>
-        </button>
-        <button id="btnRush" class="btn btn-secondary booking-toggle" onclick="selectBookingType('rush')">
-            Rush Booking <span class="arrow">▼</span>
-        </button>
+    <div id="step1" style="text-align: center; margin-bottom: 20px;">
+        <p style="margin-bottom: 15px; font-weight: 500;">Select booking type:</p>
+        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button id="btnNormal" class="btn btn-primary booking-toggle" onclick="selectBookingType('normal')">
+                Normal Booking <span class="arrow">▼</span>
+            </button>
+            <button id="btnRush" class="btn btn-secondary booking-toggle" onclick="selectBookingType('rush')">
+                Rush Booking <span class="arrow">▼</span>
+            </button>
+        </div>
     </div>
 
     <!-- Complete Form (hidden by default) -->
     <div class="form-steps hidden" id="formSteps">
         <!-- Booking Type Indicator (hidden by default) -->
-        <div class="booking-type-indicator hidden" id="bookingTypeIndicator">
+        <div class="booking-type-indicator hidden" id="bookingTypeIndicator" style="margin-bottom: 30px;">
             <strong id="bookingTypeText">Normal Booking</strong> - 3-day processing time
         </div>
 
@@ -50,7 +52,7 @@
             <!-- Service Option Section -->
             <div class="form-section" data-section="serviceSection">
                 <h3>📋 Service Details</h3>
-                <div class="form-grid full-width">
+                <div class="service-option-container">
                     <label for="serviceOption">Choose Service Option *</label>
                     <select id="serviceOption" required>
                         <option value="">-- Select Service --</option>
@@ -63,21 +65,27 @@
 
             <!-- Date & Time Section -->
             <div class="form-section" data-section="scheduleSection">
-                <h3>🗓️ Schedule</h3>
+                <h3>Book a Schedule</h3>
                 
-                <!-- Calendar -->
-                <div id="calendar">
-                    <div class="calendar-navigation">
-                        <button type="button" onclick="previousMonth()">◀</button>
-                        <h4 id="currentMonth">December 2024</h4>
-                        <button type="button" onclick="nextMonth()">▶</button>
+                <div class="calendar-time-container">
+                    <!-- Calendar -->
+                    <div class="calendar-wrapper">
+                        <div id="calendar">
+                            <div class="calendar-navigation">
+                                <button type="button" onclick="previousMonth()">◀</button>
+                                <h4 id="currentMonth">December 2024</h4>
+                                <button type="button" onclick="nextMonth()">▶</button>
+                            </div>
+                            <div id="calendarGrid" class="calendar-grid"></div>
+                        </div>
                     </div>
-                    <div id="calendarGrid" class="calendar-grid"></div>
-                </div>
 
-                <!-- Time Slots -->
-                <div id="timeSlots" class="time-slots-container">
-                    <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a date first</p>
+                    <!-- Time Slots -->
+                    <div class="time-slots-wrapper">
+                        <div id="timeSlots" class="time-slots-container">
+                            <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a date first</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -88,32 +96,40 @@
                 <!-- Auto-fill banner will be inserted here -->
                 <div id="autoFillBanner"></div>
                 
+                <!-- First Name, Last Name -->
                 <div class="form-grid">
                     <div>
                         <label for="firstName">First Name *</label>
-                        <input type="text" class="narrow-input" id="firstName" required>
+                        <input type="text" id="firstName" required>
                     </div>
                     <div>
                         <label for="lastName">Last Name *</label>
-                        <input type="text" class="narrow-input" id="lastName" required>
+                        <input type="text" id="lastName" required>
                     </div>
                 </div>
                 
-                <label for="contactNumber">Contact Number *</label>
-                <input type="tel" class="compact-input" id="contactNumber" pattern="09[0-9]{9}" placeholder="09XXXXXXXXX" required>
-                
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" placeholder="your-email@example.com" required>
+                <!-- Contact Number, Email -->
+                <div class="form-grid">
+                    <div>
+                        <label for="contactNumber">Contact Number *</label>
+                        <input type="tel" id="contactNumber" pattern="09[0-9]{9}" placeholder="09XXXXXXXXX" maxlength="11" required>
+                    </div>
+                    <div>
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" placeholder="your-email@example.com" required>
+                    </div>
                 </div>
                 
-                <label for="barangay">Barangay *</label>
-                <input type="text" id="barangay" required>
-                
-                <!-- Rush booking address field (hidden by default) -->
-                <div id="rushFields" class="hidden">
-                    <label for="address">Complete Address *</label>
-                    <input type="text" id="address" placeholder="House No., Street, Subdivision, etc.">
+                <!-- Barangay, Address Information -->
+                <div class="form-grid">
+                    <div>
+                        <label for="barangay">Barangay *</label>
+                        <input type="text" id="barangay" required>
+                    </div>
+                    <div>
+                        <label for="address">Address Details *</label>
+                        <input type="text" id="address" placeholder="House No., Street, Subdivision, etc." required>
+                    </div>
                 </div>
                 
                 <label for="specialInstructions">Special Instructions (Optional)</label>

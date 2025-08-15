@@ -188,8 +188,21 @@ function validateBookingTypeVisual() {
 }
 
 function validateDateTimeVisual() {
-    const ok = !!selectedDate && !!selectedTime;
+    // Check both local and window variables for selected date and time
+    const actualSelectedDate = selectedDate || window.selectedDate;
+    const actualSelectedTime = selectedTime || window.selectedTime;
+    const ok = !!actualSelectedDate && !!actualSelectedTime;
     const ts = document.getElementById('timeSlots');
+    
+    console.log('validateDateTimeVisual:', {
+        selectedDate,
+        'window.selectedDate': window.selectedDate,
+        actualSelectedDate,
+        selectedTime,
+        'window.selectedTime': window.selectedTime,
+        actualSelectedTime,
+        ok
+    });
     
     if (!ok) {
         ts && ts.classList.add('input-invalid');
@@ -204,13 +217,16 @@ function validateDateTimeVisual() {
 
 function validateAll() {
     let ok = true;
+    const validationResults = {};
 
     // Service option
     const serviceOption = document.getElementById('serviceOption');
-    if (!validateSelect(serviceOption)) ok = false;
+    validationResults.serviceOption = validateSelect(serviceOption);
+    if (!validationResults.serviceOption) ok = false;
 
     // Booking type
-    if (!validateBookingTypeVisual()) ok = false;
+    validationResults.bookingType = validateBookingTypeVisual();
+    if (!validationResults.bookingType) ok = false;
 
     // Customer info fields
     const firstName = document.getElementById('firstName');
@@ -220,15 +236,26 @@ function validateAll() {
     const barangay = document.getElementById('barangay');
     const address = document.getElementById('address');
 
-    if (!validateText(firstName)) ok = false;
-    if (!validateText(lastName)) ok = false;
-    if (!validatePhone(contactNumber)) ok = false;
-    if (!validateEmail(email)) ok = false;
-    if (!validateText(barangay)) ok = false;
-    if (!validateText(address)) ok = false;
+    validationResults.firstName = validateText(firstName);
+    validationResults.lastName = validateText(lastName);
+    validationResults.contactNumber = validatePhone(contactNumber);
+    validationResults.email = validateEmail(email);
+    validationResults.barangay = validateText(barangay);
+    validationResults.address = validateText(address);
+
+    if (!validationResults.firstName) ok = false;
+    if (!validationResults.lastName) ok = false;
+    if (!validationResults.contactNumber) ok = false;
+    if (!validationResults.email) ok = false;
+    if (!validationResults.barangay) ok = false;
+    if (!validationResults.address) ok = false;
 
     // Date & time
-    if (!validateDateTimeVisual()) ok = false;
+    validationResults.dateTime = validateDateTimeVisual();
+    if (!validationResults.dateTime) ok = false;
+
+    console.log('validateAll results:', validationResults);
+    console.log('Overall validation:', ok);
 
     return ok;
 }
