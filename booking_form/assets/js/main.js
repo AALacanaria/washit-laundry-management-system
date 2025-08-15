@@ -3,6 +3,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize calendar data
     initializeCalendarData();
     
+    // Initialize self-claim calendar if available
+    if (typeof initializeSelfClaimCalendar === 'function') {
+        // Only initialize if we have the required data
+        const hasPickupData = (window.selectedDate || selectedDate) && (window.bookingType || bookingType);
+        if (hasPickupData) {
+            const pickupDate = window.selectedDate || selectedDate;
+            const bookingType = window.bookingType || bookingType;
+            initializeSelfClaimCalendar(pickupDate, bookingType);
+        }
+    }
+    
     // Initialize auto-fill system
     setTimeout(() => {
         if (typeof autoFillManager !== 'undefined') {
@@ -40,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Focus first invalid element
                 const firstInvalid = document.querySelector('.input-invalid, .btn-invalid');
                 if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
                 }
                 alert('Please complete all required fields and selections highlighted in red.');
                 return;
@@ -54,7 +65,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     contactNumber: contactNumberVal,
                     email: emailVal,
                     barangay: barangayVal,
-                    address: addressVal
+                    address: addressVal,
+                    serviceOption: serviceOptionVal
                 };
                 autoFillManager.saveUserData(userData);
             }
@@ -123,6 +135,7 @@ function attachValidators() {
     if (svc) {
         svc.addEventListener('change', () => {
             validateSelect(svc);
+            updateServiceIndicator(svc.value);
         });
     }
 
@@ -131,4 +144,98 @@ function attachValidators() {
     const btnR = document.getElementById('btnRush');
     if (btnN) btnN.addEventListener('click', () => validateBookingTypeVisual());
     if (btnR) btnR.addEventListener('click', () => validateBookingTypeVisual());
+}
+
+// Update service option indicator
+function updateServiceIndicator(serviceValue) {
+    const indicator = document.getElementById('serviceOptionIndicator');
+    const description = document.getElementById('serviceDescription');
+    const selfClaimSection = document.getElementById('selfClaimSection');
+    
+    // Set global service type for validation
+    window.selectedServiceType = serviceValue;
+    
+    if (!indicator || !description) return;
+    
+    // Clear existing classes
+    indicator.className = 'service-option-indicator';
+    
+    if (!serviceValue || serviceValue === '') {
+        indicator.classList.add('hidden');
+        if (selfClaimSection) selfClaimSection.classList.add('hidden');
+        return;
+    }
+    
+    // Get current booking type for delivery period
+    const currentBookingType = window.bookingType || bookingType;
+    const deliveryPeriod = currentBookingType === 'rush' ? '1.5 days' : '2-3 days';
+    
+    // Show indicator and add appropriate class
+    indicator.classList.remove('hidden');
+    indicator.classList.add(serviceValue.replace('_', '-'));
+    
+    // Handle self-claim section visibility
+    if (serviceValue === 'pickup_selfclaim') {
+        // Show self-claim section but initially hidden until pickup is scheduled
+        if (selfClaimSection) {
+            selfClaimSection.classList.add('hidden');
+        }
+        updateScheduleTitle('pickup');
+    } else {
+        // Hide self-claim section for other service types
+        if (selfClaimSection) {
+            selfClaimSection.classList.add('hidden');
+        }
+        updateScheduleTitle('default');
+    }
+    
+    // Set description based on service type
+    let descriptionHTML = '';
+    switch (serviceValue) {
+        case 'pickup_delivery':
+            descriptionHTML = `
+                <strong>🚚 Pickup and Delivery</strong><br>
+                The laundry shop will pick up the item and also deliver it back to you.<br>
+                <em style="color: #6c757d; font-size: 0.9rem;">Delivery period: ${deliveryPeriod}</em>
+            `;
+            break;
+        case 'pickup_selfclaim':
+            descriptionHTML = `
+                <strong>🏪 Pickup and Self-Claim</strong><br>
+                The laundry shop will pick up the item, and you will pick it up on your own at the shop.<br>
+                <em style="color: #6c757d; font-size: 0.9rem;">Items ready for self-claim in ${deliveryPeriod} from today | Shop hours: Mon-Sat, 6:00 AM - 5:00 PM</em>
+            `;
+            break;
+        case 'dropoff_delivery':
+            descriptionHTML = `
+                <strong>📦 Drop-off and Delivery</strong><br>
+                You will drop off the item at the shop within a specified time, and the laundry shop will deliver it back to you.<br>
+                <em style="color: #6c757d; font-size: 0.9rem;">Delivery period: ${deliveryPeriod}</em>
+            `;
+            break;
+        default:
+            indicator.classList.add('hidden');
+            if (selfClaimSection) selfClaimSection.classList.add('hidden');
+            return;
+    }
+    
+    description.innerHTML = descriptionHTML;
+}
+
+// Update schedule section title based on service type
+function updateScheduleTitle(mode) {
+    const scheduleTitle = document.querySelector('[data-section="scheduleSection"] h3');
+    if (!scheduleTitle) return;
+    
+    switch (mode) {
+        case 'pickup':
+            scheduleTitle.textContent = 'Book Pick-up and Self-claim Schedule';
+            break;
+        case 'claim':
+            scheduleTitle.textContent = 'Book Pick-up and Self-claim Schedule';
+            break;
+        default:
+            scheduleTitle.textContent = 'Book a Schedule';
+            break;
+    }
 }

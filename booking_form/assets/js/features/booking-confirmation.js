@@ -38,10 +38,26 @@ class BookingConfirmation {
         );
         
         reviewDetails.innerHTML = receiptHTML;
+
+        // Ensure the form is fully removed from layout (no residual height)
+        if (formSteps) {
+            // Besides adding the hidden class, set display none to prevent any max-height transition gap
+            formSteps.classList.add('hidden');
+            formSteps.classList.remove('expanded');
+            formSteps.style.display = 'none';
+        }
+
+        // Show confirmation and scroll to it reliably
         confirmation.classList.remove("hidden");
-        
-        // Scroll to top to show confirmation
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Jump to top first to avoid layout jump issues, then smooth-scroll to confirmation
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        setTimeout(() => {
+            if (typeof confirmation.scrollIntoView === 'function') {
+                confirmation.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }, 40);
     }
 
     // Get booking data with fallbacks
@@ -49,11 +65,19 @@ class BookingConfirmation {
         const actualSelectedDate = selectedDate || window.selectedDate;
         const actualSelectedTime = selectedTime || window.selectedTime;
         const actualBookingType = bookingType || window.bookingType;
+        const actualServiceType = selectedServiceType || window.selectedServiceType;
+        
+        // For pickup and self-claim services, also get self-claim details
+        const actualSelfClaimDate = selfClaimDate || window.selfClaimDate;
+        const actualSelfClaimTime = selfClaimTime || window.selfClaimTime;
         
         return {
             selectedDate: actualSelectedDate,
             selectedTime: actualSelectedTime,
-            bookingType: actualBookingType
+            bookingType: actualBookingType,
+            serviceType: actualServiceType,
+            selfClaimDate: actualSelfClaimDate,
+            selfClaimTime: actualSelfClaimTime
         };
     }
 
@@ -108,13 +132,25 @@ class BookingConfirmation {
 
         // Calculate estimated completion
         const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
-        const estimatedDays = isRush ? 1 : 3;
+        const estimatedDays = isRush ? 1.5 : 2.5; // 1.5 days for rush, 2.5 days average for normal (2-3 days)
         const completionDate = new Date(bookingData.selectedDate);
-        completionDate.setDate(completionDate.getDate() + estimatedDays);
+        
+        if (isRush) {
+            // 1.5 days = 1 day + 12 hours
+            completionDate.setDate(completionDate.getDate() + 1);
+            completionDate.setHours(completionDate.getHours() + 12);
+        } else {
+            // 2.5 days average for 2-3 day range
+            completionDate.setDate(completionDate.getDate() + 2);
+            completionDate.setHours(completionDate.getHours() + 12);
+        }
+        
         const completionDateStr = completionDate.toLocaleDateString('en-PH', {
             year: 'numeric',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
 
         return {
@@ -170,6 +206,21 @@ class BookingConfirmation {
     // Build complete receipt HTML
     buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData) {
         const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
+        const isPickupAndSelfClaim = bookingData.serviceType === 'pickup_selfclaim';
+        
+        // Format self-claim details if applicable
+        let selfClaimSchedule = '';
+        if (isPickupAndSelfClaim && bookingData.selfClaimDate && bookingData.selfClaimTime) {
+            const selfClaimDateStr = bookingData.selfClaimDate.toLocaleDateString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            selfClaimSchedule = `
+                <p><strong>🏪 Self-Claim Date:</strong> ${selfClaimDateStr}</p>
+                <p><strong>🕐 Self-Claim Time:</strong> ${bookingData.selfClaimTime}</p>
+            `;
+        }
         
         return `
             <div class="booking-receipt">
@@ -181,11 +232,12 @@ class BookingConfirmation {
                 
                 <div class="receipt-section">
                     <h5>📋 Service Details</h5>
-                    <p><strong>Booking Type:</strong> ${isRush ? "🚀 Rush Booking (1-day service)" : "⏰ Normal Booking (3-day service)"}</p>
+                    <p><strong>Booking Type:</strong> ${isRush ? "🚀 Rush Booking (1.5 days delivery)" : "⏰ Normal Booking (2-3 days delivery)"}</p>
                     <p><strong>Service Option:</strong> ${sanitizedData.serviceOption}</p>
-                    <p><strong>Scheduled Date:</strong> ${timestamps.selectedDateStr}</p>
-                    <p><strong>Scheduled Time:</strong> ${selectedTimeStr}</p>
-                    <p><strong>Estimated Completion:</strong> ${timestamps.completionDateStr}</p>
+                    <p><strong>📅 Pickup Date:</strong> ${timestamps.selectedDateStr}</p>
+                    <p><strong>🕐 Pickup Time:</strong> ${selectedTimeStr}</p>
+                    ${selfClaimSchedule}
+                    ${!isPickupAndSelfClaim ? `<p><strong>Estimated Completion:</strong> ${timestamps.completionDateStr}</p>` : ''}
                 </div>
                 
                 <div class="receipt-section">
@@ -202,8 +254,13 @@ class BookingConfirmation {
                     <h5>📞 What's Next?</h5>
                     <p>• We'll contact you at <strong>${sanitizedData.contactNumber}</strong> within 24 hours to confirm details</p>
                     <p>• Keep this booking reference: <strong>${this.bookingRef}</strong></p>
-                    <p>• Our team will arrive at your scheduled time for ${sanitizedData.serviceOption.includes('pickup') ? 'pickup' : 'drop-off'}</p>
-                    <p>• Payment will be collected upon ${sanitizedData.serviceOption.includes('delivery') ? 'delivery' : 'pickup'}</p>
+                    ${isPickupAndSelfClaim ? 
+                        `<p>• Our team will arrive at your scheduled time for pickup on <strong>${timestamps.selectedDateStr}</strong></p>
+                         <p>• Please collect your items at our shop on <strong>${bookingData.selfClaimDate ? bookingData.selfClaimDate.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'your selected date'}</strong> at <strong>${bookingData.selfClaimTime || 'your selected time'}</strong></p>
+                         <p>• Payment will be collected upon pickup of items at our shop</p>` :
+                        `<p>• Our team will arrive at your scheduled time for ${sanitizedData.serviceOption.includes('pickup') ? 'pickup' : 'drop-off'}</p>
+                         <p>• Payment will be collected upon ${sanitizedData.serviceOption.includes('delivery') ? 'delivery' : 'pickup'}</p>`
+                    }
                 </div>
                 
                 <div class="receipt-actions">
@@ -217,9 +274,9 @@ class BookingConfirmation {
     // Format service option display text
     formatService(service) {
         switch (service) {
-            case "pickup_delivery": return "Pickup and Delivery";
-            case "pickup_selfclaim": return "Pickup and Self-Claim";
-            case "dropoff_delivery": return "Drop-off and Delivery";
+            case "pickup_delivery": return "Pickup and Delivery - We pick up and deliver your items";
+            case "pickup_selfclaim": return "Pickup and Self-Claim - We pick up, you collect at shop";
+            case "dropoff_delivery": return "Drop-off and Delivery - You drop off, we deliver";
             default: return service || "";
         }
     }

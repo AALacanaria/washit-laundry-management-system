@@ -39,10 +39,6 @@ class FormNavigation {
                         const confirmSection = document.querySelector('[data-section="confirmSection"]');
                         const submitBtn = document.querySelector('.submit-btn');
                         
-                        if (confirmSection) {
-                            confirmSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                        
                         if (submitBtn) {
                             submitBtn.style.backgroundColor = '#28a745';
                             submitBtn.style.borderColor = '#28a745';
@@ -76,9 +72,7 @@ class FormNavigation {
                 const nextElement = document.querySelector(nextElementSelector);
                 if (nextElement) {
                     setTimeout(() => {
-                        nextElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        
-                        // Trigger auto-fill when scrolling to customer section
+                        // Trigger auto-fill when navigating to customer section
                         if (nextElementSelector === '[data-section="customerSection"]' && typeof autoFillManager !== 'undefined') {
                             autoFillManager.initializeAutoFill();
                         }
@@ -91,18 +85,13 @@ class FormNavigation {
         // All parts complete, scroll to submit button
         const submitBtn = document.querySelector('.submit-btn');
         if (submitBtn) {
-            setTimeout(() => {
-                submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
+            // Submit button is ready but no auto scroll
         }
     }
 
-    // Scroll to specific section
+    // Scroll to specific section (disabled)
     scrollToSection(sectionSelector) {
-        const element = document.querySelector(sectionSelector);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        // Auto scroll disabled
     }
 
     // Check if section is complete

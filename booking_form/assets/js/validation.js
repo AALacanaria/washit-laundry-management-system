@@ -16,6 +16,24 @@ function clearValidation(el) {
     el.classList.remove('input-invalid', 'input-valid');
 }
 
+// Ensure form container and confirm section are visible
+function ensureConfirmVisible() {
+    const formSteps = document.getElementById('formSteps');
+    const submitSection = document.querySelector('[data-section="confirmSection"]');
+    // Don't auto-expand the main form container; only reveal confirmSection
+    // when the form is already visible (user opened it) to avoid auto-fill
+    // making the entire booking form appear unexpectedly.
+    if (!formSteps || formSteps.classList.contains('hidden')) {
+        // Form is still collapsed; do not auto-show confirm section
+        return;
+    }
+
+    if (submitSection) {
+        submitSection.classList.remove('hidden');
+        submitSection.style.display = 'block';
+    }
+}
+
 function validateText(el) {
     if (!el) return false;
     const val = (el.value || '').trim();
@@ -25,33 +43,27 @@ function validateText(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll to Submit section
+    // Check if customer section is now complete and show Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Directly scroll to Submit section
-            const submitSection = document.querySelector('[data-section="confirmSection"]');
-            if (submitSection) {
-                submitSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
+            // Ensure parent form and submit section are visible
+            ensureConfirmVisible();
+
+            // Add highlight effect to submit button
+            const submitBtn = document.querySelector('.submit-btn');
+            if (submitBtn) {
+                submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                submitBtn.style.transform = 'scale(1.02)';
                 
-                // Add highlight effect to submit button
-                const submitBtn = document.querySelector('.submit-btn');
-                if (submitBtn) {
-                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
-                    submitBtn.style.transform = 'scale(1.02)';
-                    
-                    // Remove highlight after a few seconds
-                    setTimeout(() => {
-                        submitBtn.style.boxShadow = '';
-                        submitBtn.style.transform = '';
-                    }, 3000);
-                }
+                // Remove highlight after a few seconds
+                setTimeout(() => {
+                    submitBtn.style.boxShadow = '';
+                    submitBtn.style.transform = '';
+                }, 3000);
             }
         }
     }, 100);
@@ -68,20 +80,19 @@ function validateEmail(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll to Submit section
+    // Check if customer section is now complete and show Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Directly scroll to Submit section
+            // Make Submit section visible
             const submitSection = document.querySelector('[data-section="confirmSection"]');
             if (submitSection) {
-                submitSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
+                // Ensure section is visible
+                submitSection.classList.remove('hidden');
+                submitSection.style.display = 'block';
                 
                 // Add highlight effect to submit button
                 const submitBtn = document.querySelector('.submit-btn');
@@ -111,20 +122,19 @@ function validatePhone(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll to Submit section
+    // Check if customer section is now complete and show Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Directly scroll to Submit section
+            // Make Submit section visible
             const submitSection = document.querySelector('[data-section="confirmSection"]');
             if (submitSection) {
-                submitSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
+                // Ensure section is visible
+                submitSection.classList.remove('hidden');
+                submitSection.style.display = 'block';
                 
                 // Add highlight effect to submit button
                 const submitBtn = document.querySelector('.submit-btn');
@@ -191,7 +201,20 @@ function validateDateTimeVisual() {
     // Check both local and window variables for selected date and time
     const actualSelectedDate = selectedDate || window.selectedDate;
     const actualSelectedTime = selectedTime || window.selectedTime;
-    const ok = !!actualSelectedDate && !!actualSelectedTime;
+    
+    // Check if this is a pickup and self-claim service
+    const currentServiceType = window.selectedServiceType || (document.getElementById('serviceOption') && document.getElementById('serviceOption').value);
+    const isPickupAndSelfClaim = currentServiceType === 'pickup_selfclaim';
+    
+    let ok = !!actualSelectedDate && !!actualSelectedTime;
+    
+    // For pickup and self-claim, also check if self-claim date and time are selected
+    if (isPickupAndSelfClaim) {
+        const actualSelfClaimDate = selfClaimDate || window.selfClaimDate;
+        const actualSelfClaimTime = selfClaimTime || window.selfClaimTime;
+        ok = ok && !!actualSelfClaimDate && !!actualSelfClaimTime;
+    }
+    
     const ts = document.getElementById('timeSlots');
     
     console.log('validateDateTimeVisual:', {
@@ -201,6 +224,10 @@ function validateDateTimeVisual() {
         selectedTime,
         'window.selectedTime': window.selectedTime,
         actualSelectedTime,
+        currentServiceType,
+        isPickupAndSelfClaim,
+        selfClaimDate: isPickupAndSelfClaim ? (selfClaimDate || window.selfClaimDate) : 'N/A',
+        selfClaimTime: isPickupAndSelfClaim ? (selfClaimTime || window.selfClaimTime) : 'N/A',
         ok
     });
     

@@ -94,6 +94,27 @@
     font-size: 0.9rem;
 }
 
+/* Confirmation/receipt styling to appear as a standalone section */
+#confirmation {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    min-height: 220px;
+}
+
+#confirmation.hidden {
+    display: none !important;
+}
+
+.calendar-error {
+    padding: 18px;
+    color: #c53030;
+    text-align: center;
+    font-style: italic;
+}
+
 /* Map Pin Placeholder */
 .map-pin {
     margin-top: 12px;

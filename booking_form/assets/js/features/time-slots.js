@@ -56,7 +56,7 @@ class TimeSlotRenderer {
     // Add header with title and shop hours
     addTimeSlotsHeader(container, selectedDate) {
         const timeSlotsTitle = document.createElement("h4");
-        timeSlotsTitle.textContent = `Available times for ${selectedDate.toLocaleDateString()}`;
+        timeSlotsTitle.textContent = `Available Time for ${selectedDate.toLocaleDateString()}`;
         timeSlotsTitle.style.textAlign = "center";
         timeSlotsTitle.style.marginBottom = "6px";
         timeSlotsTitle.style.color = "#333";
@@ -236,20 +236,63 @@ class TimeSlotRenderer {
             selectedTime = time;
         }
 
-        // Auto-scroll to customer section after selection
-        setTimeout(() => {
-            if (typeof validateDateTimeVisual === 'function') {
-                validateDateTimeVisual();
-            }
-            
-            const customerSection = document.querySelector('[data-section="customerSection"]');
-            if (customerSection) {
-                customerSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-            }
-        }, 200);
+        // Check if this is pickup and self-claim service
+        const isPickupAndSelfClaim = window.selectedServiceType === 'pickup_selfclaim';
+        
+        if (isPickupAndSelfClaim) {
+            // Show self-claim calendar after pickup time is selected
+            setTimeout(() => {
+                if (typeof validateDateTimeVisual === 'function') {
+                    validateDateTimeVisual();
+                }
+                
+                // Show self-claim section and update title
+                const selfClaimSection = document.getElementById('selfClaimSection');
+                if (selfClaimSection) {
+                    selfClaimSection.classList.remove('hidden');
+                    
+                    // Update schedule title
+                    if (typeof updateScheduleTitle === 'function') {
+                        updateScheduleTitle('claim');
+                    }
+                    
+                        // Initialize self-claim calendar with current selection
+                        if (typeof initializeSelfClaimCalendar === 'function') {
+                            const pickupDate = window.selectedDate || selectedDate;
+                            const currentBookingType = window.bookingType || bookingType;
+                            
+                            console.log('=== TRIGGERING SELF-CLAIM CALENDAR ===');
+                            console.log('Available data:', { 
+                                pickupDate, 
+                                currentBookingType,
+                                'window.selectedDate': window.selectedDate,
+                                'window.bookingType': window.bookingType
+                            });
+                            
+                            // Try with current values first
+                            if (pickupDate && currentBookingType) {
+                                console.log('Initializing with valid data...');
+                                initializeSelfClaimCalendar(pickupDate, currentBookingType);
+                            } else {
+                                console.log('Missing data, using fallback...');
+                                // Use test data as fallback
+                                const fallbackDate = new Date();
+                                fallbackDate.setDate(fallbackDate.getDate() + 1);
+                                initializeSelfClaimCalendar(fallbackDate, 'normal');
+                            }
+                            
+                            // Do NOT auto-run the debug test function here; it can overwrite the real initialization.
+                        }
+                }
+            }, 200);
+        } else {
+            // Auto-scroll to customer section for other service types
+            setTimeout(() => {
+                if (typeof validateDateTimeVisual === 'function') {
+                    validateDateTimeVisual();
+                }
+            }, 200);
+        }
     }
 }
 

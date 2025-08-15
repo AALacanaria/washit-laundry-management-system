@@ -63,6 +63,12 @@ class BookingSelection {
                 console.log('BookingSelection: Re-triggering auto-fill for booking type:', type);
                 autoFillManager.initializeAutoFill();
             }
+            
+            // Update service indicator to reflect new delivery period
+            const serviceOption = document.getElementById('serviceOption');
+            if (serviceOption && serviceOption.value && typeof updateServiceIndicator === 'function') {
+                updateServiceIndicator(serviceOption.value);
+            }
         }, 800);
     }
 
@@ -120,7 +126,7 @@ class BookingSelection {
         if (type === CONFIG.BOOKING_TYPES.RUSH) {
             if (text) text.textContent = "Rush Booking";
             if (indicator) {
-                indicator.innerHTML = '<strong>Rush Booking</strong> - Same day service (limited slots)';
+                indicator.innerHTML = '<strong>Rush Booking</strong> - 1.5 days delivery (limited slots)';
                 indicator.style.background = "#fff5f5";
                 indicator.style.borderColor = "#fed7d7";
                 indicator.style.color = "#c53030";
@@ -128,7 +134,7 @@ class BookingSelection {
         } else {
             if (text) text.textContent = "Normal Booking";
             if (indicator) {
-                indicator.innerHTML = '<strong>Normal Booking</strong> - 3-day processing time';
+                indicator.innerHTML = '<strong>Normal Booking</strong> - 2-3 days delivery';
                 indicator.style.background = "#fff3cd";
                 indicator.style.borderColor = "#ffeaa7";
                 indicator.style.color = "#856404";
@@ -169,12 +175,6 @@ class BookingSelection {
     // Auto-scroll to service details section
     autoScrollToService() {
         if (this.currentBookingType) {
-            setTimeout(() => {
-                const serviceSection = document.querySelector('[data-section="serviceSection"]');
-                if (serviceSection) {
-                    serviceSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 400);
         }
     }
 

@@ -17,6 +17,41 @@
     margin-bottom: 0;
 }
 
+/* Service Option Indicator */
+.service-option-indicator {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+}
+
+.service-option-indicator.pickup-delivery {
+    border-left-color: #28a745;
+    background: #f8fff9;
+}
+
+.service-option-indicator.pickup-selfclaim {
+    border-left-color: #ffc107;
+    background: #fffef7;
+}
+
+.service-option-indicator.dropoff-delivery {
+    border-left-color: #17a2b8;
+    background: #f7feff;
+}
+
+.service-description {
+    font-size: 0.95rem;
+    color: #495057;
+    line-height: 1.5;
+}
+
+.service-description strong {
+    color: #343a40;
+    font-weight: 600;
+}
+
 /* Labels */
 label {
     font-size: 0.9rem;

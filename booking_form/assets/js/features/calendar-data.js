@@ -16,9 +16,9 @@ class CalendarData {
         
         for (let d = new Date(today); d <= thirtyDaysLater; d.setDate(d.getDate() + 1)) {
             const dayOfWeek = d.getDay();
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
+            const isSunday = dayOfWeek === 0; // Sunday only (shop closed)
             
-            if (isWeekend) {
+            if (isSunday) {
                 this.unavailable.push(new Date(d));
             } else {
                 this.available.push(new Date(d));
@@ -36,11 +36,11 @@ class CalendarData {
         const isPast = checkDate < today;
         if (isPast) return false;
 
-        // For both normal and rush booking: weekdays available, weekends unavailable
+        // Shop is open Monday-Saturday (closed Sundays only)
         const dayOfWeek = checkDate.getDay();
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+        const isSunday = dayOfWeek === 0;
 
-        return !isWeekend;
+        return !isSunday;
     }
 
     // Clear all calendar data

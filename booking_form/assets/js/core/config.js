@@ -37,9 +37,15 @@ window.bookingType = "";
 window.currentDate = new Date();
 window.selectedDate = null;
 window.selectedTime = null;
+window.selfClaimDate = null;
+window.selfClaimTime = null;
+window.currentSelfClaimDate = new Date();
 
 // Backward compatibility variables
 let bookingType = "";
 let currentDate = new Date();
 let selectedDate = null;
 let selectedTime = null;
+let selfClaimDate = null;
+let selfClaimTime = null;
+let currentSelfClaimDate = new Date();

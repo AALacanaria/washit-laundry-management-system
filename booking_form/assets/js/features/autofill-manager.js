@@ -44,6 +44,13 @@ class AutoFillManager {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(data));
             console.log('AutoFillManager: User data saved:', data);
+            
+            // Also save service option for auto-fill
+            const serviceOption = document.getElementById('serviceOption');
+            if (serviceOption && serviceOption.value) {
+                data.serviceOption = serviceOption.value;
+                localStorage.setItem(this.storageKey, JSON.stringify(data));
+            }
         } catch (error) {
             console.error('AutoFillManager: Error saving user data:', error);
         }
@@ -82,6 +89,7 @@ class AutoFillManager {
     fillFormSilently(data) {
         console.log('AutoFillManager: Filling form silently with data:', data);
 
+        // Fill regular fields
         this.fields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field && data[fieldId] && !field.value.trim()) {
@@ -99,6 +107,9 @@ class AutoFillManager {
                 field.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
+
+    // Intentionally skip auto-filling the service option so the user must choose it each time.
+    // This keeps the select required in the UI while still allowing other fields to be auto-filled.
 
         // Force re-check visibility of address field for rush bookings
         setTimeout(() => {

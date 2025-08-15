@@ -119,6 +119,17 @@
     font-weight: 600;
 }
 
+/* Calendar Day Headers */
+.calendar-day-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+    background-color: #f8f9fa;
+    color: #666;
+    font-size: 0.9rem;
+    border-radius: 3px;
+}
+
 /* Responsive Calendar */
 @media (max-width: 768px) {
     .calendar-time-container {

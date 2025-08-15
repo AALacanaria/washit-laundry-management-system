@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wash.IT Booking Form - Refactored</title>
+    <title>Wash.IT Booking Form</title>
     
     <!-- CSS Files - Base Styles -->
     <link rel="stylesheet" href="assets/css/base/reset.css">
@@ -56,9 +56,9 @@
                     <label for="serviceOption">Choose Service Option *</label>
                     <select id="serviceOption" required>
                         <option value="">-- Select Service --</option>
-                        <option value="pickup_delivery">Pickup and Delivery</option>
-                        <option value="pickup_selfclaim">Pickup and Self-Claim</option>
-                        <option value="dropoff_delivery">Drop-off and Delivery</option>
+                        <option value="pickup_delivery">Pickup and Delivery - We pick up and deliver your items</option>
+                        <option value="pickup_selfclaim">Pickup and Self-Claim - We pick up, you collect at shop</option>
+                        <option value="dropoff_delivery">Drop-off and Delivery - You drop off, we deliver</option>
                     </select>
                 </div>
             </div>
@@ -67,13 +67,19 @@
             <div class="form-section" data-section="scheduleSection">
                 <h3>Book a Schedule</h3>
                 
+                <!-- Pickup Scheduling Header (matching self-claim format) -->
+                <h4 style="color: #007bff; margin-bottom: 15px; text-align: center;">📅 Choose Pickup Schedule</h4>
+                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                    Select your preferred pickup date and time:
+                </p>
+                
                 <div class="calendar-time-container">
                     <!-- Calendar -->
                     <div class="calendar-wrapper">
                         <div id="calendar">
                             <div class="calendar-navigation">
                                 <button type="button" onclick="previousMonth()">◀</button>
-                                <h4 id="currentMonth">December 2024</h4>
+                                <h4 id="currentMonth">August 2025</h4>
                                 <button type="button" onclick="nextMonth()">▶</button>
                             </div>
                             <div id="calendarGrid" class="calendar-grid"></div>
@@ -85,6 +91,42 @@
                         <div id="timeSlots" class="time-slots-container">
                             <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a date first</p>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Self-Claim Scheduling (hidden by default) -->
+                <div id="selfClaimSection" class="hidden" style="margin-top: 30px;">
+                    <h4 style="color: #28a745; margin-bottom: 15px; text-align: center;">🏪 Choose Self-claim Schedule</h4>
+                    <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                        Your items will be ready for pickup. Select when you'd like to collect them:
+                    </p>
+                    
+                    <div class="calendar-time-container">
+                        <!-- Self-Claim Calendar -->
+                        <div class="calendar-wrapper">
+                            <div id="selfClaimCalendar">
+                                <div class="calendar-navigation">
+                                    <button type="button" onclick="previousMonthSelfClaim()">◀</button>
+                                    <h4 id="currentMonthSelfClaim">Loading...</h4>
+                                    <button type="button" onclick="nextMonthSelfClaim()">▶</button>
+                                </div>
+                                <div id="selfClaimCalendarGrid" class="calendar-grid"></div>
+                            </div>
+                        </div>
+
+                        <!-- Self-Claim Time Slots -->
+                        <div class="time-slots-wrapper">
+                            <div id="selfClaimTimeSlots" class="time-slots-container">
+                                <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a claim date first</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Option Indicator (moved here from service section) -->
+                <div class="service-option-indicator hidden" id="serviceOptionIndicator" style="margin-top: 20px;">
+                    <div class="service-description" id="serviceDescription">
+                        Service details will appear here
                     </div>
                 </div>
             </div>
@@ -170,6 +212,8 @@
 <script src="assets/js/features/calendar-data.js"></script>
 <script src="assets/js/features/calendar-renderer.js"></script>
 <script src="assets/js/features/time-slots.js"></script>
+<script src="assets/js/features/self-claim-calendar.js"></script>
+<script src="assets/js/debug/calendar-test.js"></script>
 
 <!-- JavaScript Files - Legacy Support -->
 <script src="assets/js/validation.js"></script>

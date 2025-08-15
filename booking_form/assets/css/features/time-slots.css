@@ -66,20 +66,21 @@
 
 /* Individual Time Slot */
 .time-slot {
-    padding: 12px 8px;
+    padding: 8px 6px;
     text-align: center;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s;
     background: white;
-    min-height: 50px;
+    min-height: 35px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
     color: #333;
+    font-size: 0.8rem;
 }
 
 .time-slot:hover {
@@ -98,14 +99,14 @@
 /* Time Slot Content */
 .time-slot .time-label {
     font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
 }
 
 .time-slot .slot-count {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     opacity: 0.8;
-    margin-top: 3px;
+    margin-top: 2px;
     font-weight: normal;
 }
 
