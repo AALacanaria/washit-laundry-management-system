@@ -1,0 +1,259 @@
+/* Calendar Styles */
+.calendar-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.calendar-time-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    min-height: 400px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #007bff;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.calendar-day:hover {
+    background: #e3f2fd;
+}
+
+.calendar-day.available {
+    background: #e8f5e8;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.calendar-day.unavailable {
+    background: #ffebee;
+    color: #c62828;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.calendar-day.selected {
+    background: #007bff;
+    color: white;
+}
+
+.calendar-day.today {
+    border: 2px solid #007bff;
+}
+
+.calendar-container h4 {
+    text-align: center;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Time Slots - wrapper with stacked groups (AM above, divider, PM below) */
+.time-slots-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Each group uses a grid of slots */
+.time-slots-group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 0;
+    width: 100%;
+}
+
+/* Divider between AM and PM groups */
+.am-pm-divider {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0;
+    height: 20px;
+}
+
+.am-pm-divider::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: #ddd;
+    z-index: 0;
+}
+
+.am-pm-divider span {
+    position: relative;
+    z-index: 1;
+    padding: 0 10px;
+    background: white;
+    color: #666;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Small note when no slots in a group */
+.time-slots-note {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 12px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px dashed #eee;
+}
+
+/* Time slot base */
+.time-slot {
+    padding: 12px 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    min-height: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* AM Time Slots - Morning theme */
+.time-slot.am {
+    background: linear-gradient(to bottom, #4b91e2 0%, #50e2c3 50%, #f5a524 100%);
+    border-color: rgba(0,0,0,0.06);
+    color: #072a4a;
+}
+
+.time-slot.am:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(75,145,226,0.18);
+}
+
+.time-slot.am.selected {
+    background: linear-gradient(to bottom, #323E66 0%, #3C7FA6 50%, #709FBA 100%);
+    color: #fff;
+    border-color: rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* PM Time Slots - Afternoon / Evening theme */
+.time-slot.pm {
+    background: linear-gradient(to bottom, #f5a524 0%, #f8e61b 50%, #cf021a 100%);
+    border-color: rgba(0,0,0,0.06);
+    color: #40100e;
+}
+
+.time-slot.pm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(207,2,26,0.14);
+}
+
+.time-slot.pm.selected {
+    background: linear-gradient(to bottom, #FDECA7 0%, #F1A57F 50%, #DB6356 100%);
+    color: #000;
+    border-color: rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+.time-slot .time-label {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+}
+
+.time-slot .slot-count {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 3px;
+    font-weight: normal;
+}
+
+.time-slot.unavailable {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Alternative time slots styling (from legacy) */
+.time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 8px;
+}
+
+.time-slots .time-slot {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.06);
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    min-width: 76px;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02) inset;
+}
+
+.time-slots .time-slot.pastel-1 { background: #f7fbff; border-color: #e1f0ff; }
+.time-slots .time-slot.pastel-2 { background: #fffaf7; border-color: #ffecd9; }
+.time-slots .time-slot.pastel-3 { background: #fbfff6; border-color: #e8f7df; }
+.time-slots .time-slot:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(30,30,30,0.06); }
+.time-slots .time-slot.selected { outline: 2px solid rgba(0,0,0,0.06); box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+
+.slot-divider {
+    display: inline-block;
+    margin: 6px auto 4px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.06);
+    color: #222;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+}

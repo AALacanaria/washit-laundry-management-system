@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wash.IT Booking Form</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/calendar.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 <body>
 
@@ -31,7 +35,7 @@
 
         <form id="bookingForm">
             <!-- Service Option Section -->
-            <div class="form-section">
+            <div class="form-section" data-section="serviceSection">
                 <h3>📋 Service Details</h3>
                 <div class="form-grid full-width">
                     <label for="serviceOption">Choose Service Option *</label>
@@ -45,7 +49,7 @@
             </div>
 
             <!-- Date & Time Section -->
-            <div class="form-section">
+            <div class="form-section" data-section="scheduleSection">
                 <h3>📅 Schedule Your Service</h3>
                 
                 <!-- Calendar and Time Container -->
@@ -75,7 +79,7 @@
             </div>
 
             <!-- Customer Information Section -->
-            <div class="form-section">
+            <div class="form-section" data-section="customerSection">
                 <h3>👤 Customer Information</h3>
 
                 <!-- Paired horizontal fields: First/Last, Phone/Email, Barangay/Address -->
@@ -94,11 +98,11 @@
                     <div class="row-two">
                         <div class="field">
                             <label for="contactNumber">Phone Number *</label>
-                            <input type="tel" id="contactNumber" placeholder="09xxxxxxxxx" pattern="^09\d{9}$" maxlength="11" inputmode="numeric" required class="compact-input">
+                            <input type="tel" id="contactNumber" placeholder="09xxxxxxxxx" pattern="^09\d{9}$" maxlength="11" inputmode="numeric" required class="compact-input" aria-required="true">
                         </div>
                         <div class="field">
                             <label for="email">Email Address</label>
-                            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" list="emailDomains" class="compact-input">
+                            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" list="emailDomains" class="compact-input" required aria-required="true">
                             <datalist id="emailDomains">
                                 <option value="gmail.com">
                                 <option value="yahoo.com">
@@ -111,11 +115,11 @@
                     <div class="row-two">
                         <div class="field">
                             <label for="barangay">Barangay</label>
-                            <input type="text" id="barangay" placeholder="Barangay" class="compact-input">
+                            <input type="text" id="barangay" placeholder="Barangay" class="compact-input" required aria-required="true">
                         </div>
                         <div class="field">
                             <label for="address">Location details (house #, street, landmark)</label>
-                            <input type="text" id="address" placeholder="House no., street, landmark" class="compact-input">
+                            <input type="text" id="address" placeholder="House no., street, landmark" class="compact-input" required aria-required="true">
                         </div>
                     </div>
                 </div>
@@ -138,7 +142,7 @@
             </div>
 
             <!-- Submit Button -->
-            <div class="form-section">
+            <div class="form-section" data-section="confirmSection">
                 <button type="submit" class="btn btn-primary submit-btn">Submit Booking</button>
             </div>
         </form>
@@ -152,6 +156,11 @@
     </div>
 </div>
 
-<script src="assets/js/main.js"></script>
+<!-- JavaScript Files -->
+<script src="assets/js/config.js"></script>
+<script src="assets/js/validation.js"></script>
+<script src="assets/js/calendar.js"></script>
+<script src="assets/js/booking.js"></script>
+<script src="assets/js/main_new.js"></script>
 </body>
 </html>
