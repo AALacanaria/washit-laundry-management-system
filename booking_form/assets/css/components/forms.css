@@ -1,0 +1,79 @@
+/* Form Input Components */
+
+/* Labels */
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Base Input Styles */
+input, 
+select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+}
+
+input:focus, 
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* Compact Input Styles */
+.compact-input {
+    width: 100%;
+    max-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* Narrow Input for Stacked Fields */
+.narrow-input {
+    max-width: 260px;
+    width: 100%;
+    padding: 8px 10px;
+}
+
+/* Input Validation States */
+.input-invalid {
+    border-color: #e03e2d !important;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.06);
+    background: #fff6f6;
+}
+
+.input-valid {
+    border-color: #2ea44f !important;
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.06);
+    background: #f6fffa;
+}
+
+/* Form Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Responsive Form Grid */
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .compact-input,
+    .narrow-input {
+        max-width: 100%;
+    }
+}

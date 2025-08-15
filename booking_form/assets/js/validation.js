@@ -25,14 +25,34 @@ function validateText(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll
+    // Check if customer section is now complete and auto-scroll to Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            autoScrollToNextSection();
+            // Directly scroll to Submit section
+            const submitSection = document.querySelector('[data-section="confirmSection"]');
+            if (submitSection) {
+                submitSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Add highlight effect to submit button
+                const submitBtn = document.querySelector('.submit-btn');
+                if (submitBtn) {
+                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                    submitBtn.style.transform = 'scale(1.02)';
+                    
+                    // Remove highlight after a few seconds
+                    setTimeout(() => {
+                        submitBtn.style.boxShadow = '';
+                        submitBtn.style.transform = '';
+                    }, 3000);
+                }
+            }
         }
     }, 100);
     
@@ -48,14 +68,34 @@ function validateEmail(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll
+    // Check if customer section is now complete and auto-scroll to Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            autoScrollToNextSection();
+            // Directly scroll to Submit section
+            const submitSection = document.querySelector('[data-section="confirmSection"]');
+            if (submitSection) {
+                submitSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Add highlight effect to submit button
+                const submitBtn = document.querySelector('.submit-btn');
+                if (submitBtn) {
+                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                    submitBtn.style.transform = 'scale(1.02)';
+                    
+                    // Remove highlight after a few seconds
+                    setTimeout(() => {
+                        submitBtn.style.boxShadow = '';
+                        submitBtn.style.transform = '';
+                    }, 3000);
+                }
+            }
         }
     }, 100);
     
@@ -71,14 +111,34 @@ function validatePhone(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and auto-scroll
+    // Check if customer section is now complete and auto-scroll to Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            autoScrollToNextSection();
+            // Directly scroll to Submit section
+            const submitSection = document.querySelector('[data-section="confirmSection"]');
+            if (submitSection) {
+                submitSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Add highlight effect to submit button
+                const submitBtn = document.querySelector('.submit-btn');
+                if (submitBtn) {
+                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                    submitBtn.style.transform = 'scale(1.02)';
+                    
+                    // Remove highlight after a few seconds
+                    setTimeout(() => {
+                        submitBtn.style.boxShadow = '';
+                        submitBtn.style.transform = '';
+                    }, 3000);
+                }
+            }
         }
     }, 100);
     

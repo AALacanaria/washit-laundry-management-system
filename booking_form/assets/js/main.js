@@ -1,9 +1,3 @@
-// Global Variables
-let bookingType = "";
-let currentDate = new Date();
-let selectedDate = null;
-let selectedTime = null;
-
 // Form submission handler and initialization
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize calendar data
@@ -33,6 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 alert('Please complete all required fields and selections highlighted in red.');
                 return;
+            }
+
+            // Save user data for auto-fill before showing confirmation
+            if (typeof autoFillManager !== 'undefined') {
+                autoFillManager.saveUserData();
             }
 
             // Collect form values
