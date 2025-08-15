@@ -53,14 +53,20 @@ function resetForm() {
     // Reset form fields - use setTimeout to ensure DOM is ready
     setTimeout(() => {
         const serviceOption = document.getElementById("serviceOption");
-        const fullName = document.getElementById("fullName");
+        const firstName = document.getElementById("firstName");
+        const lastName = document.getElementById("lastName");
         const contactNumber = document.getElementById("contactNumber");
+        const email = document.getElementById("email");
+        const barangay = document.getElementById("barangay");
         const address = document.getElementById("address");
         const specialInstructions = document.getElementById("specialInstructions");
         
         if (serviceOption) serviceOption.value = "";
-        if (fullName) fullName.value = "";
+        if (firstName) firstName.value = "";
+        if (lastName) lastName.value = "";
         if (contactNumber) contactNumber.value = "";
+        if (email) email.value = "";
+        if (barangay) barangay.value = "";
         if (address) address.value = "";
         if (specialInstructions) specialInstructions.value = "";
         
@@ -95,67 +101,105 @@ function resetForm() {
 }
 
 function selectBookingType(type) {
+    // If clicking same option -> toggle hide/show
+    const formSteps = document.getElementById("formSteps");
+    const bookingIndicator = document.getElementById("bookingTypeIndicator");
+    const rushFieldsEl = document.getElementById("rushFields");
+    const btnNormal = document.getElementById("btnNormal");
+    const btnRush = document.getElementById("btnRush");
+
+    // If same type clicked -> collapse/hide
+    if (bookingType === type) {
+        // clear selection
+        bookingType = "";
+        // collapse animated container and hide for accessibility
+        if (formSteps) {
+            formSteps.classList.remove("expanded");
+            formSteps.classList.add("hidden");
+        }
+        if (bookingIndicator) bookingIndicator.classList.add("hidden");
+        if (rushFieldsEl) rushFieldsEl.classList.add("hidden");
+        if (btnNormal) btnNormal.classList.remove("expanded");
+        if (btnRush) btnRush.classList.remove("expanded");
+
+        // Remove visual selected classes on buttons but leave inputs intact
+        const normalBtn = document.querySelector('.btn-primary');
+        const rushBtn = document.querySelector('.btn-secondary');
+        if (normalBtn) normalBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+        if (rushBtn) rushBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+
+        return;
+    }
+
+    // Selecting a (possibly different) type -> keep previous behavior but also show/hide properly
+    const previousType = bookingType;
     bookingType = type;
-    
-    // Update button visual states
+
+    // Update visual button states (existing logic)
     const normalBtn = document.querySelector('.btn-primary');
     const rushBtn = document.querySelector('.btn-secondary');
-    
-    // Remove all selected classes
-    normalBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
-    rushBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
-    
-    // Add appropriate selected class
+
+    if (normalBtn) normalBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+    if (rushBtn) rushBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+
     if (type === "rush") {
-        rushBtn.classList.add('selected', 'rush-selected');
-        normalBtn.classList.remove('rush-selected');
+        if (rushBtn) rushBtn.classList.add('selected', 'rush-selected');
     } else {
-        normalBtn.classList.add('selected', 'normal-selected');
-        rushBtn.classList.remove('normal-selected');
+        if (normalBtn) normalBtn.classList.add('selected', 'normal-selected');
     }
-    
-    // Update booking type indicator
+
+    // rotate arrows: add 'expanded' to clicked booking-toggle button, remove from the other
+    if (btnNormal) btnNormal.classList.toggle('expanded', type === 'normal');
+    if (btnRush) btnRush.classList.toggle('expanded', type === 'rush');
+
+    // Update booking type indicator content & styles (existing logic)
     const indicator = document.getElementById("bookingTypeIndicator");
     const text = document.getElementById("bookingTypeText");
-    
+
     if (type === "rush") {
-        text.textContent = "Rush Booking";
-        indicator.innerHTML = '<strong>Rush Booking</strong> - Same day service (limited slots)';
-        indicator.style.background = "#fff5f5";
-        indicator.style.borderColor = "#fed7d7";
-        indicator.style.color = "#c53030";
-        
-        // Show rush-specific fields
-        document.getElementById("rushFields").classList.remove("hidden");
-        document.getElementById("address").required = true;
+        if (text) text.textContent = "Rush Booking";
+        if (indicator) {
+            indicator.innerHTML = '<strong>Rush Booking</strong> - Same day service (limited slots)';
+            indicator.style.background = "#fff5f5";
+            indicator.style.borderColor = "#fed7d7";
+            indicator.style.color = "#c53030";
+        }
+        if (rushFieldsEl) rushFieldsEl.classList.remove("hidden");
+        const addr = document.getElementById("address");
+        if (addr) addr.required = true;
     } else {
-        text.textContent = "Normal Booking";
-        indicator.innerHTML = '<strong>Normal Booking</strong> - 3-day processing time';
-        indicator.style.background = "#fff3cd";
-        indicator.style.borderColor = "#ffeaa7";
-        indicator.style.color = "#856404";
-        
-        // Hide rush-specific fields
-        document.getElementById("rushFields").classList.add("hidden");
-        document.getElementById("address").required = false;
+        if (text) text.textContent = "Normal Booking";
+        if (indicator) {
+            indicator.innerHTML = '<strong>Normal Booking</strong> - 3-day processing time';
+            indicator.style.background = "#fff3cd";
+            indicator.style.borderColor = "#ffeaa7";
+            indicator.style.color = "#856404";
+        }
+        if (rushFieldsEl) rushFieldsEl.classList.add("hidden");
+        const addr = document.getElementById("address");
+        if (addr) addr.required = false;
     }
-    
-    // Expand the form steps container with animation
-    const formSteps = document.getElementById("formSteps");
-    formSteps.classList.add("expanded");
-    
-    // Reset ALL form data when switching booking types
-    resetForm();
-    
-    // Initialize calendar and render with a longer delay to ensure complete reset
+
+    // Show form steps and booking indicator
+    if (formSteps) {
+        formSteps.classList.remove("hidden");
+        formSteps.classList.add("expanded");
+    }
+    if (bookingIndicator) bookingIndicator.classList.remove("hidden");
+
+    // If switching between two different types (not initial open), reset form to clear previous selections
+    if (previousType && previousType !== type) {
+        resetForm();
+    }
+
+    // Initialize calendar and render
     setTimeout(() => {
-        // Force re-initialization of calendar data
         initializeCalendarData();
         renderCalendar();
-        renderTimeSlots(); // Clear time slots when switching
+        renderTimeSlots();
     }, 150);
-    
-    // Debug: Log the current state
+
+    // Debug
     console.log('Booking type selected:', bookingType);
     console.log('Form expanded:', document.getElementById("formSteps").classList.contains('expanded'));
 }
@@ -239,20 +283,13 @@ function isDateAvailable(date) {
     const checkDate = new Date(date);
     checkDate.setHours(0, 0, 0, 0);
     
-    const isToday = checkDate.getTime() === today.getTime();
     const isPast = checkDate < today;
-    
     if (isPast) return false;
-    
-    // For rush booking, only today is available
-    if (bookingType === "rush") {
-        return isToday;
-    }
-    
-    // For normal booking, check available dates (weekdays)
+
+    // For both normal and rush booking: weekdays available, weekends unavailable
     const dayOfWeek = checkDate.getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
-    
+
     return !isWeekend;
 }
 
@@ -276,11 +313,28 @@ function renderTimeSlots() {
     const timeSlotsTitle = document.createElement("h4");
     timeSlotsTitle.textContent = `Available times for ${selectedDate.toLocaleDateString()}`;
     timeSlotsTitle.style.textAlign = "center";
-    timeSlotsTitle.style.marginBottom = "20px";
+    timeSlotsTitle.style.marginBottom = "6px"; // tightened spacing
     timeSlotsTitle.style.color = "#333";
-    timeSlotsTitle.style.fontSize = "1.1rem";
+    timeSlotsTitle.style.fontSize = "1.05rem";
     timeSlotsTitle.style.fontWeight = "600";
     timeSlotsContainer.appendChild(timeSlotsTitle);
+    
+    const isRush = bookingType === "rush";
+    // When rush booking, show a small indicator above the AM group
+    if (isRush) {
+        const amInfo = document.createElement("div");
+        amInfo.className = "slot-divider";
+        amInfo.innerHTML = `
+            <div style="text-align:center; line-height:1.25;">
+                Rush booking: Only AM times can be chosen
+                <div style="margin-top:6px; font-size:0.9rem; color:#666;">
+                    (deliveries are scheduled in the PM until the shop’s closing time).
+                </div>
+            </div>
+        `;
+        amInfo.style.margin = "4px auto 8px"; // tightened spacing
+        timeSlotsContainer.appendChild(amInfo);
+    }
     
     // Wrapper for stacked AM and PM groups
     const wrapper = document.createElement("div");
@@ -317,22 +371,35 @@ function renderTimeSlots() {
         const slotElement = document.createElement("div");
         slotElement.className = "time-slot";
         
-        const hour = parseInt(time.split(':')[0]);
+        const hour = parseInt(time.split(':')[0], 10);
         if (hour < 12) {
             slotElement.classList.add("am");
         } else {
             slotElement.classList.add("pm");
         }
+
+        // Determine displayed slot count/text; for rush+PM we mark as not selectable
+        let slotCountText = `${slot.available} slot${slot.available > 1 ? 's' : ''} available`;
+        if (isRush && hour >= 12) {
+            slotCountText = "PM delivery not selectable";
+        }
         
         slotElement.innerHTML = `
             <div class="time-label">${slot.label}</div>
-            <div class="slot-count">${slot.available} slot${slot.available > 1 ? 's' : ''} available</div>
+            <div class="slot-count">${slotCountText}</div>
         `;
         
-        if (slot.available > 0) {
-            slotElement.onclick = () => selectTimeSlot(time, slotElement);
-        } else {
+        if (isRush && hour >= 12) {
+            // mark PM as unavailable for selection in rush mode
             slotElement.classList.add("unavailable");
+            slotElement.setAttribute("aria-disabled", "true");
+        } else {
+            if (slot.available > 0) {
+                slotElement.onclick = () => selectTimeSlot(time, slotElement);
+            } else {
+                slotElement.classList.add("unavailable");
+                slotElement.setAttribute("aria-disabled", "true");
+            }
         }
         
         if (hour < 12) {
@@ -406,8 +473,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Get form values
         const serviceOption = document.getElementById("serviceOption").value;
-        const fullName = document.getElementById("fullName").value.trim();
+        const firstName = document.getElementById("firstName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim();
         const contactNumber = document.getElementById("contactNumber").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const barangay = document.getElementById("barangay").value.trim();
         const address = document.getElementById("address").value.trim();
         const specialInstructions = document.getElementById("specialInstructions").value.trim();
         
@@ -422,8 +492,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        if (!fullName) {
-            alert("Please enter your full name.");
+        if (!firstName || !lastName) {
+            alert("Please enter your first and last name.");
             return;
         }
         
@@ -446,11 +516,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Show confirmation with review
-        showConfirmation(serviceOption, fullName, contactNumber, address, specialInstructions);
+        showConfirmation(serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions);
     });
 });
 
-function showConfirmation(serviceOption, fullName, contactNumber, address, specialInstructions) {
+function showConfirmation(serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
     // Hide the form
     document.getElementById("formSteps").classList.add("hidden");
     
@@ -467,6 +537,7 @@ function showConfirmation(serviceOption, fullName, contactNumber, address, speci
     
     const selectedDateStr = selectedDate.toLocaleDateString();
     const selectedTimeStr = timeSlots[selectedTime].label;
+    const fullName = `${firstName} ${lastName}`.trim();
     
     reviewDetails.innerHTML = `
         <p><strong>Booking Type:</strong> ${bookingType === "rush" ? "Rush Booking" : "Normal Booking"}</p>
@@ -475,6 +546,8 @@ function showConfirmation(serviceOption, fullName, contactNumber, address, speci
         <p><strong>Time:</strong> ${sanitizeHTML(selectedTimeStr)}</p>
         <p><strong>Full Name:</strong> ${sanitizeHTML(fullName)}</p>
         <p><strong>Contact Number:</strong> ${sanitizeHTML(contactNumber)}</p>
+        ${email ? `<p><strong>Email:</strong> ${sanitizeHTML(email)}</p>` : ''}
+        ${barangay ? `<p><strong>Barangay:</strong> ${sanitizeHTML(barangay)}</p>` : ''}
         ${address ? `<p><strong>Delivery Address:</strong> ${sanitizeHTML(address)}</p>` : ''}
         ${specialInstructions ? `<p><strong>Special Instructions:</strong> ${sanitizeHTML(specialInstructions)}</p>` : ''}
     `;

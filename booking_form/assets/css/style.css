@@ -75,6 +75,40 @@ body {
     }
 }
 
+/* Paired-row helper: two columns for horizontally paired fields */
+.row-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    align-items: start;
+    margin-bottom: 10px;
+}
+.row-two .field label {
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Compact inputs: limited width but flexible for responsiveness */
+.compact-input {
+    width: 100%;
+    max-width: 260px; /* reduced width for names/phone/email/address */
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* Ensure compact inputs expand on very small screens */
+@media (max-width: 600px) {
+    .row-two {
+        grid-template-columns: 1fr;
+    }
+    .compact-input {
+        max-width: 100%;
+    }
+}
+
 /* Submit Button */
 .submit-btn {
     width: 100%;
@@ -295,7 +329,7 @@ select:focus {
 .time-slots-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 8px; /* reduced from 16px */
     width: 100%;
 }
 
@@ -391,7 +425,7 @@ select:focus {
 
 /* AM selected state */
 .time-slot.am.selected {
-    background: linear-gradient(to bottom, #2b6fb3 0%, #1fa887 50%, #d18a1f 100%);
+    background: linear-gradient(to bottom, #323E66 0%, #3C7FA6 50%, #709FBA 100%);
     color: #fff;
     border-color: rgba(0,0,0,0.12);
     transform: translateY(-2px);
@@ -412,8 +446,8 @@ select:focus {
 
 /* PM selected state */
 .time-slot.pm.selected {
-    background: linear-gradient(to bottom, #b06b16 0%, #a38f12 50%, #8a010e 100%);
-    color: #fff;
+    background: linear-gradient(to bottom, #FDECA7 0%, #F1A57F 50%, #DB6356 100%);
+    color: #000;
     border-color: rgba(0,0,0,0.12);
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(0,0,0,0.18);
@@ -461,8 +495,81 @@ select:focus {
 
 .calendar-container h4 {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 8px; /* reduced from 15px */
     color: #333;
     font-size: 1.1rem;
     font-weight: 600;
+}
+
+/* Added: moved from inline index.html */
+.booking-toggle { display:inline-flex; align-items:center; gap:8px; }
+.booking-toggle .arrow { display:inline-block; transition:transform .18s ease; font-size:12px; }
+.booking-toggle.expanded .arrow { transform:rotate(180deg); } /* arrow points up when expanded */
+
+.time-slots { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:8px; }
+.time-slots .time-slot {
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid rgba(0,0,0,0.06);
+    font-size:14px;
+    color:#333;
+    cursor:pointer;
+    min-width:76px;
+    text-align:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02) inset;
+}
+.time-slots .time-slot.pastel-1 { background:#f7fbff; border-color:#e1f0ff; }
+.time-slots .time-slot.pastel-2 { background:#fffaf7; border-color:#ffecd9; }
+.time-slots .time-slot.pastel-3 { background:#fbfff6; border-color:#e8f7df; }
+.time-slots .time-slot:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(30,30,30,0.06); }
+.time-slots .time-slot.selected { outline:2px solid rgba(0,0,0,0.06); box-shadow:0 6px 18px rgba(0,0,0,0.08); }
+
+.slot-divider {
+    display:inline-block;
+    margin:6px auto 4px; /* tightened spacing */
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(0,0,0,0.06);
+    color:#222;
+    font-weight:600;
+    font-size:12px;
+    text-align:center;
+}
+
+@media (max-width:480px) {
+    .time-slots .time-slot { min-width:64px; padding:6px 8px; font-size:13px; }
+}
+
+/* Narrow input for stacked name fields */
+.narrow-input {
+    max-width: 260px;
+    width: 100%;
+    padding: 8px 10px;
+}
+
+/* Vertical stacking helper used in customer info */
+.form-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Map pin placeholder (empty container for future map) */
+.map-pin {
+    margin-top: 12px;
+    height: 160px;
+    border: 1px dashed #d0d7de;
+    border-radius: 8px;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7a7a7a;
+    font-size: 0.95rem;
+}
+
+/* Keep responsive behavior intact */
+@media (max-width: 768px) {
+    .narrow-input { max-width: 100%; }
 }
