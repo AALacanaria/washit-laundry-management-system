@@ -1,0 +1,146 @@
+/* Form Section Components */
+
+/* Form Steps Container */
+.form-steps {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.form-steps.expanded {
+    /* Allow the form to expand naturally so the page's scrollbar handles overflowing
+       content. This prevents clipping the Confirm section and uses the browser's
+       page-level scroll instead of an internal scroll area. */
+    max-height: none;
+    overflow: visible;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+    scroll-margin-top: 20px;
+}
+
+.form-section:last-child {
+    margin-bottom: 0;
+}
+
+.form-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Booking Type Selection */
+#step1 .btn.selected {
+    background: #007bff;
+    color: white;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+#step1 .btn.normal-selected {
+    background: #28a745;
+    color: white;
+}
+
+#step1 .btn.normal-selected:hover {
+    background: #218838;
+}
+
+#step1 .btn.rush-selected {
+    background: #dc3545;
+    color: white;
+}
+
+#step1 .btn.rush-selected:hover {
+    background: #c82333;
+}
+
+/* Booking Toggle Arrows */
+.booking-toggle { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.booking-toggle .arrow { 
+    display: inline-block; 
+    transition: transform .18s ease; 
+    font-size: 12px; 
+}
+
+.booking-toggle.expanded .arrow { 
+    transform: rotate(180deg); 
+}
+
+/* Booking Type Indicator */
+.booking-type-indicator {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 25px;
+    text-align: center;
+    color: #856404;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Review Section */
+#reviewDetails p {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+/* Confirmation/receipt styling to appear as a standalone section */
+#confirmation {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+    min-height: 220px;
+}
+
+#confirmation.hidden {
+    display: none !important;
+}
+
+.calendar-error {
+    padding: 18px;
+    color: #c53030;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Map Pin Placeholder */
+.map-pin {
+    margin-top: 12px;
+    height: 160px;
+    border: 1px dashed #d0d7de;
+    border-radius: 8px;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7a7a7a;
+    font-size: 0.95rem;
+}
+
+/* Responsive Form Sections */
+@media (max-width: 768px) {
+    .form-section {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .form-section h3 {
+        font-size: 1rem;
+    }
+}

@@ -1,0 +1,137 @@
+/* Booking Receipt Components */
+
+/* Main Receipt Container */
+.booking-receipt {
+    background: #fff;
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1);
+}
+
+/* Receipt Header */
+.receipt-header {
+    text-align: center;
+    border-bottom: 2px dashed #e0e0e0;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+}
+
+.receipt-header h4 {
+    color: #1565c0;
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+}
+
+/* Booking Reference */
+.booking-ref {
+    background: #e3f2fd;
+    color: #0d47a1;
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
+/* Booking Timestamp */
+.booking-timestamp {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 4px 0 0 0;
+}
+
+/* Receipt Sections */
+.receipt-section {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+}
+
+.receipt-section:not(:last-child) {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.receipt-section h5 {
+    color: #1565c0;
+    margin: 0 0 12px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.receipt-section p {
+    margin: 6px 0;
+    line-height: 1.5;
+}
+
+/* Receipt Footer */
+.receipt-footer {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+
+.receipt-footer h5 {
+    color: #2e7d32;
+}
+
+/* Receipt Actions */
+.receipt-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 2px dashed #e0e0e0;
+}
+
+/* Print Styles */
+@media print {
+    .receipt-actions {
+        display: none;
+    }
+    
+    .booking-receipt {
+        box-shadow: none;
+        border: 2px solid #000;
+    }
+    
+    .receipt-header h4 {
+        color: #000;
+    }
+    
+    .booking-ref {
+        background: #f0f0f0;
+        color: #000;
+    }
+    
+    .receipt-section h5 {
+        color: #000;
+    }
+}
+
+/* Responsive Receipt */
+@media (max-width: 768px) {
+    .booking-receipt {
+        padding: 16px;
+        margin: 15px 0;
+    }
+    
+    .receipt-header h4 {
+        font-size: 1.2rem;
+    }
+    
+    .receipt-section h5 {
+        font-size: 1rem;
+    }
+    
+    .receipt-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .receipt-actions .btn {
+        width: 100%;
+    }
+}

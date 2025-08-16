@@ -1,0 +1,59 @@
+/* Button Components */
+
+/* Base Button Styles */
+.btn {
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    font-size: 0.95rem;
+}
+
+/* Primary Button */
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background: #6c757d;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Small Button */
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.875rem;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* Button Validation States */
+.btn-invalid {
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.04);
+    outline: 2px solid rgba(224,62,45,0.08);
+}
+
+.btn-valid {
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.04);
+    outline: 2px solid rgba(46,164,79,0.08);
+}
