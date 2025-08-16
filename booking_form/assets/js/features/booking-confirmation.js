@@ -6,9 +6,7 @@ class BookingConfirmation {
 
     // Main confirmation display function
     showConfirmation(serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
-        console.log('showConfirmation called with:', {
-            serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions
-        });
+    // showConfirmation called
         
         // Hide the form
         const formSteps = document.getElementById("formSteps");
@@ -300,7 +298,7 @@ function formatService(service) {
 }
 
 // Test function for confirmation
-window.testConfirmation = function() {
+    window.testConfirmation = function() {
     // Set test data in both local and window variables
     selectedDate = new Date();
     selectedTime = "09:00";
@@ -310,9 +308,7 @@ window.testConfirmation = function() {
     window.selectedTime = selectedTime;
     window.bookingType = bookingType;
     
-    console.log('Test confirmation with:', {
-        selectedDate, selectedTime, bookingType
-    });
+    // test confirmation invoked
     
     showConfirmation(
         "pickup_delivery",

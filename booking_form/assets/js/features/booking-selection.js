@@ -60,7 +60,7 @@ class BookingSelection {
         // Re-trigger auto-fill after booking type selection
         setTimeout(() => {
             if (typeof autoFillManager !== 'undefined' && autoFillManager.isAutoFillAvailable()) {
-                console.log('BookingSelection: Re-triggering auto-fill for booking type:', type);
+                    // re-triggering auto-fill for booking type
                 autoFillManager.initializeAutoFill();
             }
             
@@ -151,6 +151,40 @@ class BookingSelection {
         }
         if (bookingIndicator) bookingIndicator.classList.remove("hidden");
 
+        // If the user already filled customer fields or selected times while the
+        // form was collapsed, ensure the Confirm section becomes visible now
+        // that the form is expanded. This fixes the case where validators ran
+        // earlier but could not reveal the submit section because `formSteps`
+        // was hidden.
+        setTimeout(() => {
+            try {
+                const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address']
+                    .every(id => {
+                        const field = document.getElementById(id);
+                        return field && field.classList.contains('input-valid');
+                    });
+
+                const dateTimeOk = (typeof validateDateTimeVisual === 'function') ? validateDateTimeVisual() : false;
+
+                if (customerComplete && dateTimeOk && typeof ensureConfirmVisible === 'function') {
+                    ensureConfirmVisible();
+
+                    // Add a short highlight to the submit button to draw attention
+                    const submitBtn = document.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                        submitBtn.style.transform = 'scale(1.02)';
+                        setTimeout(() => {
+                            submitBtn.style.boxShadow = '';
+                            submitBtn.style.transform = '';
+                        }, 3000);
+                    }
+                }
+            } catch (e) {
+                // swallow any errors - defensive
+            }
+        }, 120);
+
         // Handle rush-specific fields - address is now always visible
         if (type === CONFIG.BOOKING_TYPES.RUSH) {
             const addr = document.getElementById("address");
@@ -165,7 +199,7 @@ class BookingSelection {
             if (typeof autoFillManager !== 'undefined') {
                 const savedData = autoFillManager.loadUserData();
                 if (savedData && Object.keys(savedData).length > 0) {
-                    console.log('BookingSelection: Auto-filling after form element changes');
+                    // auto-filling after form element changes
                     autoFillManager.fillFormSilently(savedData);
                 }
             }

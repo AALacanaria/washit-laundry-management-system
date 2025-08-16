@@ -139,6 +139,21 @@ function attachValidators() {
         });
     }
 
+    // When the user switches service options, reset scheduling-specific selections
+    if (svc) {
+        svc.addEventListener('change', () => {
+            try {
+                if (typeof formReset !== 'undefined' && formReset && typeof formReset.resetScheduling === 'function') {
+                    formReset.resetScheduling();
+                } else if (typeof formNavigation !== 'undefined' && formNavigation && typeof formNavigation.resetScheduling === 'function') {
+                    formNavigation.resetScheduling();
+                }
+            } catch (e) {
+                // non-fatal
+            }
+        });
+    }
+
     // Booking type button validation
     const btnN = document.getElementById('btnNormal');
     const btnR = document.getElementById('btnRush');

@@ -31,6 +31,22 @@ function ensureConfirmVisible() {
     if (submitSection) {
         submitSection.classList.remove('hidden');
         submitSection.style.display = 'block';
+        try {
+            // Smoothly bring the confirm section into the user's viewport so it's not clipped
+            // when long calendar/time-slot sections push it below the visible area.
+            if (typeof submitSection.scrollIntoView === 'function') {
+                submitSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                // Fallback: scroll to its top offset
+                const top = submitSection.getBoundingClientRect().top + window.scrollY - 40;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }
+            // Also focus the submit button for keyboard users and better discoverability
+            const sb = submitSection.querySelector('.submit-btn');
+            if (sb && typeof sb.focus === 'function') sb.focus({ preventScroll: true });
+        } catch (e) {
+            // Non-fatal: if scrolling fails, leave the section visible and continue
+        }
     }
 }
 
@@ -217,19 +233,7 @@ function validateDateTimeVisual() {
     
     const ts = document.getElementById('timeSlots');
     
-    console.log('validateDateTimeVisual:', {
-        selectedDate,
-        'window.selectedDate': window.selectedDate,
-        actualSelectedDate,
-        selectedTime,
-        'window.selectedTime': window.selectedTime,
-        actualSelectedTime,
-        currentServiceType,
-        isPickupAndSelfClaim,
-        selfClaimDate: isPickupAndSelfClaim ? (selfClaimDate || window.selfClaimDate) : 'N/A',
-        selfClaimTime: isPickupAndSelfClaim ? (selfClaimTime || window.selfClaimTime) : 'N/A',
-        ok
-    });
+    // validateDateTimeVisual diagnostics removed
     
     if (!ok) {
         ts && ts.classList.add('input-invalid');
@@ -281,8 +285,7 @@ function validateAll() {
     validationResults.dateTime = validateDateTimeVisual();
     if (!validationResults.dateTime) ok = false;
 
-    console.log('validateAll results:', validationResults);
-    console.log('Overall validation:', ok);
+    // validateAll results computed
 
     return ok;
 }

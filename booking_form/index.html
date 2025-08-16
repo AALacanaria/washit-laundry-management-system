@@ -29,9 +29,9 @@
     <h2>Book Your Laundry Service</h2>
 
     <!-- Step 1: Booking Type -->
-    <div id="step1" style="text-align: center; margin-bottom: 20px;">
-        <p style="margin-bottom: 15px; font-weight: 500;">Select booking type:</p>
-        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+    <div id="step1" class="centered-section">
+        <p class="booking-step-p">Select booking type:</p>
+        <div class="booking-toggle-wrapper">
             <button id="btnNormal" class="btn btn-primary booking-toggle" onclick="selectBookingType('normal')">
                 Normal Booking <span class="arrow">▼</span>
             </button>
@@ -43,8 +43,8 @@
 
     <!-- Complete Form (hidden by default) -->
     <div class="form-steps hidden" id="formSteps">
-        <!-- Booking Type Indicator (hidden by default) -->
-        <div class="booking-type-indicator hidden" id="bookingTypeIndicator" style="margin-bottom: 30px;">
+    <!-- Booking Type Indicator (hidden by default) -->
+    <div class="booking-type-indicator hidden" id="bookingTypeIndicator">
             <strong id="bookingTypeText">Normal Booking</strong> - 3-day processing time
         </div>
 
@@ -68,8 +68,8 @@
                 <h3>Book a Schedule</h3>
                 
                 <!-- Pickup Scheduling Header (matching self-claim format) -->
-                <h4 style="color: #007bff; margin-bottom: 15px; text-align: center;">📅 Choose Pickup Schedule</h4>
-                <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                <h4 class="pickup-header">📅 Choose Pickup Schedule</h4>
+                <p class="section-subtext">
                     Select your preferred pickup date and time:
                 </p>
                 
@@ -89,15 +89,15 @@
                     <!-- Time Slots -->
                     <div class="time-slots-wrapper">
                         <div id="timeSlots" class="time-slots-container">
-                            <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a date first</p>
+                            <p class="time-slots-placeholder">Please select a date first</p>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Self-Claim Scheduling (hidden by default) -->
-                <div id="selfClaimSection" class="hidden" style="margin-top: 30px;">
-                    <h4 style="color: #28a745; margin-bottom: 15px; text-align: center;">🏪 Choose Self-claim Schedule</h4>
-                    <p style="color: #666; margin-bottom: 20px; font-size: 0.9rem; text-align: center;">
+                <div id="selfClaimSection" class="hidden self-claim-section">
+                    <h4 class="selfclaim-header">🏪 Choose Self-claim Schedule</h4>
+                    <p class="section-subtext">
                         Your items will be ready for pickup. Select when you'd like to collect them:
                     </p>
                     
@@ -117,14 +117,14 @@
                         <!-- Self-Claim Time Slots -->
                         <div class="time-slots-wrapper">
                             <div id="selfClaimTimeSlots" class="time-slots-container">
-                                <p style="text-align: center; color: #666; font-style: italic; padding: 20px;">Please select a claim date first</p>
-                            </div>
+                                    <p class="time-slots-placeholder">Please select a claim date first</p>
+                                </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Service Option Indicator (moved here from service section) -->
-                <div class="service-option-indicator hidden" id="serviceOptionIndicator" style="margin-top: 20px;">
+                <div class="service-option-indicator hidden mt-20" id="serviceOptionIndicator">
                     <div class="service-description" id="serviceDescription">
                         Service details will appear here
                     </div>

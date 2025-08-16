@@ -7,12 +7,12 @@ class SelfClaimCalendar {
 
     // Initialize self-claim calendar after pickup is scheduled
     initializeSelfClaimCalendar(pickupDate, bookingType) {
-        console.log('Initializing self-claim calendar for pickup:', pickupDate, 'booking type:', bookingType);
+    // initialization logged in debug during development (removed)
         
         // Validate inputs
         if (!pickupDate || !bookingType) {
             console.error('Missing required parameters for self-claim calendar:', { pickupDate, bookingType });
-            console.log('Using fallback: normal booking with 2.5 days processing from today');
+            // fallback path used (no console log)
             
             // Use today + normal processing as fallback
             const today = new Date();
@@ -27,7 +27,7 @@ class SelfClaimCalendar {
             this.maxClaimDate = new Date(today);
             this.maxClaimDate.setDate(this.maxClaimDate.getDate() + 4); // 3.5 days rounded up
             
-            console.log('Fallback dates:', { currentDate: this.currentDate, minClaimDate: this.minClaimDate, maxClaimDate: this.maxClaimDate });
+            // fallback dates computed
             
             // Still try to render with fallback data
             const selfClaimSection = document.getElementById('selfClaimSection');
@@ -48,7 +48,7 @@ class SelfClaimCalendar {
             // the existing rush configuration. This avoids stray fallback/normal
             // initializations from widening a rush-only window.
             if (this.bookingType === 'rush' && bookingType !== 'rush' && window.bookingType !== 'rush') {
-                console.log('initializeSelfClaimCalendar: skipping re-init because existing bookingType is rush and incoming is not rush');
+                // skipping re-init because existing bookingType is rush
                 // Still ensure calendar is rendered with current state
                 this.renderSelfClaimCalendar();
                 return;
@@ -64,144 +64,91 @@ class SelfClaimCalendar {
             } else {
                 this.bookingType = 'normal';
             }
-            // Calculate minimum claim date based on processing period
-            // For pickup and self-claim: processing starts from today, not pickup date
+            // Calculate claim availability
+            // Shop open hours: 06:00 - 17:00, closed Sundays.
+            // Rush processing: 4 hours from pickup time (same-day window from readiness to 17:00) and next working day full hours.
             const today = new Date();
-            this.minClaimDate = new Date(today);
-            const processingDays = this.bookingType === 'rush' ? 1.5 : 2.5;
-            
-            // Calculate maximum claim date (limited window for self-claim)
-            this.maxClaimDate = new Date(today);
-            let maxWindowDays = null;
-            if (bookingType === 'rush') {
-                // For rush bookings, only make the exact processing completion date available (1.5 days)
-                // We'll set maxClaimDate to equal minClaimDate after applying processing offset below.
-                maxWindowDays = 1.5;
-            } else {
-                // For normal bookings keep the existing wider pickup window (3.5 days)
-                maxWindowDays = 3.5;
-                this.maxClaimDate.setDate(this.maxClaimDate.getDate() + Math.ceil(maxWindowDays));
-            }
 
-            console.log('Today:', today);
-            console.log('Processing days for', bookingType, ':', processingDays);
-            console.log('Max window days:', maxWindowDays);
-            console.log('Note: Self-claim availability is calculated from TODAY, not pickup date');
-            
-            // Add processing days from today (handle half-days)
-            this.minClaimDate.setDate(this.minClaimDate.getDate() + Math.floor(processingDays));
-            if (processingDays % 1 !== 0) {
-                this.minClaimDate.setHours(this.minClaimDate.getHours() + 12);
-            }
-
-            // For rush bookings, we want only the single completion day to be selectable.
-            // If the calculated minClaimDate falls on a Sunday (shop closed), shift to Monday.
-            if (bookingType === 'rush') {
-                if (this.minClaimDate.getDay() === 0) {
-                    console.log('Min claim date falls on Sunday; shifting to Monday');
-                    this.minClaimDate.setDate(this.minClaimDate.getDate() + 1);
+            // Helper: start-of-day and next working day
+            const toStartOfDay = (d) => { const n = new Date(d); n.setHours(0,0,0,0); return n; };
+            const nextWorkingDay = (d) => {
+                const x = new Date(d);
+                x.setDate(x.getDate() + 1);
+                // Skip Sundays
+                while (x.getDay() === 0) {
+                    x.setDate(x.getDate() + 1);
                 }
-                // Make the max claim date equal to the min claim date so only that day is available
-                this.maxClaimDate = new Date(this.minClaimDate);
+                x.setHours(6,0,0,0);
+                return x;
+            };
+
+            // Unified availability logic for both normal and rush: use pickup + 4 hours readiness
+            // and allow the earliest day (same-day if readiness <= 17:00 and not Sunday) plus
+            // two subsequent working days (skip Sundays). This makes Rush behave like Normal
+            // for self-claim availability but keeps the +4-hour readiness rule for both.
+            // Resolve pickup datetime (prefer incoming pickupDate or window.selectedDate)
+            const P = (pickupDate && pickupDate instanceof Date) ? new Date(pickupDate) : (window.selectedDate ? new Date(window.selectedDate) : new Date());
+
+            // Apply selected pickup time if pickupDate had no time component
+            try {
+                const hasHour = P.getHours() !== 0 || P.getMinutes() !== 0;
+                const timeStr = (typeof window.selectedTime !== 'undefined' && window.selectedTime) ? window.selectedTime : (typeof selectedTime !== 'undefined' ? selectedTime : null);
+                if (!hasHour && timeStr) {
+                    const parts = timeStr.toString().split(':');
+                    const hh = Number(parts[0]);
+                    const mm = parts.length > 1 ? Number(parts[1]) : 0;
+                    if (!Number.isNaN(hh)) {
+                        P.setHours(hh, isNaN(mm) ? 0 : mm, 0, 0);
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to apply pickup time to pickupDate:', err);
             }
-            
-            console.log('Calculated minimum claim date:', this.minClaimDate);
-            console.log('Calculated maximum claim date:', this.maxClaimDate);
-            console.log('Self-claim available from:', this.minClaimDate.toDateString(), 'to', this.maxClaimDate.toDateString());
-            
-            // Set current month to minimum claim date for better UX
+
+            // Compute readiness = pickup + 4 hours
+            const readiness = new Date(P.getTime() + 4 * 60 * 60 * 1000);
+
+            // Build allowed claim dates: earliest (same-day if allowed) + 2 next working days
+            this.allowedClaimDates = [];
+
+            const readinessEndOfDay = new Date(readiness.getFullYear(), readiness.getMonth(), readiness.getDate(), 17, 0, 0);
+            let earliestDayStart;
+            // include same-day only if not Sunday and readiness <= 17:00
+            if (readiness.getDay() !== 0 && readiness.getTime() <= readinessEndOfDay.getTime()) {
+                earliestDayStart = toStartOfDay(readiness);
+                // set precise min and end times for earliest day
+                this.minClaimDateTime = new Date(readiness);
+                this.endClaimDateTime = new Date(readinessEndOfDay);
+            } else {
+                const next = nextWorkingDay(readiness);
+                earliestDayStart = toStartOfDay(next);
+                this.minClaimDateTime = new Date(next.getFullYear(), next.getMonth(), next.getDate(), 6, 0, 0);
+                this.endClaimDateTime = new Date(next.getFullYear(), next.getMonth(), next.getDate(), 17, 0, 0);
+            }
+
+            // push earliest and then N subsequent working days depending on booking type
+            // Rush: earliest + 1 extra day (total 2 days). Normal: earliest + 2 extra days (total 3 days).
+            const extraDays = (this.bookingType === 'rush') ? 1 : 2;
+            let cursor = new Date(earliestDayStart);
+            for (let i = 0; i <= extraDays; i++) {
+                this.allowedClaimDates.push(toStartOfDay(cursor).getTime());
+                // advance cursor to next working day for next iteration
+                cursor = nextWorkingDay(cursor);
+            }
+
+            // Set min/max claim dates for calendar rendering
+            this.minClaimDate = new Date(this.allowedClaimDates[0]);
+            this.maxClaimDate = new Date(this.allowedClaimDates[this.allowedClaimDates.length - 1]);
+
+            // Ensure min/end timestamps exist as a fallback
+            if (!this.minClaimDateTime) this.minClaimDateTime = new Date(this.minClaimDate.getFullYear(), this.minClaimDate.getMonth(), this.minClaimDate.getDate(), 6, 0, 0);
+            if (!this.endClaimDateTime) this.endClaimDateTime = new Date(this.maxClaimDate.getFullYear(), this.maxClaimDate.getMonth(), this.maxClaimDate.getDate(), 17, 0, 0);
+
+            // Set calendar current month to earliest allowed day
             this.currentDate = new Date(this.minClaimDate);
             window.currentSelfClaimDate = this.currentDate;
-
-            // Compute earliest self-claim time based on working hours algorithm (spec)
-            // Shop open hours: 06:00 - 17:00, closed Sundays. Cutoff at 12:00.
-            try {
-                // Helper utilities
-                const isOpenDay = (d) => d.getDay() !== 0; // skip Sunday; holidays not configured here
-                const toStartOfDay = (d) => { const n = new Date(d); n.setHours(0,0,0,0); return n; };
-                const nextOpenDayAtStart = (d) => {
-                    const x = new Date(d);
-                    x.setHours(6,0,0,0);
-                    while (!isOpenDay(x)) {
-                        x.setDate(x.getDate() + 1);
-                        x.setHours(6,0,0,0);
-                    }
-                    return x;
-                };
-
-                // Use pickupDate param if provided, otherwise fall back to now
-                const P = (pickupDate && pickupDate instanceof Date) ? new Date(pickupDate) : new Date();
-
-                // Determine processing start S per cutoff rule
-                const cutoffHour = 12;
-                let S = new Date(P);
-                const pickupHour = S.getHours();
-                if (pickupHour >= cutoffHour) {
-                    // Start next open day at 06:00
-                    S = nextOpenDayAtStart(S);
-                } else {
-                    // If pickup day is closed (Sunday), shift to next open day at 06:00
-                    if (!isOpenDay(S)) {
-                        S = nextOpenDayAtStart(S);
-                    }
-                    // Ensure S is at least 06:00
-                    if (S.getHours() < 6) S.setHours(6,0,0,0);
-                    // If pickup time is after 17:00, move to next open day at 06:00
-                    if (S.getHours() >= 17) S = nextOpenDayAtStart(S);
-                }
-
-                // Remaining processing in working hours: 1.5 working days = 16.5 hours
-                let remainingHours = 16.5;
-                let current = new Date(S);
-                let earliestClaim = null;
-
-                while (remainingHours > 0) {
-                    // If current is a closed day, move to next open day at 06:00
-                    if (!isOpenDay(current)) {
-                        current = nextOpenDayAtStart(current);
-                        continue;
-                    }
-
-                    // Ensure current is within open hours
-                    if (current.getHours() < 6) current.setHours(6,0,0,0);
-                    if (current.getHours() >= 17) {
-                        current = nextOpenDayAtStart(current);
-                        continue;
-                    }
-
-                    // Compute available hours today from current time until 17:00
-                    const endOfToday = new Date(current);
-                    endOfToday.setHours(17,0,0,0);
-                    const availableToday = (endOfToday.getTime() - current.getTime()) / (1000 * 60 * 60);
-
-                    if (remainingHours <= availableToday) {
-                        // Earliest claim is within current day
-                        earliestClaim = new Date(current.getTime() + remainingHours * 60 * 60 * 1000);
-                        remainingHours = 0;
-                        break;
-                    } else {
-                        // Consume today's available hours and move to next open day at 06:00
-                        remainingHours -= availableToday;
-                        current = nextOpenDayAtStart(current);
-                    }
-                }
-
-                if (!earliestClaim) {
-                    // Fallback: if loop somehow didn't set earliest, set to next open day at 06:00
-                    earliestClaim = nextOpenDayAtStart(new Date());
-                }
-
-                this.minClaimDateTime = new Date(earliestClaim);
-                this.minClaimDate = toStartOfDay(this.minClaimDateTime);
-
-                console.log('Computed minClaimDateTime (working-hours):', this.minClaimDateTime);
-            } catch (err) {
-                console.warn('Failed to compute earliest claim via working-hours algorithm:', err);
-                this.minClaimDateTime = new Date();
-                this.minClaimDate = toStartOfDay(this.minClaimDateTime);
-            }
             
-            console.log('Set current date for calendar to:', this.currentDate);
+            // current date set for calendar
             
             // Show self-claim section
             const selfClaimSection = document.getElementById('selfClaimSection');
@@ -223,12 +170,12 @@ class SelfClaimCalendar {
             // Force multiple re-renders to ensure display
             setTimeout(() => {
                 this.renderSelfClaimCalendar();
-                console.log('Self-claim calendar re-rendered after 100ms');
+                // re-render after 100ms
             }, 100);
             
             setTimeout(() => {
                 this.renderSelfClaimCalendar();
-                console.log('Self-claim calendar re-rendered after 200ms');
+                // re-render after 200ms
             }, 200);
             // Auto-select earliest allowed date so time slots are visible immediately
             try {
@@ -256,19 +203,12 @@ class SelfClaimCalendar {
 
     // Render self-claim calendar
     renderSelfClaimCalendar() {
-        console.log('=== RENDERING SELF-CLAIM CALENDAR ===');
-        console.log('Current date:', this.currentDate);
-        console.log('Min claim date:', this.minClaimDate);
+    // rendering self-claim calendar
         
         const currentMonthElement = document.getElementById('currentMonthSelfClaim');
         const calendarGrid = document.getElementById('selfClaimCalendarGrid');
         
-        console.log('Elements found:', { 
-            currentMonthElement: !!currentMonthElement, 
-            calendarGrid: !!calendarGrid,
-            currentMonthElementExists: currentMonthElement !== null,
-            calendarGridExists: calendarGrid !== null
-        });
+    // element existence checked
         
         if (!currentMonthElement || !calendarGrid) {
             console.error('CRITICAL: Self-claim calendar elements not found!');
@@ -277,37 +217,37 @@ class SelfClaimCalendar {
             
             // Try to find elements with different selectors
             const allElements = document.querySelectorAll('[id*="selfClaim"]');
-            console.log('All elements with selfClaim in ID:', allElements);
+            // debug: elements with selfClaim IDs
             
             return false;
         }
         
         try {
-            console.log('Updating month display...');
+            // update month display
             // Update month display
             const monthText = this.currentDate.toLocaleDateString('en-US', {
                 month: 'long',
                 year: 'numeric'
             });
-            console.log('Setting month text to:', monthText);
+            // set month text
             currentMonthElement.textContent = monthText;
             
-            console.log('Clearing existing calendar...');
+            // clearing existing calendar
             // Clear existing calendar
             calendarGrid.innerHTML = '';
             
-            console.log('Creating calendar structure...');
+            // creating calendar structure
             // Create calendar days
             const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
             const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
             const startDate = new Date(firstDay);
             startDate.setDate(startDate.getDate() - firstDay.getDay());
             
-            console.log('Calendar date range:', { firstDay, lastDay, startDate });
+            // calendar date range computed
             
             // Add day headers
             const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            console.log('Adding day headers...');
+            // adding day headers
             dayHeaders.forEach(day => {
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'calendar-day-header';
@@ -315,10 +255,10 @@ class SelfClaimCalendar {
                 calendarGrid.appendChild(dayHeader);
             });
             
-            console.log('Day headers added, total children:', calendarGrid.children.length);
+            // day headers added
             
             // Add calendar days
-            console.log('Adding calendar days...');
+            // adding calendar days
             for (let i = 0; i < 42; i++) {
                 const currentCalendarDate = new Date(startDate);
                 currentCalendarDate.setDate(startDate.getDate() + i);
@@ -333,7 +273,7 @@ class SelfClaimCalendar {
                 calendarGrid.appendChild(dayElement);
             }
             
-            console.log('Calendar rendering complete! Total children:', calendarGrid.children.length);
+            // calendar rendering complete
             return true;
             
         } catch (error) {
@@ -371,7 +311,7 @@ class SelfClaimCalendar {
                     this.allowedClaimDates = [norm.getTime()];
                     this.minClaimDate = new Date(norm);
                     this.maxClaimDate = new Date(norm);
-                    console.log('Enforced fallback rush allowedClaimDates:', this.allowedClaimDates.map(t => new Date(t).toDateString()));
+                    // enforced fallback rush allowedClaimDates
                 } else {
                     // Keep the precomputed allowedClaimDates (earliest partial + next working day)
                     // Ensure min/max reflect the allowed range
@@ -403,7 +343,7 @@ class SelfClaimCalendar {
         
         // Log for specific dates to understand the logic
         if (currentCalendarDate.getDate() === 20 || currentCalendarDate.getDate() === 25) {
-            console.log('Date analysis for', currentCalendarDate.getDate(), ':', debugInfo);
+            // date analysis logged for debugging
         }
         
     // Reset any previous availability classes to ensure idempotent styling
@@ -435,7 +375,7 @@ class SelfClaimCalendar {
             const maxClaimDateOnly = new Date(this.maxClaimDate);
             maxClaimDateOnly.setHours(0, 0, 0, 0); // Reset time to start of day
             // Diagnostic logging for min/max and current date (show effective booking type and allowed dates)
-            console.log('Availability check for', currentCalendarDate.toDateString(), 'min:', minClaimDateOnly.toDateString(), 'max:', maxClaimDateOnly.toDateString(), 'effectiveBookingType:', (window.bookingType || this.bookingType || 'normal'), 'allowedDates(ms):', this.allowedClaimDates);
+            // availability check performed
 
             // If we computed an explicit allowedClaimDates list, prefer it — it's deterministic and skips time-of-day pitfalls
             if (Array.isArray(this.allowedClaimDates) && this.allowedClaimDates.length > 0) {
@@ -493,7 +433,7 @@ class SelfClaimCalendar {
         selfClaimDate = date;
         window.selfClaimDate = date;
         
-        console.log('Self-claim date selected:', date);
+    // self-claim date selected
         
         // Update visual selection
         document.querySelectorAll('#selfClaimCalendarGrid .calendar-day').forEach(day => {
@@ -567,50 +507,70 @@ class SelfClaimCalendar {
         // Sort time slots and populate AM/PM groups
         const entries = Object.entries(SELF_CLAIM_TIME_SLOTS).sort((a, b) => a[0].localeCompare(b[0]));
 
-        // Determine if we need to filter slots by ready time (earliest allowed day)
+        // Determine per-day readiness and end-of-day bounds so we can filter slots correctly
     const selectedDayOnly = new Date(selectedDate);
         selectedDayOnly.setHours(0,0,0,0);
     const earliestAllowedMs = Array.isArray(this.allowedClaimDates) && this.allowedClaimDates.length > 0 ? this.allowedClaimDates[0] : null;
     const lastAllowedMs = Array.isArray(this.allowedClaimDates) && this.allowedClaimDates.length > 0 ? this.allowedClaimDates[this.allowedClaimDates.length - 1] : null;
-    const filterByReadyTime = earliestAllowedMs && selectedDayOnly.getTime() === earliestAllowedMs;
-    const filterByEndTime = lastAllowedMs && selectedDayOnly.getTime() === lastAllowedMs;
+
+    // Compute day-specific min/max timestamps (default shop hours 06:00-17:00)
+    const dayMinTime = (function() {
+        const d = new Date(selectedDayOnly);
+        d.setHours(6,0,0,0);
+        // If this is the earliest allowed day and we have a precise minClaimDateTime, use it (readiness)
+        if (earliestAllowedMs && selectedDayOnly.getTime() === earliestAllowedMs && this.minClaimDateTime) {
+            return new Date(this.minClaimDateTime);
+        }
+        return d;
+    }).call(this);
+
+    const dayEndTime = (function() {
+        const d = new Date(selectedDayOnly);
+        d.setHours(17,0,0,0);
+        // If this is the last allowed day and we have a precise endClaimDateTime that
+        // falls on this same day, use it. Otherwise keep the day's 17:00 bound.
+        if (lastAllowedMs && selectedDayOnly.getTime() === lastAllowedMs && this.endClaimDateTime) {
+            const e = new Date(this.endClaimDateTime);
+            const eDay = new Date(e);
+            eDay.setHours(0,0,0,0);
+            if (eDay.getTime() === selectedDayOnly.getTime()) {
+                return new Date(this.endClaimDateTime);
+            }
+        }
+        return d;
+    }).call(this);
 
     // Diagnostic logs to help debug disabled slots
-    console.log('renderSelfClaimTimeSlots: selectedDayOnly=', selectedDayOnly.toDateString(), 'filterByReadyTime=', filterByReadyTime, 'filterByEndTime=', filterByEndTime);
-    console.log('minClaimDateTime=', this.minClaimDateTime, 'endClaimDateTime=', this.endClaimDateTime, 'earliestAllowedMs=', earliestAllowedMs, 'lastAllowedMs=', lastAllowedMs);
+    // renderSelfClaimTimeSlots diagnostics removed
 
         entries.forEach(([time, slot]) => {
-            // If filtering by ready time, skip slots that occur before minClaimDateTime
-            if (filterByReadyTime && this.minClaimDateTime) {
-                const [h, m] = time.split(':').map(Number);
-                const slotDate = new Date(selectedDayOnly);
-                slotDate.setHours(h, m, 0, 0);
-                if (slotDate.getTime() < this.minClaimDateTime.getTime()) {
-                    console.log('Slot', slot.label, 'on', selectedDayOnly.toDateString(), 'DISABLED: before minClaimDateTime', slotDate, '<', this.minClaimDateTime);
-                    // Create a disabled-looking slot instead of showing it as selectable
-                    const disabledSlot = document.createElement('div');
-                    disabledSlot.className = 'time-slot unavailable';
-                    disabledSlot.innerHTML = `<div class="time-label">${slot.label}</div>`;
-                    const hour = parseInt(time.split(':')[0], 10);
-                    if (hour < 12) amGroup.appendChild(disabledSlot); else pmGroup.appendChild(disabledSlot);
-                    return; // skip adding a selectable slot
-                }
+            // Compute timestamp for this slot on the selected day
+            const [h, m] = time.split(':').map(Number);
+            const slotDate = new Date(selectedDayOnly);
+            slotDate.setHours(h, m, 0, 0);
+
+            // Disable slots before the day-specific min time (e.g., readiness on earliest day or 06:00 on subsequent days)
+            if (slotDate.getTime() < dayMinTime.getTime()) {
+                    // slot disabled: before dayMinTime
+                const disabledSlot = document.createElement('div');
+                disabledSlot.className = 'time-slot unavailable';
+                disabledSlot.innerHTML = `<div class="time-label">${slot.label}</div>`;
+                const hour = parseInt(time.split(':')[0], 10);
+                if (hour < 12) amGroup.appendChild(disabledSlot); else pmGroup.appendChild(disabledSlot);
+                return; // skip adding a selectable slot
             }
 
-            // If on the last allowed day, also disable slots that are after endClaimDateTime
-            if (filterByEndTime && this.endClaimDateTime) {
-                const [eh, em] = time.split(':').map(Number);
-                const endSlotDate = new Date(selectedDayOnly);
-                endSlotDate.setHours(eh, em, 0, 0);
-                if (endSlotDate.getTime() > this.endClaimDateTime.getTime()) {
-                    console.log('Slot', slot.label, 'on', selectedDayOnly.toDateString(), 'DISABLED: after endClaimDateTime', endSlotDate, '>', this.endClaimDateTime);
-                    const disabledSlot = document.createElement('div');
-                    disabledSlot.className = 'time-slot unavailable';
-                    disabledSlot.innerHTML = `<div class="time-label">${slot.label}</div>`;
-                    const hour = parseInt(time.split(':')[0], 10);
-                    if (hour < 12) amGroup.appendChild(disabledSlot); else pmGroup.appendChild(disabledSlot);
-                    return; // skip adding a selectable slot
-                }
+            // Disable slots after the day-specific end time (e.g., 17:00 on last allowed day)
+            const endSlotDate = new Date(selectedDayOnly);
+            endSlotDate.setHours(h, m, 0, 0);
+            if (endSlotDate.getTime() > dayEndTime.getTime()) {
+                    // slot disabled: after dayEndTime
+                const disabledSlot = document.createElement('div');
+                disabledSlot.className = 'time-slot unavailable';
+                disabledSlot.innerHTML = `<div class="time-label">${slot.label}</div>`;
+                const hour = parseInt(time.split(':')[0], 10);
+                if (hour < 12) amGroup.appendChild(disabledSlot); else pmGroup.appendChild(disabledSlot);
+                return; // skip adding a selectable slot
             }
 
             const slotElement = document.createElement('div');
@@ -670,7 +630,7 @@ class SelfClaimCalendar {
         selfClaimTime = time;
         window.selfClaimTime = time;
         
-        console.log('Self-claim time selected:', time, label);
+    // self-claim time selected
         
         // Update visual selection
         document.querySelectorAll('#selfClaimTimeSlots .time-slot').forEach(slot => {
@@ -693,8 +653,29 @@ class SelfClaimCalendar {
         
         // Validate and scroll to next section
         setTimeout(() => {
-            if (typeof validateDateTimeVisual === 'function') {
-                validateDateTimeVisual();
+            try {
+                let ok = false;
+                if (typeof validateDateTimeVisual === 'function') {
+                    ok = !!validateDateTimeVisual();
+                }
+
+                // If validation passes and the form is expanded, reveal the Confirm section
+                if (ok && typeof ensureConfirmVisible === 'function') {
+                    ensureConfirmVisible();
+
+                    // Briefly highlight the submit button to draw attention
+                    const submitBtn = document.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
+                        submitBtn.style.transform = 'scale(1.02)';
+                        setTimeout(() => {
+                            submitBtn.style.boxShadow = '';
+                            submitBtn.style.transform = '';
+                        }, 3000);
+                    }
+                }
+            } catch (e) {
+                // defensive: swallow errors
             }
         }, 500);
     }
@@ -733,6 +714,8 @@ class SelfClaimCalendar {
             <em style="color: #6c757d; font-size: 0.9rem;">Processing period: ${deliveryPeriod}</em>
         `;
     }
+
+    // debug helper removed
 
     // Navigation methods
     previousMonth() {
@@ -777,8 +760,7 @@ function nextMonthSelfClaim() {
 
 // Simpler global function
 function initializeSelfClaimCalendar(pickupDate, bookingType) {
-    console.log('=== SIMPLE INITIALIZATION ===');
-    console.log('Params:', { pickupDate, bookingType });
+    // simple initialization
 
     // Ensure UI elements exist and show a preliminary month header to avoid 'Loading...'
     const selfClaimSection = document.getElementById('selfClaimSection');
@@ -802,10 +784,10 @@ function initializeSelfClaimCalendar(pickupDate, bookingType) {
     // Defensive init: call instance initializer inside try/catch and render result or a friendly message
     try {
         if (typeof selfClaimCalendar !== 'undefined' && selfClaimCalendar) {
-            console.log('Using global selfClaimCalendar instance');
+            // using global selfClaimCalendar instance
             selfClaimCalendar.initializeSelfClaimCalendar(pickupDate, bookingType);
         } else {
-            console.log('Creating new instance');
+            // creating new instance
             const newCalendar = new SelfClaimCalendar();
             newCalendar.initializeSelfClaimCalendar(pickupDate, bookingType);
         }
@@ -819,7 +801,7 @@ function initializeSelfClaimCalendar(pickupDate, bookingType) {
 
 // Test function to manually trigger calendar rendering
 function testSelfClaimCalendar() {
-    console.log('=== MANUAL TEST OF SELF-CLAIM CALENDAR ===');
+    // manual test function invoked
     const testDate = new Date();
     testDate.setDate(testDate.getDate() + 3); // 3 days from now
     

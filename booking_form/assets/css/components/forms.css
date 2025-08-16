@@ -132,3 +132,53 @@ select:focus {
         max-width: 100%;
     }
 }
+
+/* Utility & layout helpers moved from inline HTML styles */
+.centered-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.booking-step-p {
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.booking-toggle-wrapper {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pickup-header {
+    color: #007bff;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.selfclaim-header {
+    color: #28a745;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.section-subtext {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.time-slots-placeholder {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+.self-claim-section {
+    margin-top: 30px;
+}
+
+.mt-20 { margin-top: 20px; }

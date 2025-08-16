@@ -8,7 +8,11 @@
 }
 
 .form-steps.expanded {
-    max-height: 2000px;
+    /* Allow the form to expand naturally so the page's scrollbar handles overflowing
+       content. This prevents clipping the Confirm section and uses the browser's
+       page-level scroll instead of an internal scroll area. */
+    max-height: none;
+    overflow: visible;
 }
 
 /* Form Sections */

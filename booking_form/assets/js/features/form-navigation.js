@@ -162,6 +162,69 @@ class FormReset {
         this.clearValidationStyles();
     }
 
+    // Reset scheduling only (keeps customer fields intact)
+    resetScheduling() {
+        // Clear global scheduling variables
+        selectedDate = null;
+        selectedTime = null;
+        window.selectedDate = null;
+        window.selectedTime = null;
+        selfClaimDate = null;
+        selfClaimTime = null;
+        window.selfClaimDate = null;
+        window.selfClaimTime = null;
+
+        // Clear selected UI elements
+        document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+        document.querySelectorAll('.calendar-day.selected').forEach(el => el.classList.remove('selected'));
+
+        // Reset time slots placeholders
+        const timeSlotsContainer = document.getElementById('timeSlots');
+        if (timeSlotsContainer) {
+            timeSlotsContainer.innerHTML = "<p class='time-slots-placeholder'>Please select a date first</p>";
+            timeSlotsContainer.classList.remove('input-valid','input-invalid');
+        }
+
+        const selfSlots = document.getElementById('selfClaimTimeSlots');
+        if (selfSlots) {
+            selfSlots.innerHTML = "<p class='time-slots-placeholder'>Please select a claim date first</p>";
+            selfSlots.classList.remove('input-valid','input-invalid');
+        }
+
+        // Clear calendar grids
+        const calGrid = document.getElementById('calendarGrid');
+        if (calGrid) calGrid.innerHTML = '';
+        const selfGrid = document.getElementById('selfClaimCalendarGrid');
+        if (selfGrid) selfGrid.innerHTML = '';
+
+        // Hide self-claim section
+        const selfClaimSection = document.getElementById('selfClaimSection');
+        if (selfClaimSection) selfClaimSection.classList.add('hidden');
+
+        // Reset booking indicator state if present
+        const serviceIndicator = document.getElementById('serviceOptionIndicator');
+        if (serviceIndicator) {
+            // keep it hidden until a valid selection is made
+            serviceIndicator.classList.add('hidden');
+        }
+
+        // Restore calendar state and re-render so the calendar shows dates immediately
+        try {
+            const start = new Date();
+            if (typeof currentDate !== 'undefined') currentDate = start;
+            window.currentDate = start;
+
+            if (typeof initializeCalendarData === 'function') {
+                initializeCalendarData();
+            }
+            if (typeof renderCalendar === 'function') {
+                renderCalendar();
+            }
+        } catch (e) {
+            // non-fatal
+        }
+    }
+
     // Clear all form fields
     clearFormFields() {
         this.fieldsToReset.forEach(fieldId => {

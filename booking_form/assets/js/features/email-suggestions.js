@@ -11,7 +11,7 @@ class EmailSuggestionManager {
 
     // Initialize email suggestions system
     initialize() {
-        console.log('EmailSuggestionManager: Initializing email suggestions');
+    // initializing email suggestions
         
         this.inputElement = document.getElementById('email');
         if (!this.inputElement) {
@@ -20,7 +20,7 @@ class EmailSuggestionManager {
         }
 
         this.setupEventListeners();
-        console.log('EmailSuggestionManager: Email suggestions initialized');
+    // email suggestions initialized
     }
 
     // Set up event listeners for email input
@@ -139,7 +139,7 @@ class EmailSuggestionManager {
         this.renderSuggestions();
         this.isVisible = true;
 
-        console.log('EmailSuggestionManager: Showing suggestions:', this.currentSuggestions);
+    // showing email suggestions
     }
 
     // Create suggestions container
@@ -217,7 +217,7 @@ class EmailSuggestionManager {
         
         this.hideSuggestions();
         
-        console.log('EmailSuggestionManager: Selected suggestion:', suggestion);
+    // suggestion selected
     }
 
     // Hide suggestions
@@ -257,9 +257,5 @@ function initializeEmailSuggestions() {
 
 // Debug function
 window.debugEmailSuggestions = function() {
-    console.log('Email suggestions debug info:');
-    console.log('Available domains:', emailSuggestionManager.emailDomains);
-    console.log('Current suggestions:', emailSuggestionManager.getCurrentSuggestions());
-    console.log('Is active:', emailSuggestionManager.isActive());
-    console.log('Selected index:', emailSuggestionManager.selectedIndex);
+    // debug helper for email suggestions
 };

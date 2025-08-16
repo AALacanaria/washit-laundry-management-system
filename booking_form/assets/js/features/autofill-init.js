@@ -9,11 +9,10 @@ class AutoFillInitializer {
     // Initialize the auto-fill system
     init() {
         if (this.initialized) {
-            console.log('AutoFillInitializer: System already initialized');
             return;
         }
 
-        console.log('AutoFillInitializer: Starting initialization');
+    // starting initialization
 
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
@@ -30,7 +29,7 @@ class AutoFillInitializer {
         // Check if required elements exist
         if (!this.checkRequiredElements()) {
             if (this.initAttempts < this.maxAttempts) {
-                console.log(`AutoFillInitializer: Required elements not found, retrying... (${this.initAttempts}/${this.maxAttempts})`);
+                // required elements not found, retrying
                 setTimeout(() => this.performInit(), 500);
                 return;
             } else {
@@ -42,7 +41,7 @@ class AutoFillInitializer {
         if (typeof autoFillManager !== 'undefined') {
             try {
                 autoFillManager.initializeAutoFill();
-                console.log('AutoFillInitializer: Auto-fill manager initialized');
+                // auto-fill manager initialized
             } catch (error) {
                 console.error('AutoFillInitializer: Error initializing auto-fill manager:', error);
             }
@@ -52,7 +51,7 @@ class AutoFillInitializer {
         if (typeof emailSuggestionManager !== 'undefined') {
             try {
                 emailSuggestionManager.initialize();
-                console.log('AutoFillInitializer: Email suggestions initialized');
+                // email suggestions initialized
             } catch (error) {
                 console.error('AutoFillInitializer: Error initializing email suggestions:', error);
             }
@@ -62,7 +61,7 @@ class AutoFillInitializer {
         this.setupFormWatchers();
 
         this.initialized = true;
-        console.log('AutoFillInitializer: System initialization complete');
+    // system initialization complete
     }
 
     // Check if required DOM elements exist
@@ -74,7 +73,7 @@ class AutoFillInitializer {
         return requiredElements.every(id => {
             const element = document.getElementById(id);
             if (!element) {
-                console.log(`AutoFillInitializer: Missing element: ${id}`);
+                // missing element: ${id}
                 return false;
             }
             return true;
@@ -116,7 +115,7 @@ class AutoFillInitializer {
             }
         });
 
-        console.log('AutoFillInitializer: Form watchers set up');
+    // form watchers set up
     }
 
     // Manual trigger for auto-fill (for testing or special cases)
@@ -135,7 +134,7 @@ class AutoFillInitializer {
     reset() {
         this.initialized = false;
         this.initAttempts = 0;
-        console.log('AutoFillInitializer: System reset');
+    // system reset
     }
 }
 
@@ -156,9 +155,5 @@ function triggerAutoFill() {
 
 // Debug function
 window.debugAutoFillInit = function() {
-    console.log('Auto-fill initialization debug info:');
-    console.log('Initialized:', autoFillInitializer.isInitialized());
-    console.log('Init attempts:', autoFillInitializer.initAttempts);
-    console.log('Max attempts:', autoFillInitializer.maxAttempts);
-    console.log('Required elements check:', autoFillInitializer.checkRequiredElements());
+    // debug helper
 };

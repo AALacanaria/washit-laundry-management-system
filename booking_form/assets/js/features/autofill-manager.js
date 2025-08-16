@@ -11,17 +11,17 @@ class AutoFillManager {
     initializeAutoFill() {
         if (!this.enabled) return;
         
-        console.log('AutoFillManager: Initializing auto-fill system');
+    // AutoFillManager initialization
         
         // Check if we have saved data and auto-fill silently
         const savedData = this.loadUserData();
         if (savedData && Object.keys(savedData).length > 0) {
-            console.log('AutoFillManager: Found saved data, auto-filling silently:', savedData);
+            // Found saved data; auto-filling silently
             setTimeout(() => {
                 this.fillFormSilently(savedData);
             }, 500);
         } else {
-            console.log('AutoFillManager: No saved data found');
+            // No saved data found
         }
         
         // Set up field listeners for saving data
@@ -43,7 +43,7 @@ class AutoFillManager {
     saveUserData(data) {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(data));
-            console.log('AutoFillManager: User data saved:', data);
+            // User data saved
             
             // Also save service option for auto-fill
             const serviceOption = document.getElementById('serviceOption');
@@ -125,24 +125,24 @@ class AutoFillManager {
                     }
                 }
                 
-                console.log('AutoFillManager: Address field filled for booking type:', currentBookingType);
+                // Address field filled for booking type
             }
         }, 200);
 
-        console.log('AutoFillManager: Form filled silently');
+    // Form filled silently
     }
 
     // Show auto-fill banner (kept for backward compatibility)
     showAutoFillBanner(data) {
         // Banner functionality removed - auto-fill now works silently
-        console.log('AutoFillManager: Silent auto-fill enabled, banner not shown');
+    // Silent auto-fill enabled
         return;
     }
 
     // Fill form with saved data
     fillForm() {
         const data = this.savedDataForFill || this.loadUserData();
-        console.log('AutoFillManager: Filling form with data:', data);
+    // Filling form with data
 
         this.fields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
@@ -170,7 +170,7 @@ class AutoFillManager {
             }
         }, 500);
 
-        console.log('AutoFillManager: Form filled successfully');
+    // Form filled successfully
     }
 
     // Dismiss auto-fill banner
@@ -179,7 +179,7 @@ class AutoFillManager {
         if (banner) {
             banner.remove();
             this.bannerShown = false;
-            console.log('AutoFillManager: Auto-fill banner dismissed');
+            // Auto-fill banner dismissed
         }
     }
 
@@ -187,7 +187,7 @@ class AutoFillManager {
     clearSavedData() {
         try {
             localStorage.removeItem(this.storageKey);
-            console.log('AutoFillManager: Saved data cleared');
+            // Saved data cleared
         } catch (error) {
             console.error('AutoFillManager: Error clearing saved data:', error);
         }
@@ -223,10 +223,5 @@ function saveUserData(data) {
 
 // Debug function
 window.debugAutoFill = function() {
-    console.log('Auto-fill debug info:');
-    console.log('Enabled:', autoFillManager.enabled);
-    console.log('Storage key:', autoFillManager.storageKey);
-    console.log('Tracked fields:', autoFillManager.fields);
-    console.log('Saved data:', autoFillManager.getSavedData());
-    console.log('Banner shown:', autoFillManager.bannerShown);
+    // debug helper available
 };

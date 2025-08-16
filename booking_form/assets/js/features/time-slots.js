@@ -261,20 +261,14 @@ class TimeSlotRenderer {
                             const pickupDate = window.selectedDate || selectedDate;
                             const currentBookingType = window.bookingType || bookingType;
                             
-                            console.log('=== TRIGGERING SELF-CLAIM CALENDAR ===');
-                            console.log('Available data:', { 
-                                pickupDate, 
-                                currentBookingType,
-                                'window.selectedDate': window.selectedDate,
-                                'window.bookingType': window.bookingType
-                            });
+                            // triggering self-claim calendar
                             
                             // Try with current values first
                             if (pickupDate && currentBookingType) {
-                                console.log('Initializing with valid data...');
+                                // initializing with valid data
                                 initializeSelfClaimCalendar(pickupDate, currentBookingType);
                             } else {
-                                console.log('Missing data, using fallback...');
+                                // missing data, using fallback
                                 // Use test data as fallback
                                 const fallbackDate = new Date();
                                 fallbackDate.setDate(fallbackDate.getDate() + 1);
