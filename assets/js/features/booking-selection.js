@@ -7,33 +7,32 @@ class BookingSelection {
 
     // Main booking type selection function
     selectBookingType(type) {
-        // If clicking same option -> toggle hide/show
+        // Reset service selection immediately when any booking button is clicked
+        if (typeof resetServiceSelection === 'function') {
+            resetServiceSelection();
+        }
+        
         const formSteps = document.getElementById("formSteps");
         const bookingIndicator = document.getElementById("bookingTypeIndicator");
         const rushFieldsEl = document.getElementById("rushFields");
         const btnNormal = document.getElementById("btnNormal");
         const btnRush = document.getElementById("btnRush");
 
-        // If same type clicked -> collapse/hide
+        // If clicking same option -> toggle hide/show
         if (this.currentBookingType === type) {
             this.clearSelection(formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
             return;
         }
 
-        // Selecting a (possibly different) type
+        // Store previous and current type
         this.previousType = this.currentBookingType;
         this.currentBookingType = type;
         
-        // Update global variables for backward compatibility
+        // Update global variables
         window.bookingType = type;
         if (typeof bookingType !== 'undefined') {
             bookingType = type;
         }
-
-        // Update visual states
-        this.updateButtonStates(type, btnNormal, btnRush);
-        this.updateBookingIndicator(type);
-        this.showFormElements(formSteps, bookingIndicator, rushFieldsEl, type);
 
         // Reset form if switching between types
         if (this.previousType && this.previousType !== type) {
@@ -42,34 +41,42 @@ class BookingSelection {
             }
         }
 
-        // Initialize calendar after short delay
+        // Determine if we need loading animation
+        const isChangingType = this.previousType && this.previousType !== type;
+        
+        if (isChangingType) {
+            // Show loading for type changes - shorter duration
+            this.showLoadingState(type);
+            setTimeout(() => {
+                this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
+                this.hideLoadingState();
+            }, 400); // Reduced from 1000ms to 400ms
+        } else {
+            // Immediate update for initial selection
+            this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
+        }
+    }
+
+    // Separated UI update logic
+    updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush) {
+        // Update visual states
+        this.updateButtonStates(type, btnNormal, btnRush);
+        this.updateBookingIndicator(type);
+        this.showFormElements(formSteps, bookingIndicator, rushFieldsEl, type);
+
+        // Initialize calendar
         setTimeout(() => {
             if (typeof initializeCalendarData === 'function') initializeCalendarData();
             if (typeof renderCalendar === 'function') renderCalendar();
             if (typeof renderTimeSlots === 'function') renderTimeSlots();
         }, 150);
 
-        // Validate visual state
+        // Validate and post-load actions
         if (typeof validateBookingTypeVisual === 'function') {
             validateBookingTypeVisual();
         }
         
-        // Auto-scroll to service section
         this.autoScrollToService();
-        
-        // Re-trigger auto-fill after booking type selection
-        setTimeout(() => {
-            if (typeof autoFillManager !== 'undefined' && autoFillManager.isAutoFillAvailable()) {
-                    // re-triggering auto-fill for booking type
-                autoFillManager.initializeAutoFill();
-            }
-            
-            // Update service indicator to reflect new delivery period
-            const serviceOption = document.getElementById('serviceOption');
-            if (serviceOption && serviceOption.value && typeof updateServiceIndicator === 'function') {
-                updateServiceIndicator(serviceOption.value);
-            }
-        }, 800);
     }
 
     // Clear selection and collapse form
@@ -78,6 +85,11 @@ class BookingSelection {
         window.bookingType = "";
         if (typeof bookingType !== 'undefined') {
             bookingType = "";
+        }
+
+        // Reset service selection
+        if (typeof resetServiceSelection === 'function') {
+            resetServiceSelection();
         }
 
         // Collapse animated container
@@ -174,21 +186,15 @@ class BookingSelection {
             }
         }, 120);
 
-        // Handle rush-specific fields - address is now always visible
-        if (type === CONFIG.BOOKING_TYPES.RUSH) {
-            const addr = document.getElementById("address");
-            if (addr) addr.required = true;
-        } else {
-            const addr = document.getElementById("address");
-            if (addr) addr.required = true; // Address is always required now
-        }
+        // Handle rush-specific fields - address is always required
+        const addr = document.getElementById("address");
+        if (addr) addr.required = true;
         
         // Trigger auto-fill after DOM changes
         setTimeout(() => {
             if (typeof autoFillManager !== 'undefined') {
                 const savedData = autoFillManager.loadUserData();
                 if (savedData && Object.keys(savedData).length > 0) {
-                    // auto-filling after form element changes
                     autoFillManager.fillFormSilently(savedData);
                 }
             }
@@ -197,13 +203,76 @@ class BookingSelection {
 
     // Auto-scroll to service details section
     autoScrollToService() {
-        if (this.currentBookingType) {
-        }
+        // Empty method - can be implemented if needed
     }
 
     // Get current booking type
     getBookingType() {
         return this.currentBookingType;
+    }
+
+    // Show loading state
+    showLoadingState(selectedType) {
+        // Add loading class to clicked button
+        const btnNormal = document.getElementById("btnNormal");
+        const btnRush = document.getElementById("btnRush");
+        
+        if (selectedType === 'normal' && btnNormal) {
+            btnNormal.classList.add('loading');
+        } else if (selectedType === 'rush' && btnRush) {
+            btnRush.classList.add('loading');
+        }
+
+        // Disable service cards during loading
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => card.classList.add('disabled'));
+
+        // Add loading overlay to form if it exists
+        const formSteps = document.getElementById("formSteps");
+        if (formSteps && !formSteps.classList.contains('hidden')) {
+            const container = formSteps.parentElement;
+            if (container) {
+                container.classList.add('form-steps-container', 'loading');
+                
+                // Create loading overlay
+                const loadingOverlay = document.createElement('div');
+                loadingOverlay.className = 'booking-loading-overlay';
+                loadingOverlay.innerHTML = `
+                    <div class="booking-loading-content">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Resetting form...</div>
+                    </div>
+                `;
+                container.appendChild(loadingOverlay);
+            }
+        }
+    }
+
+    // Hide loading state
+    hideLoadingState() {
+        // Remove loading class from buttons
+        const btnNormal = document.getElementById("btnNormal");
+        const btnRush = document.getElementById("btnRush");
+        
+        if (btnNormal) btnNormal.classList.remove('loading');
+        if (btnRush) btnRush.classList.remove('loading');
+
+        // Re-enable service cards
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => card.classList.remove('disabled'));
+
+        // Remove loading overlay
+        const loadingOverlay = document.querySelector('.booking-loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loadingOverlay.remove();
+                const container = document.querySelector('.form-steps-container');
+                if (container) {
+                    container.classList.remove('loading');
+                }
+            }, 300);
+        }
     }
 }
 

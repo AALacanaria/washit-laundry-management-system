@@ -1,0 +1,102 @@
+/* Loading Animation Styles */
+
+.booking-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+}
+
+.booking-loading-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.booking-loading-content {
+    text-align: center;
+    padding: 20px;
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #1170e4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 12px;
+}
+
+.loading-text {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Booking buttons loading state */
+.booking-toggle.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.booking-toggle.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    transform: translateY(-50%);
+}
+
+/* Form steps loading state */
+.form-steps-container {
+    position: relative;
+}
+
+.form-steps-container.loading {
+    overflow: hidden;
+}
+
+.form-steps-container.loading .booking-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Service cards disabled during loading */
+.service-card.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Smooth transition for form appearance */
+.form-section {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.form-section.loading {
+    opacity: 0.7;
+    transform: translateY(5px);
+}

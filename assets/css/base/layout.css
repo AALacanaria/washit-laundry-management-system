@@ -13,9 +13,9 @@ body {
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    max-width: 900px;
+    max-width: 1100px;
     width: 100%;
-    padding: 20px 25px;
+    padding: 20px 30px;
     overflow: hidden;
 }
 

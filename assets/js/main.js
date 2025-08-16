@@ -30,6 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Attach live validators to form inputs
         attachValidators();
+        
+        // Update static header on page load if service is already selected
+        const serviceOption = document.getElementById('serviceOption');
+        if (serviceOption && serviceOption.value) {
+            updateStaticCalendarHeader(serviceOption.value);
+        }
 
         // Set up form submission handler
         newForm.addEventListener('submit', function(e) {
@@ -136,6 +142,10 @@ function attachValidators() {
         svc.addEventListener('change', () => {
             validateSelect(svc);
             updateServiceIndicator(svc.value);
+            updateStaticCalendarHeader(svc.value);
+            if (typeof renderTimeSlots === 'function') {
+                renderTimeSlots();
+            }
         });
     }
 
@@ -161,6 +171,22 @@ function attachValidators() {
     if (btnR) btnR.addEventListener('click', () => validateBookingTypeVisual());
 }
 
+// Update static calendar header based on service selection
+function updateStaticCalendarHeader(serviceValue) {
+    const header = document.getElementById('calendarHeader');
+    const subtext = document.getElementById('calendarSubtext');
+    
+    if (!header || !subtext) return;
+    
+    if (serviceValue === 'dropoff_delivery') {
+        header.textContent = '📅 Choose Drop-off Schedule';
+        subtext.textContent = 'Select your preferred drop-off date and time:';
+    } else {
+        header.textContent = '📅 Choose Pickup Schedule';
+        subtext.textContent = 'Select your preferred pickup date and time:';
+    }
+}
+
 // Update service option indicator
 function updateServiceIndicator(serviceValue) {
     const indicator = document.getElementById('serviceOptionIndicator');
@@ -175,9 +201,13 @@ function updateServiceIndicator(serviceValue) {
     // Clear existing classes
     indicator.className = 'service-option-indicator';
     
+    // Always hide self-claim section initially
+    if (selfClaimSection) {
+        selfClaimSection.classList.add('hidden');
+    }
+    
     if (!serviceValue || serviceValue === '') {
         indicator.classList.add('hidden');
-        if (selfClaimSection) selfClaimSection.classList.add('hidden');
         return;
     }
     
@@ -189,15 +219,11 @@ function updateServiceIndicator(serviceValue) {
     indicator.classList.remove('hidden');
     indicator.classList.add(serviceValue.replace('_', '-'));
     
-    // Handle self-claim section visibility
+    // Handle self-claim section visibility - only show for pickup_selfclaim
     if (serviceValue === 'pickup_selfclaim') {
-        // Show self-claim section but initially hidden until pickup is scheduled
-        if (selfClaimSection) {
-            selfClaimSection.classList.add('hidden');
-        }
         updateScheduleTitle('pickup');
     } else {
-        // Hide self-claim section for other service types
+        // For all other service types, ensure self-claim is hidden
         if (selfClaimSection) {
             selfClaimSection.classList.add('hidden');
         }
@@ -230,7 +256,6 @@ function updateServiceIndicator(serviceValue) {
             break;
         default:
             indicator.classList.add('hidden');
-            if (selfClaimSection) selfClaimSection.classList.add('hidden');
             return;
     }
     

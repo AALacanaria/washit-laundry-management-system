@@ -48,8 +48,8 @@ class AutoFillManager {
             // Also save service option for auto-fill
             const serviceOption = document.getElementById('serviceOption');
             if (serviceOption && serviceOption.value) {
-                data.serviceOption = serviceOption.value;
-                localStorage.setItem(this.storageKey, JSON.stringify(data));
+                // Note: Service option autofill removed - only save for reference
+                // data.serviceOption = serviceOption.value;
             }
         } catch (error) {
             console.error('AutoFillManager: Error saving user data:', error);

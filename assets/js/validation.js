@@ -121,10 +121,33 @@ function validateSelect(el) {
     if (!el) return false;
     const v = (el.value || '').trim();
     if (!v) { 
-        markInvalid(el); 
+        // For service cards, mark all cards as invalid
+        if (el.id === 'serviceOption') {
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.classList.add('input-invalid');
+                card.classList.remove('input-valid');
+            });
+        } else {
+            markInvalid(el);
+        }
         return false; 
     }
-    markValid(el);
+    
+    // For service cards, mark selected card as valid
+    if (el.id === 'serviceOption') {
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            card.classList.remove('input-invalid');
+            if (card.dataset.value === v) {
+                card.classList.add('input-valid');
+            } else {
+                card.classList.remove('input-valid');
+            }
+        });
+    } else {
+        markValid(el);
+    }
     
     // Auto-scroll if service option is selected
     if (el.id === 'serviceOption') {

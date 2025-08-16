@@ -27,8 +27,8 @@ class TimeSlotRenderer {
 
     // Render time slots for selected date
     renderTimeSlotsForDate(container, selectedDate) {
-        // Add title and shop hours
-        this.addTimeSlotsHeader(container, selectedDate);
+    // Add title and shop hours
+    this.addTimeSlotsHeader(container, selectedDate);
         
         const isRush = (window.bookingType || bookingType) === CONFIG.BOOKING_TYPES.RUSH;
         
@@ -55,6 +55,16 @@ class TimeSlotRenderer {
 
     // Add header with title and shop hours
     addTimeSlotsHeader(container, selectedDate) {
+        // Determine current service selection (fallback to DOM select if no global value)
+        const svcElem = document.getElementById('serviceOption');
+        const currentService = (window.selectedServiceType || (svcElem && svcElem.value) || '').toString();
+        
+        // Debug logging
+        console.log('addTimeSlotsHeader - Current service:', currentService);
+        console.log('addTimeSlotsHeader - window.selectedServiceType:', window.selectedServiceType);
+        console.log('addTimeSlotsHeader - DOM value:', svcElem?.value);
+
+        // Always show the "Available Time for [date]" header for all services
         const timeSlotsTitle = document.createElement("h4");
         timeSlotsTitle.textContent = `Available Time for ${selectedDate.toLocaleDateString()}`;
         timeSlotsTitle.style.textAlign = "center";
@@ -63,7 +73,7 @@ class TimeSlotRenderer {
         timeSlotsTitle.style.fontSize = "1.05rem";
         timeSlotsTitle.style.fontWeight = "600";
         container.appendChild(timeSlotsTitle);
-        
+
         const shopHoursInfo = document.createElement("div");
         shopHoursInfo.style.textAlign = "center";
         shopHoursInfo.style.fontSize = "0.85rem";

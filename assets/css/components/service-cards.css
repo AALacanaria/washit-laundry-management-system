@@ -1,0 +1,185 @@
+/* Service Card Selection Styles */
+
+.service-selection-label {
+    display: block;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.service-options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+    max-width: 100%;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid #e1e8ed;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1170e4, #667eea);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    border-color: #1170e4;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(17, 112, 228, 0.12);
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card.selected {
+    border-color: #28a745;
+    border-width: 3px;
+    background: #d4edda;
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.service-card.selected::before {
+    transform: scaleX(1);
+    background: #28a745;
+    height: 4px;
+}
+
+/* Reset state override - higher specificity */
+.service-options-grid.reset-state .service-card {
+    border-color: #e1e8ed !important;
+    border-width: 2px !important;
+    background: white !important;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+.service-options-grid.reset-state .service-card::before {
+    transform: scaleX(0) !important;
+    background: linear-gradient(90deg, #1170e4, #667eea) !important;
+    height: 3px !important;
+}
+
+.service-options-grid.reset-state .service-card.selected {
+    border-color: #e1e8ed !important;
+    border-width: 2px !important;
+    background: white !important;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+}
+
+.service-card.input-invalid {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.service-card.input-valid {
+    border-color: #28a745;
+}
+
+.service-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.service-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.service-card p {
+    color: #666;
+    line-height: 1.4;
+    font-size: 0.85rem;
+}
+
+.service-card:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .service-options-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .service-card {
+        padding: 16px;
+    }
+    
+    .service-icon {
+        font-size: 1.8rem;
+        height: 40px;
+        margin-bottom: 8px;
+    }
+    
+    .service-card h4 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    .service-card p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .service-card {
+        padding: 16px;
+    }
+    
+    .service-card h4 {
+        font-size: 1rem;
+    }
+    
+    .service-card p {
+        font-size: 0.82rem;
+    }
+}
+
+/* Animation for ripple effect */
+@keyframes ripple {
+    from {
+        transform: scale(0);
+        opacity: 1;
+    }
+    to {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.service-card .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(17, 112, 228, 0.3);
+    pointer-events: none;
+    animation: ripple 0.6s ease-out;
+}
