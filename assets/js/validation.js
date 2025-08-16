@@ -60,29 +60,22 @@ function validateText(el) {
     markValid(el);
     
     // Check if customer section is now complete and show Submit section
+    // Only show the submit section if all fields are valid, but do not auto-scroll or focus
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Ensure parent form and submit section are visible
-            ensureConfirmVisible();
-
-            // Add highlight effect to submit button
-            const submitBtn = document.querySelector('.submit-btn');
-            if (submitBtn) {
-                submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
-                submitBtn.style.transform = 'scale(1.02)';
-                
-                // Remove highlight after a few seconds
-                setTimeout(() => {
-                    submitBtn.style.boxShadow = '';
-                    submitBtn.style.transform = '';
-                }, 3000);
+            // Only reveal the submit section, do not scroll or focus
+            const formSteps = document.getElementById('formSteps');
+            const submitSection = document.querySelector('[data-section="confirmSection"]');
+            if (formSteps && !formSteps.classList.contains('hidden') && submitSection) {
+                submitSection.classList.remove('hidden');
+                submitSection.style.display = 'block';
             }
         }
-    }, 100);
+    }, 0);
     
     return true;
 }

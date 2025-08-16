@@ -8,7 +8,7 @@
             "type": "msedge",
             "request": "launch",
             "name": "Open index.html",
-            "file": "c:\\Users\\aalac\\Documents\\washit\\booking_form\\index.html"
+            "file": "C:\\Users\\aalac\\Documents\\washit-bookingform\\index.html"
         },
         {
             "type": "pwa-msedge",
