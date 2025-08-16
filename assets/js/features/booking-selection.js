@@ -15,12 +15,12 @@ class BookingSelection {
         const formSteps = document.getElementById("formSteps");
         const bookingIndicator = document.getElementById("bookingTypeIndicator");
         const rushFieldsEl = document.getElementById("rushFields");
-        const btnNormal = document.getElementById("btnNormal");
-        const btnRush = document.getElementById("btnRush");
+        const toggleNormal = document.getElementById("toggleNormal");
+        const toggleRush = document.getElementById("toggleRush");
 
         // If clicking same option -> toggle hide/show
         if (this.currentBookingType === type) {
-            this.clearSelection(formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
+            this.clearSelection(formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush);
             return;
         }
 
@@ -48,19 +48,19 @@ class BookingSelection {
             // Show loading for type changes - shorter duration
             this.showLoadingState(type);
             setTimeout(() => {
-                this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
+                this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush);
                 this.hideLoadingState();
             }, 400); // Reduced from 1000ms to 400ms
         } else {
             // Immediate update for initial selection
-            this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush);
+            this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush);
         }
     }
 
     // Separated UI update logic
-    updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush) {
+    updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush) {
         // Update visual states
-        this.updateButtonStates(type, btnNormal, btnRush);
+        this.updateToggleStates(type, toggleNormal, toggleRush);
         this.updateBookingIndicator(type);
         this.showFormElements(formSteps, bookingIndicator, rushFieldsEl, type);
 
@@ -80,7 +80,7 @@ class BookingSelection {
     }
 
     // Clear selection and collapse form
-    clearSelection(formSteps, bookingIndicator, rushFieldsEl, btnNormal, btnRush) {
+    clearSelection(formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush) {
         this.currentBookingType = "";
         window.bookingType = "";
         if (typeof bookingType !== 'undefined') {
@@ -99,35 +99,47 @@ class BookingSelection {
         }
         if (bookingIndicator) bookingIndicator.classList.add("hidden");
         if (rushFieldsEl) rushFieldsEl.classList.add("hidden");
-        if (btnNormal) btnNormal.classList.remove("expanded");
-        if (btnRush) btnRush.classList.remove("expanded");
 
-        // Remove visual selected classes
-        const normalBtn = document.querySelector('.btn-primary');
-        const rushBtn = document.querySelector('.btn-secondary');
-        if (normalBtn) normalBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
-        if (rushBtn) rushBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+        // Remove toggle visual states
+        if (toggleNormal) toggleNormal.classList.remove("active");
+        if (toggleRush) toggleRush.classList.remove("active");
+
+        // Reset booking details to default (Normal)
+        this.updateBookingDetails(CONFIG.BOOKING_TYPES.NORMAL);
     }
 
-    // Update button visual states
-    updateButtonStates(type, btnNormal, btnRush) {
-        const normalBtn = document.querySelector('.btn-primary');
-        const rushBtn = document.querySelector('.btn-secondary');
-
+    // Update toggle visual states
+    updateToggleStates(type, toggleNormal, toggleRush) {
         // Clear existing states
-        if (normalBtn) normalBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
-        if (rushBtn) rushBtn.classList.remove('selected', 'normal-selected', 'rush-selected');
+        if (toggleNormal) toggleNormal.classList.remove('active');
+        if (toggleRush) toggleRush.classList.remove('active');
 
         // Add appropriate states
         if (type === CONFIG.BOOKING_TYPES.RUSH) {
-            if (rushBtn) rushBtn.classList.add('selected', 'rush-selected');
+            if (toggleRush) toggleRush.classList.add('active');
         } else {
-            if (normalBtn) normalBtn.classList.add('selected', 'normal-selected');
+            if (toggleNormal) toggleNormal.classList.add('active');
         }
 
-        // Update arrow states
-        if (btnNormal) btnNormal.classList.toggle('expanded', type === CONFIG.BOOKING_TYPES.NORMAL);
-        if (btnRush) btnRush.classList.toggle('expanded', type === CONFIG.BOOKING_TYPES.RUSH);
+        // Update booking details section
+        this.updateBookingDetails(type);
+    }
+
+    // Update booking details section
+    updateBookingDetails(type) {
+        const processingTimeEl = document.getElementById('processingTime');
+        const pricingEl = document.getElementById('pricing');
+        const availabilityEl = document.getElementById('availability');
+
+        if (type === CONFIG.BOOKING_TYPES.RUSH) {
+            if (processingTimeEl) processingTimeEl.textContent = '1.5 days';
+            if (pricingEl) pricingEl.textContent = 'Rush rate (+50%)';
+            if (availabilityEl) availabilityEl.textContent = 'Limited slots';
+        } else {
+            if (processingTimeEl) processingTimeEl.textContent = '2-3 days';
+            if (pricingEl) pricingEl.textContent = 'Standard rate';
+            if (availabilityEl) availabilityEl.textContent = 'All time slots';
+        }
     }
 
     // Update booking type indicator content and styles
@@ -213,14 +225,14 @@ class BookingSelection {
 
     // Show loading state
     showLoadingState(selectedType) {
-        // Add loading class to clicked button
-        const btnNormal = document.getElementById("btnNormal");
-        const btnRush = document.getElementById("btnRush");
+        // Add loading class to clicked toggle
+        const toggleNormal = document.getElementById("toggleNormal");
+        const toggleRush = document.getElementById("toggleRush");
         
-        if (selectedType === 'normal' && btnNormal) {
-            btnNormal.classList.add('loading');
-        } else if (selectedType === 'rush' && btnRush) {
-            btnRush.classList.add('loading');
+        if (selectedType === 'normal' && toggleNormal) {
+            toggleNormal.classList.add('loading');
+        } else if (selectedType === 'rush' && toggleRush) {
+            toggleRush.classList.add('loading');
         }
 
         // Disable service cards during loading
@@ -250,12 +262,12 @@ class BookingSelection {
 
     // Hide loading state
     hideLoadingState() {
-        // Remove loading class from buttons
-        const btnNormal = document.getElementById("btnNormal");
-        const btnRush = document.getElementById("btnRush");
+        // Remove loading class from toggles
+        const toggleNormal = document.getElementById("toggleNormal");
+        const toggleRush = document.getElementById("toggleRush");
         
-        if (btnNormal) btnNormal.classList.remove('loading');
-        if (btnRush) btnRush.classList.remove('loading');
+        if (toggleNormal) toggleNormal.classList.remove('loading');
+        if (toggleRush) toggleRush.classList.remove('loading');
 
         // Re-enable service cards
         const serviceCards = document.querySelectorAll('.service-card');

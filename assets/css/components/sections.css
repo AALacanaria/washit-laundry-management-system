@@ -36,49 +36,6 @@
     font-weight: 600;
 }
 
-/* Booking Type Selection */
-#step1 .btn.selected {
-    background: #007bff;
-    color: white;
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-
-#step1 .btn.normal-selected {
-    background: #28a745;
-    color: white;
-}
-
-#step1 .btn.normal-selected:hover {
-    background: #218838;
-}
-
-#step1 .btn.rush-selected {
-    background: #dc3545;
-    color: white;
-}
-
-#step1 .btn.rush-selected:hover {
-    background: #c82333;
-}
-
-/* Booking Toggle Arrows */
-.booking-toggle { 
-    display: inline-flex; 
-    align-items: center; 
-    gap: 8px; 
-}
-
-.booking-toggle .arrow { 
-    display: inline-block; 
-    transition: transform .18s ease; 
-    font-size: 12px; 
-}
-
-.booking-toggle.expanded .arrow { 
-    transform: rotate(180deg); 
-}
-
 /* Booking Type Indicator */
 .booking-type-indicator {
     background: #fff3cd;

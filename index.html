@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="assets/css/components/autofill.css">
     <link rel="stylesheet" href="assets/css/components/email-suggestions.css">
     <link rel="stylesheet" href="assets/css/components/receipt.css">
+    <link rel="stylesheet" href="assets/css/components/toggle-booking.css">
     
     <!-- CSS Files - Features -->
     <link rel="stylesheet" href="assets/css/features/calendar.css">
@@ -32,14 +33,30 @@
 
     <!-- Step 1: Booking Type -->
     <div id="step1" class="centered-section">
-        <p class="booking-step-p">Select booking type:</p>
-        <div class="booking-toggle-wrapper">
-            <button id="btnNormal" class="btn btn-primary booking-toggle" onclick="selectBookingType('normal')">
-                Normal Booking <span class="arrow">▼</span>
-            </button>
-            <button id="btnRush" class="btn btn-secondary booking-toggle" onclick="selectBookingType('rush')">
-                Rush Booking <span class="arrow">▼</span>
-            </button>
+        <p class="booking-step-p">Choose your booking preference:</p>
+        <div class="toggle-container">
+            <div class="toggle-option active" onclick="selectBookingType('normal')" id="toggleNormal">
+                <h3>📅 Normal</h3>
+                <p>Standard</p>
+            </div>
+            <div class="toggle-option" onclick="selectBookingType('rush')" id="toggleRush">
+                <h3>⚡ Rush</h3>
+                <p>Express</p>
+            </div>
+        </div>
+        <div class="booking-details" id="bookingDetails">
+            <div class="detail-item">
+                <span class="detail-label">Processing Time:</span>
+                <span class="detail-value" id="processingTime">2-3 days</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Pricing:</span>
+                <span class="detail-value" id="pricing">Standard rate</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Availability:</span>
+                <span class="detail-value highlight" id="availability">All time slots</span>
+            </div>
         </div>
     </div>
 

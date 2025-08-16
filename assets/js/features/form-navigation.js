@@ -271,10 +271,10 @@ class FormReset {
                 timeSlots.classList.remove('input-invalid', 'input-valid'); 
             }
             
-            const btnNormal = document.getElementById('btnNormal');
-            const btnRush = document.getElementById('btnRush');
-            if (btnNormal) btnNormal.classList.remove('btn-invalid', 'btn-valid');
-            if (btnRush) btnRush.classList.remove('btn-invalid', 'btn-valid');
+            const toggleNormal = document.getElementById('toggleNormal');
+            const toggleRush = document.getElementById('toggleRush');
+            if (toggleNormal) toggleNormal.classList.remove('btn-invalid', 'btn-valid');
+            if (toggleRush) toggleRush.classList.remove('btn-invalid', 'btn-valid');
         }, 0);
     }
 }

@@ -164,11 +164,11 @@ function attachValidators() {
         });
     }
 
-    // Booking type button validation
-    const btnN = document.getElementById('btnNormal');
-    const btnR = document.getElementById('btnRush');
-    if (btnN) btnN.addEventListener('click', () => validateBookingTypeVisual());
-    if (btnR) btnR.addEventListener('click', () => validateBookingTypeVisual());
+    // Booking type toggle validation
+    const toggleN = document.getElementById('toggleNormal');
+    const toggleR = document.getElementById('toggleRush');
+    if (toggleN) toggleN.addEventListener('click', () => validateBookingTypeVisual());
+    if (toggleR) toggleR.addEventListener('click', () => validateBookingTypeVisual());
 }
 
 // Update static calendar header based on service selection

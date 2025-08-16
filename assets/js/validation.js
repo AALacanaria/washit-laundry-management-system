@@ -158,26 +158,26 @@ function validateSelect(el) {
 }
 
 function validateBookingTypeVisual() {
-    const btnN = document.getElementById('btnNormal');
-    const btnR = document.getElementById('btnRush');
+    const toggleN = document.getElementById('toggleNormal');
+    const toggleR = document.getElementById('toggleRush');
     
     if (bookingType === CONFIG.BOOKING_TYPES.NORMAL) {
-        btnN && btnN.classList.add('btn-valid'); 
-        btnN && btnN.classList.remove('btn-invalid');
-        btnR && btnR.classList.remove('btn-valid'); 
-        btnR && btnR.classList.add('btn-invalid');
+        toggleN && toggleN.classList.add('btn-valid'); 
+        toggleN && toggleN.classList.remove('btn-invalid');
+        toggleR && toggleR.classList.remove('btn-valid'); 
+        toggleR && toggleR.classList.add('btn-invalid');
         return true;
     } else if (bookingType === CONFIG.BOOKING_TYPES.RUSH) {
-        btnR && btnR.classList.add('btn-valid'); 
-        btnR && btnR.classList.remove('btn-invalid');
-        btnN && btnN.classList.remove('btn-valid'); 
-        btnN && btnN.classList.add('btn-invalid');
+        toggleR && toggleR.classList.add('btn-valid'); 
+        toggleR && toggleR.classList.remove('btn-invalid');
+        toggleN && toggleN.classList.remove('btn-valid'); 
+        toggleN && toggleN.classList.add('btn-invalid');
         return true;
     } else {
-        btnN && btnN.classList.remove('btn-valid'); 
-        btnN && btnN.classList.add('btn-invalid');
-        btnR && btnR.classList.remove('btn-valid'); 
-        btnR && btnR.classList.add('btn-invalid');
+        toggleN && toggleN.classList.remove('btn-valid'); 
+        toggleN && toggleN.classList.add('btn-invalid');
+        toggleR && toggleR.classList.remove('btn-valid'); 
+        toggleR && toggleR.classList.add('btn-invalid');
         return false;
     }
 }
