@@ -31,22 +31,6 @@ function ensureConfirmVisible() {
     if (submitSection) {
         submitSection.classList.remove('hidden');
         submitSection.style.display = 'block';
-        try {
-            // Smoothly bring the confirm section into the user's viewport so it's not clipped
-            // when long calendar/time-slot sections push it below the visible area.
-            if (typeof submitSection.scrollIntoView === 'function') {
-                submitSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Fallback: scroll to its top offset
-                const top = submitSection.getBoundingClientRect().top + window.scrollY - 40;
-                window.scrollTo({ top, behavior: 'smooth' });
-            }
-            // Also focus the submit button for keyboard users and better discoverability
-            const sb = submitSection.querySelector('.submit-btn');
-            if (sb && typeof sb.focus === 'function') sb.focus({ preventScroll: true });
-        } catch (e) {
-            // Non-fatal: if scrolling fails, leave the section visible and continue
-        }
     }
 }
 
@@ -96,25 +80,10 @@ function validateEmail(el) {
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Make Submit section visible
             const submitSection = document.querySelector('[data-section="confirmSection"]');
             if (submitSection) {
-                // Ensure section is visible
                 submitSection.classList.remove('hidden');
                 submitSection.style.display = 'block';
-                
-                // Add highlight effect to submit button
-                const submitBtn = document.querySelector('.submit-btn');
-                if (submitBtn) {
-                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
-                    submitBtn.style.transform = 'scale(1.02)';
-                    
-                    // Remove highlight after a few seconds
-                    setTimeout(() => {
-                        submitBtn.style.boxShadow = '';
-                        submitBtn.style.transform = '';
-                    }, 3000);
-                }
             }
         }
     }, 100);
@@ -131,32 +100,16 @@ function validatePhone(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and show Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
             return field && field.classList.contains('input-valid');
         });
         if (customerComplete) {
-            // Make Submit section visible
             const submitSection = document.querySelector('[data-section="confirmSection"]');
             if (submitSection) {
-                // Ensure section is visible
                 submitSection.classList.remove('hidden');
                 submitSection.style.display = 'block';
-                
-                // Add highlight effect to submit button
-                const submitBtn = document.querySelector('.submit-btn');
-                if (submitBtn) {
-                    submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
-                    submitBtn.style.transform = 'scale(1.02)';
-                    
-                    // Remove highlight after a few seconds
-                    setTimeout(() => {
-                        submitBtn.style.boxShadow = '';
-                        submitBtn.style.transform = '';
-                    }, 3000);
-                }
             }
         }
     }, 100);

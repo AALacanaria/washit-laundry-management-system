@@ -168,17 +168,6 @@ class BookingSelection {
 
                 if (customerComplete && dateTimeOk && typeof ensureConfirmVisible === 'function') {
                     ensureConfirmVisible();
-
-                    // Add a short highlight to the submit button to draw attention
-                    const submitBtn = document.querySelector('.submit-btn');
-                    if (submitBtn) {
-                        submitBtn.style.boxShadow = '0 0 20px rgba(0, 123, 255, 0.5)';
-                        submitBtn.style.transform = 'scale(1.02)';
-                        setTimeout(() => {
-                            submitBtn.style.boxShadow = '';
-                            submitBtn.style.transform = '';
-                        }, 3000);
-                    }
                 }
             } catch (e) {
                 // swallow any errors - defensive
