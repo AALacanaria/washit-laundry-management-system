@@ -44,17 +44,12 @@ class BookingSelection {
         // Determine if we need loading animation
         const isChangingType = this.previousType && this.previousType !== type;
         
-        if (isChangingType) {
-            // Show loading for type changes - shorter duration
-            this.showLoadingState(type);
-            setTimeout(() => {
-                this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush);
-                this.hideLoadingState();
-            }, 400); // Reduced from 1000ms to 400ms
-        } else {
-            // Immediate update for initial selection
+        // Always show loading animation for visual feedback
+        this.showLoadingState(type);
+        setTimeout(() => {
             this.updateBookingUI(type, formSteps, bookingIndicator, rushFieldsEl, toggleNormal, toggleRush);
-        }
+            this.hideLoadingState();
+        }, 400);
     }
 
     // Separated UI update logic
@@ -104,11 +99,17 @@ class BookingSelection {
         if (toggleNormal) toggleNormal.classList.remove("active");
         if (toggleRush) toggleRush.classList.remove("active");
 
+        // Hide booking details section
+        const bookingDetails = document.getElementById('bookingDetails');
+        if (bookingDetails) {
+            bookingDetails.classList.add('hidden');
+        }
+
         // Reset booking details to default (Normal)
         this.updateBookingDetails(CONFIG.BOOKING_TYPES.NORMAL);
     }
 
-    // Update toggle visual states
+    // Update toggle visual states (simple button-like behavior)
     updateToggleStates(type, toggleNormal, toggleRush) {
         // Clear existing states
         if (toggleNormal) toggleNormal.classList.remove('active');
@@ -119,6 +120,12 @@ class BookingSelection {
             if (toggleRush) toggleRush.classList.add('active');
         } else {
             if (toggleNormal) toggleNormal.classList.add('active');
+        }
+
+        // Show booking details section
+        const bookingDetails = document.getElementById('bookingDetails');
+        if (bookingDetails) {
+            bookingDetails.classList.remove('hidden');
         }
 
         // Update booking details section
@@ -223,7 +230,7 @@ class BookingSelection {
         return this.currentBookingType;
     }
 
-    // Show loading state
+    // Show loading state for visual feedback
     showLoadingState(selectedType) {
         // Add loading class to clicked toggle
         const toggleNormal = document.getElementById("toggleNormal");
@@ -252,7 +259,7 @@ class BookingSelection {
                 loadingOverlay.innerHTML = `
                     <div class="booking-loading-content">
                         <div class="loading-spinner"></div>
-                        <div class="loading-text">Resetting form...</div>
+                        <div class="loading-text">Updating form...</div>
                     </div>
                 `;
                 container.appendChild(loadingOverlay);

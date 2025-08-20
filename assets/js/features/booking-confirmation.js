@@ -8,18 +8,12 @@ class BookingConfirmation {
     showConfirmation(serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
     // showConfirmation called
         
-        // Hide the form
-        const formSteps = document.getElementById("formSteps");
-        if (formSteps) {
-            formSteps.classList.add("hidden");
-        }
-        
-        // Get confirmation elements
-        const confirmation = document.getElementById("confirmation");
+        // Get confirmation modal elements
+        const modal = document.getElementById("booking-modal");
         const reviewDetails = document.getElementById("reviewDetails");
         
-        if (!confirmation || !reviewDetails) {
-            console.error('Confirmation elements not found!');
+        if (!modal || !reviewDetails) {
+            console.error('Modal elements not found!');
             return;
         }
         
@@ -37,25 +31,52 @@ class BookingConfirmation {
         
         reviewDetails.innerHTML = receiptHTML;
 
-        // Ensure the form is fully removed from layout (no residual height)
-        if (formSteps) {
-            // Besides adding the hidden class, set display none to prevent any max-height transition gap
-            formSteps.classList.add('hidden');
-            formSteps.classList.remove('expanded');
-            formSteps.style.display = 'none';
-        }
-
-        // Show confirmation and scroll to it reliably
-        confirmation.classList.remove("hidden");
-        // Jump to top first to avoid layout jump issues, then smooth-scroll to confirmation
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        setTimeout(() => {
-            if (typeof confirmation.scrollIntoView === 'function') {
-                confirmation.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Force modal to be in the exact center of current viewport
+        this.centerModalInViewport(modal);
+        
+        // Add click outside to close
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                closeBookingModal();
             }
-        }, 40);
+        };
+    }
+
+    // Force modal to center of current viewport
+    centerModalInViewport(modal) {
+        // FORCE immediate viewport reset - no smooth scrolling
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        
+        // Lock the page completely
+        const currentScrollY = window.scrollY;
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${currentScrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
+        document.body.style.height = '100%';
+        document.body.style.overflow = 'hidden';
+        
+        // Force modal to display immediately - no transitions
+        modal.style.display = 'flex';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
+        modal.style.zIndex = '999999';
+        modal.classList.remove("hidden");
+        modal.classList.add("show");
+        
+        // Force immediate focus and viewport centering
+        modal.focus();
+        
+        // Double-check modal is visible
+        setTimeout(() => {
+            modal.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
+        }, 10);
     }
 
     // Get booking data with fallbacks
@@ -321,3 +342,54 @@ function formatService(service) {
         "Test instructions"
     );
 };
+
+// Modal Control Functions
+function closeBookingModal() {
+    const modal = document.getElementById("booking-modal");
+    if (modal) {
+        // Get the stored scroll position
+        const scrollTop = parseInt(document.body.style.top || '0') * -1;
+        
+        // Hide modal immediately
+        modal.classList.remove("show");
+        modal.classList.add("hidden");
+        modal.style.display = 'none';
+        
+        // Restore body scroll and position
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.overflow = '';
+        
+        // Restore scroll position
+        window.scrollTo(0, scrollTop);
+    }
+}
+
+function printReceipt() {
+    // Hide modal temporarily for printing
+    const modal = document.getElementById("booking-modal");
+    if (modal) {
+        modal.classList.add("print-mode");
+        window.print();
+        modal.classList.remove("print-mode");
+    }
+}
+
+function startNewBooking() {
+    // Close modal
+    closeBookingModal();
+    
+    // Reset form and reload page
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
+}
+
+// Global functions for modal
+window.closeBookingModal = closeBookingModal;
+window.printReceipt = printReceipt;
+window.startNewBooking = startNewBooking;

@@ -1,6 +1,5 @@
 // Simple service selection function
 function selectService(cardElement, serviceValue) {
-    console.log('Service card clicked:', serviceValue);
     
     // Remove reset state from container
     const container = document.querySelector('.service-options-grid');
@@ -21,36 +20,40 @@ function selectService(cardElement, serviceValue) {
         hiddenInput.value = serviceValue;
     }
     
-    // Update global variable
+    // Capture previous and update global variable early
+    const previousService = window.selectedServiceType;
     window.selectedServiceType = serviceValue;
     
-    // Update static calendar header
-    if (typeof updateStaticCalendarHeader === 'function') {
+    // If service changed, perform hard reset BEFORE updating indicator
+    if (previousService !== serviceValue) {
+        if (typeof resetScheduleOnServiceChange === 'function') {
+            resetScheduleOnServiceChange();
+        }
+    }
+
+    // Run unified indicator/update logic
+    if (typeof updateServiceIndicator === 'function') {
+        updateServiceIndicator(serviceValue);
+    } else if (typeof updateStaticCalendarHeader === 'function') {
         updateStaticCalendarHeader(serviceValue);
     }
     
-    // Re-render time slots
-    if (typeof renderTimeSlots === 'function') {
-        renderTimeSlots();
-    }
+    // Do NOT auto-render time slots on service change; user must pick a new date first
     
     // Trigger validation
     if (hiddenInput && typeof validateSelect === 'function') {
         validateSelect(hiddenInput);
     }
     
-    console.log('Service selection complete. Card classes:', cardElement.className);
 }
 
 // Simple reset function using CSS override
 function resetServiceSelection() {
-    console.log('Resetting service selection - Simple approach');
     
     // Add reset state to container - this overrides all selected styles
     const container = document.querySelector('.service-options-grid');
     if (container) {
         container.classList.add('reset-state');
-        console.log('Added reset-state class to container');
     }
     
     // Clear hidden input
@@ -69,18 +72,21 @@ function resetServiceSelection() {
         indicator.classList.add('hidden');
     }
     
-    // Hide self-claim section
-    const selfClaimSection = document.getElementById('selfClaimSection');
-    if (selfClaimSection) {
-        selfClaimSection.classList.add('hidden');
+    // Fully reset self-claim calendars/UI
+    if (typeof resetSelfClaimCalendar === 'function') {
+        resetSelfClaimCalendar();
+    } else {
+        const selfClaimSection = document.getElementById('selfClaimSection');
+        if (selfClaimSection) selfClaimSection.classList.add('hidden');
     }
     
-    // Reset calendar header to default
-    if (typeof updateStaticCalendarHeader === 'function') {
+    // Reset calendar/service indicators
+    if (typeof updateServiceIndicator === 'function') {
+        updateServiceIndicator('');
+    } else if (typeof updateStaticCalendarHeader === 'function') {
         updateStaticCalendarHeader('');
     }
     
-    console.log('Service selection reset complete');
 }
 
 

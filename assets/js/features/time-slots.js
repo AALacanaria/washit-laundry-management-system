@@ -8,15 +8,20 @@ class TimeSlotRenderer {
     renderTimeSlots() {
         const timeSlotsContainer = document.getElementById("timeSlots");
         if (!timeSlotsContainer) return;
-        
-        timeSlotsContainer.innerHTML = "";
-        
-        const currentSelectedDate = window.selectedDate || selectedDate;
+        const currentSelectedDate = window.selectedDate || (typeof selectedDate !== 'undefined' ? selectedDate : null);
+
         if (!currentSelectedDate) {
-            this.showNoDateSelectedMessage(timeSlotsContainer);
+            // Hide container entirely until a date is newly selected after service change
+            timeSlotsContainer.innerHTML = "";
+            timeSlotsContainer.classList.add('hidden');
+            timeSlotsContainer.style.display = 'none';
             return;
         }
-        
+
+        // Show container now that a date exists
+    timeSlotsContainer.classList.remove('hidden');
+    timeSlotsContainer.style.display = '';
+        timeSlotsContainer.innerHTML = "";
         this.renderTimeSlotsForDate(timeSlotsContainer, currentSelectedDate);
     }
 
@@ -59,10 +64,6 @@ class TimeSlotRenderer {
         const svcElem = document.getElementById('serviceOption');
         const currentService = (window.selectedServiceType || (svcElem && svcElem.value) || '').toString();
         
-        // Debug logging
-        console.log('addTimeSlotsHeader - Current service:', currentService);
-        console.log('addTimeSlotsHeader - window.selectedServiceType:', window.selectedServiceType);
-        console.log('addTimeSlotsHeader - DOM value:', svcElem?.value);
 
         // Always show the "Available Time for [date]" header for all services
         const timeSlotsTitle = document.createElement("h4");
@@ -256,16 +257,18 @@ class TimeSlotRenderer {
                     validateDateTimeVisual();
                 }
                 
-                // Show self-claim section and update title
-                const selfClaimSection = document.getElementById('selfClaimSection');
-                if (selfClaimSection) {
-                    selfClaimSection.classList.remove('hidden');
-                    
-                    // Update schedule title
-                    if (typeof updateScheduleTitle === 'function') {
-                        updateScheduleTitle('claim');
-                    }
-                    
+                // Only show self-claim section if service is pickup_selfclaim
+                const currentServiceType = window.selectedServiceType;
+                if (currentServiceType === 'pickup_selfclaim') {
+                    const selfClaimSection = document.getElementById('selfClaimSection');
+                    if (selfClaimSection) {
+                        selfClaimSection.classList.remove('hidden');
+                        
+                        // Update schedule title
+                        if (typeof updateScheduleTitle === 'function') {
+                            updateScheduleTitle('claim');
+                        }
+                        
                         // Initialize self-claim calendar with current selection
                         if (typeof initializeSelfClaimCalendar === 'function') {
                             const pickupDate = window.selectedDate || selectedDate;
@@ -287,6 +290,7 @@ class TimeSlotRenderer {
                             
                             // Do NOT auto-run the debug test function here; it can overwrite the real initialization.
                         }
+                    }
                 }
             }, 200);
         } else {

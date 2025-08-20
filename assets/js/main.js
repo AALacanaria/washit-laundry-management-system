@@ -5,12 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize self-claim calendar if available
     if (typeof initializeSelfClaimCalendar === 'function') {
-        // Only initialize if we have the required data
-        const hasPickupData = (window.selectedDate || selectedDate) && (window.bookingType || bookingType);
-        if (hasPickupData) {
-            const pickupDate = window.selectedDate || selectedDate;
-            const bookingType = window.bookingType || bookingType;
-            initializeSelfClaimCalendar(pickupDate, bookingType);
+        // Only initialize if we have the required data (guard against undefined globals)
+        const rawSelectedDate = (typeof window.selectedDate !== 'undefined' && window.selectedDate) || (typeof selectedDate !== 'undefined' ? selectedDate : null);
+        const rawBookingType = (typeof window.bookingType !== 'undefined' && window.bookingType) || (typeof bookingType !== 'undefined' ? bookingType : null);
+        if (rawSelectedDate && rawBookingType) {
+            initializeSelfClaimCalendar(rawSelectedDate, rawBookingType);
         }
     }
     
@@ -141,11 +140,9 @@ function attachValidators() {
     if (svc) {
         svc.addEventListener('change', () => {
             validateSelect(svc);
+            resetScheduleOnServiceChange();
             updateServiceIndicator(svc.value);
             updateStaticCalendarHeader(svc.value);
-            if (typeof renderTimeSlots === 'function') {
-                renderTimeSlots();
-            }
         });
     }
 
@@ -167,8 +164,20 @@ function attachValidators() {
     // Booking type toggle validation
     const toggleN = document.getElementById('toggleNormal');
     const toggleR = document.getElementById('toggleRush');
-    if (toggleN) toggleN.addEventListener('click', () => validateBookingTypeVisual());
-    if (toggleR) toggleR.addEventListener('click', () => validateBookingTypeVisual());
+    if (toggleN) toggleN.addEventListener('click', () => {
+        // Reset self-claim calendar when booking type changes
+        if (typeof resetSelfClaimCalendar === 'function') {
+            resetSelfClaimCalendar();
+        }
+        validateBookingTypeVisual();
+    });
+    if (toggleR) toggleR.addEventListener('click', () => {
+        // Reset self-claim calendar when booking type changes
+        if (typeof resetSelfClaimCalendar === 'function') {
+            resetSelfClaimCalendar();
+        }
+        validateBookingTypeVisual();
+    });
 }
 
 // Update static calendar header based on service selection
@@ -192,45 +201,48 @@ function updateServiceIndicator(serviceValue) {
     const indicator = document.getElementById('serviceOptionIndicator');
     const description = document.getElementById('serviceDescription');
     const selfClaimSection = document.getElementById('selfClaimSection');
-    
-    // Set global service type for validation
+    const selfClaimTimeSlots = document.getElementById('selfClaimTimeSlots');
     window.selectedServiceType = serviceValue;
-    
+
     if (!indicator || !description) return;
-    
-    // Clear existing classes
+
+    // Base indicator styling
     indicator.className = 'service-option-indicator';
-    
-    // Always hide self-claim section initially
-    if (selfClaimSection) {
-        selfClaimSection.classList.add('hidden');
-    }
-    
-    if (!serviceValue || serviceValue === '') {
+
+    if (!serviceValue) {
         indicator.classList.add('hidden');
         return;
     }
-    
-    // Get current booking type for delivery period
+
+    // Booking type influences wording only
     const currentBookingType = window.bookingType || bookingType;
     const deliveryPeriod = currentBookingType === 'rush' ? '1.5 days' : '2-3 days';
-    
-    // Show indicator and add appropriate class
+
     indicator.classList.remove('hidden');
     indicator.classList.add(serviceValue.replace('_', '-'));
-    
-    // Handle self-claim section visibility - only show for pickup_selfclaim
-    if (serviceValue === 'pickup_selfclaim') {
-        updateScheduleTitle('pickup');
-    } else {
-        // For all other service types, ensure self-claim is hidden
+
+    // Visibility rules for self-claim calendar section
+    const wantsSelfClaim = serviceValue === 'pickup_selfclaim';
+    if (wantsSelfClaim) {
+        // Defer showing self-claim calendar until user re-selects date & time under new service
         if (selfClaimSection) {
             selfClaimSection.classList.add('hidden');
+            selfClaimSection.style.display = 'none';
         }
+        updateScheduleTitle('pickup');
+        // Any prior initialization will happen later via time slot selection logic (time-slots.js)
+    } else {
+        // Non self-claim service: hide and hard clear any residual UI
+        if (selfClaimSection) {
+            selfClaimSection.classList.add('hidden');
+            selfClaimSection.style.display = 'none';
+        }
+        if (selfClaimTimeSlots) selfClaimTimeSlots.innerHTML = '';
+        window.selfClaimDate = null;
         updateScheduleTitle('default');
     }
-    
-    // Set description based on service type
+
+    // Service description content
     let descriptionHTML = '';
     switch (serviceValue) {
         case 'pickup_delivery':
@@ -258,7 +270,8 @@ function updateServiceIndicator(serviceValue) {
             indicator.classList.add('hidden');
             return;
     }
-    
+
+    // (Removed duplicate description block that incorrectly redefined descriptionHTML)
     description.innerHTML = descriptionHTML;
 }
 
@@ -279,3 +292,50 @@ function updateScheduleTitle(mode) {
             break;
     }
 }
+
+// Utility: close/clear time slots UI explicitly
+function closeTimeSlots() {
+    const ts = document.getElementById('timeSlots');
+    if (ts) {
+        ts.innerHTML = '';
+    }
+    // Remove any selected time state
+    window.selectedTime = null;
+    if (typeof selectedTime !== 'undefined') {
+        try { selectedTime = null; } catch(e) { /* ignore */ }
+    }
+}
+
+function hideTimeSlots() { closeTimeSlots(); }
+
+// Minimal reset used when switching service types
+function resetScheduleOnServiceChange() {
+    // Clear core state
+    window.selectedDate = null;
+    window.selectedTime = null;
+    window.selfClaimDate = null;
+    try { if (typeof selectedDate !== 'undefined') selectedDate = null; } catch(e) {}
+    try { if (typeof selectedTime !== 'undefined') selectedTime = null; } catch(e) {}
+
+    // Clear visual selections
+    document.querySelectorAll('#calendarGrid .calendar-day.selected').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.time-slot.selected').forEach(el => el.classList.remove('selected'));
+
+    // Hide/clear time slots
+    const ts = document.getElementById('timeSlots');
+    if (ts) { ts.innerHTML = ''; ts.classList.add('hidden'); ts.style.display = 'none'; }
+
+    // Reset self-claim calendar/section
+    if (typeof resetSelfClaimCalendar === 'function') resetSelfClaimCalendar();
+    const sc = document.getElementById('selfClaimSection');
+    if (sc) { sc.classList.add('hidden'); sc.style.display = 'none'; }
+    const scSlots = document.getElementById('selfClaimTimeSlots');
+    if (scSlots) scSlots.innerHTML = '';
+
+    // Re-render main calendar (blank state)
+    if (typeof calendarRenderer !== 'undefined') calendarRenderer.renderCalendar();
+    else if (typeof renderCalendar === 'function') renderCalendar();
+
+    if (typeof validateDateTimeVisual === 'function') validateDateTimeVisual();
+}
+

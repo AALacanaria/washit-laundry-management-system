@@ -59,7 +59,7 @@ function validateText(el) {
                 submitSection.style.display = 'block';
             }
         }
-    }, 0);
+    }, 100);
     
     return true;
 }
@@ -73,7 +73,6 @@ function validateEmail(el) {
     }
     markValid(el);
     
-    // Check if customer section is now complete and show Submit section
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
@@ -151,7 +150,12 @@ function validateSelect(el) {
     
     // Auto-scroll if service option is selected
     if (el.id === 'serviceOption') {
-        autoScrollToNextSection();
+        setTimeout(() => {
+            const customerSection = document.querySelector('[data-section="customerInfo"]');
+            if (customerSection) {
+                customerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
     }
     
     return true;
@@ -202,8 +206,6 @@ function validateDateTimeVisual() {
     
     const ts = document.getElementById('timeSlots');
     
-    // validateDateTimeVisual diagnostics removed
-    
     if (!ok) {
         ts && ts.classList.add('input-invalid');
         ts && ts.classList.remove('input-valid');
@@ -253,6 +255,12 @@ function validateAll() {
     // Date & time
     validationResults.dateTime = validateDateTimeVisual();
     if (!validationResults.dateTime) ok = false;
+
+    // Payment method
+    if (typeof validatePaymentMethodVisual === 'function') {
+        validationResults.paymentMethod = validatePaymentMethodVisual();
+        if (!validationResults.paymentMethod) ok = false;
+    }
 
     // validateAll results computed
 

@@ -1,51 +1,175 @@
-/* Booking Receipt Components */
+/* Booking Receipt Modal Components */
 
-/* Main Receipt Container */
-.booking-receipt {
-    background: #fff;
-    border: 2px solid #2196f3;
-    border-radius: 12px;
-    padding: 24px;
-    margin: 20px 0;
-    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1);
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999999 !important;
+    padding: 20px;
+    box-sizing: border-box;
+    cursor: pointer;
+    overflow: hidden !important;
+    /* Force immediate positioning */
+    outline: none;
+    margin: 0 !important;
+    transform: none !important;
 }
 
-/* Receipt Header */
+.modal-overlay:focus {
+    outline: none;
+}
+
+.modal-overlay.show {
+    display: flex !important;
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-overlay.hidden {
+    display: none !important;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Modal Container */
+.modal-container {
+    background: white;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 85vh;
+    position: relative;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    cursor: default;
+    /* Force center positioning */
+    margin: auto !important;
+    flex-shrink: 0;
+    /* Remove any transforms that could cause positioning issues */
+    transform: none !important;
+}
+
+.modal-overlay.show .modal-container {
+    /* No transform animations - immediate display */
+    transform: none !important;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #1565c0;
+    font-size: 1.3rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #dee2e6;
+    color: #333;
+}
+
+/* Modal Content */
+.modal-content {
+    padding: 20px 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 16px 24px 20px;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 12px 12px;
+}
+
+.modal-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: auto;
+}
+
+/* Compact Receipt Design */
+.booking-receipt {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* Compact Receipt Header */
 .receipt-header {
     text-align: center;
     border-bottom: 2px dashed #e0e0e0;
-    padding-bottom: 16px;
-    margin-bottom: 20px;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .receipt-header h4 {
     color: #1565c0;
-    margin: 0 0 8px 0;
-    font-size: 1.4rem;
+    margin: 0 0 6px 0;
+    font-size: 1.1rem;
 }
 
-/* Booking Reference */
+/* Compact Booking Reference */
 .booking-ref {
     background: #e3f2fd;
     color: #0d47a1;
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 6px 12px;
+    border-radius: 16px;
     display: inline-block;
-    margin: 8px 0;
+    margin: 6px 0;
     font-weight: 500;
+    font-size: 0.85rem;
 }
 
-/* Booking Timestamp */
+/* Compact Booking Timestamp */
 .booking-timestamp {
     color: #666;
-    font-size: 0.9rem;
-    margin: 4px 0 0 0;
+    font-size: 0.8rem;
+    margin: 2px 0 0 0;
 }
 
-/* Receipt Sections */
+/* Compact Receipt Sections */
 .receipt-section {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
 }
 
 .receipt-section:not(:last-child) {
@@ -54,47 +178,71 @@
 
 .receipt-section h5 {
     color: #1565c0;
-    margin: 0 0 12px 0;
-    font-size: 1.1rem;
+    margin: 0 0 8px 0;
+    font-size: 1rem;
     font-weight: 600;
 }
 
 .receipt-section p {
-    margin: 6px 0;
-    line-height: 1.5;
+    margin: 4px 0;
+    line-height: 1.4;
+    font-size: 0.9rem;
 }
 
-/* Receipt Footer */
+/* Compact Receipt Footer */
 .receipt-footer {
     background: #f8f9fa;
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 20px;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 16px;
 }
 
 .receipt-footer h5 {
     color: #2e7d32;
+    font-size: 1rem;
+    margin-bottom: 8px;
 }
 
-/* Receipt Actions */
+/* Hide receipt actions in modal (we have modal actions instead) */
 .receipt-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 2px dashed #e0e0e0;
+    display: none;
 }
 
 /* Print Styles */
 @media print {
-    .receipt-actions {
+    .modal-overlay,
+    .modal-overlay.print-mode {
+        position: static;
+        background: none;
+        display: block;
+        padding: 0;
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    .modal-container {
+        max-width: none;
+        width: auto;
+        max-height: none;
+        overflow: visible;
+        box-shadow: none;
+        transform: none;
+    }
+    
+    .modal-header,
+    .modal-actions {
         display: none;
     }
     
+    .modal-content {
+        padding: 0;
+        max-height: none;
+        overflow: visible;
+    }
+    
     .booking-receipt {
-        box-shadow: none;
         border: 2px solid #000;
+        padding: 20px;
     }
     
     .receipt-header h4 {
@@ -111,27 +259,72 @@
     }
 }
 
-/* Responsive Receipt */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .booking-receipt {
-        padding: 16px;
-        margin: 15px 0;
+    .modal-overlay {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 5vh;
     }
     
-    .receipt-header h4 {
+    .modal-container {
+        max-width: none;
+        width: 100%;
+        max-height: 90vh;
+        margin: 0;
+    }
+    
+    .modal-header {
+        padding: 16px 20px 12px;
+    }
+    
+    .modal-header h3 {
         font-size: 1.2rem;
     }
     
-    .receipt-section h5 {
+    .modal-content {
+        padding: 16px 20px;
+        max-height: 65vh;
+    }
+    
+    .modal-actions {
+        padding: 12px 20px 16px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    .modal-actions .btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .receipt-header h4 {
         font-size: 1rem;
     }
     
-    .receipt-actions {
-        flex-direction: column;
-        gap: 8px;
+    .receipt-section h5 {
+        font-size: 0.95rem;
     }
     
-    .receipt-actions .btn {
-        width: 100%;
+    .receipt-section p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Ensure modal is always visible even on very small screens */
+@media (max-height: 500px) {
+    .modal-overlay {
+        align-items: flex-start;
+        padding-top: 10px;
+    }
+    
+    .modal-container {
+        max-height: 95vh;
+    }
+    
+    .modal-content {
+        max-height: 300px;
     }
 }

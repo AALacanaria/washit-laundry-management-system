@@ -133,7 +133,7 @@ class CalendarRenderer {
             el.classList.remove('selected');
         });
         
-        // Re-render calendar and time slots
+        // Re-render calendar and show time slots immediately for the newly selected date
         this.renderCalendar();
         if (typeof timeSlotRenderer !== 'undefined') {
             timeSlotRenderer.renderTimeSlots();

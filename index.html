@@ -19,7 +19,8 @@
     <link rel="stylesheet" href="assets/css/components/autofill.css">
     <link rel="stylesheet" href="assets/css/components/email-suggestions.css">
     <link rel="stylesheet" href="assets/css/components/receipt.css">
-    <link rel="stylesheet" href="assets/css/components/toggle-booking.css">
+    <link rel="stylesheet" href="assets/css/components/simple-toggle.css">
+    <link rel="stylesheet" href="assets/css/components/payment-options.css">
     
     <!-- CSS Files - Features -->
     <link rel="stylesheet" href="assets/css/features/calendar.css">
@@ -35,7 +36,7 @@
     <div id="step1" class="centered-section">
         <p class="booking-step-p">Choose your booking preference:</p>
         <div class="toggle-container">
-            <div class="toggle-option active" onclick="selectBookingType('normal')" id="toggleNormal">
+            <div class="toggle-option" onclick="selectBookingType('normal')" id="toggleNormal">
                 <h3>📅 Normal</h3>
                 <p>Standard</p>
             </div>
@@ -44,7 +45,7 @@
                 <p>Express</p>
             </div>
         </div>
-        <div class="booking-details" id="bookingDetails">
+        <div class="booking-details hidden" id="bookingDetails">
             <div class="detail-item">
                 <span class="detail-label">Processing Time:</span>
                 <span class="detail-value" id="processingTime">2-3 days</span>
@@ -209,6 +210,39 @@
                 <input type="text" id="specialInstructions" placeholder="Any special requests or instructions...">
             </div>
 
+            <!-- Payment Method Section -->
+            <div class="form-section" data-section="paymentSection">
+                <h3>💳 Payment Method</h3>
+                <p class="section-description">Choose how you'd like to pay for your laundry service</p>
+                
+                <div class="payment-options">
+                    <div class="payment-card" data-value="cash" onclick="selectPaymentMethod(this, 'cash')">
+                        <div class="payment-icon">💵</div>
+                        <h4>Cash on Delivery (COD)</h4>
+                        <p>Pay when you receive your laundry</p>
+                        <div class="payment-details">
+                            <small>• Booking confirmed immediately</small>
+                            <small>• Pay at pickup/delivery time</small>
+                            <small>• Exact amount preferred</small>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-card" data-value="cashless" onclick="selectPaymentMethod(this, 'cashless')">
+                        <div class="payment-icon">📱</div>
+                        <h4>Cashless Payment</h4>
+                        <p>GCash, Maya, Online Banking</p>
+                        <div class="payment-details">
+                            <small>• Payment required before confirmation</small>
+                            <small>• Secure digital transaction</small>
+                            <small>• No payment needed on delivery</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden input to maintain form compatibility -->
+                <input type="hidden" id="paymentMethod" name="paymentMethod" required>
+            </div>
+
             <!-- Submit Section -->
             <div class="form-section" data-section="confirmSection">
                 <h3>✅ Confirm Booking</h3>
@@ -218,10 +252,22 @@
         </form>
     </div>
 
-    <!-- Confirmation Section (hidden by default) -->
-    <div id="confirmation" class="hidden">
-        <h3>🎉 Booking Confirmed!</h3>
-        <div id="reviewDetails"></div>
+    <!-- Booking Confirmation Modal (hidden by default) -->
+    <div id="booking-modal" class="modal-overlay hidden" tabindex="-1" role="dialog" aria-labelledby="booking-modal-title" aria-hidden="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="booking-modal-title">🎉 Booking Confirmed!</h3>
+                <button type="button" class="modal-close" onclick="closeBookingModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="reviewDetails"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
+                <button type="button" class="btn btn-success" onclick="startNewBooking()">New Booking</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -238,13 +284,15 @@
 <script src="assets/js/features/booking-selection.js"></script>
 <script src="assets/js/features/service-card-handler.js"></script>
 <script src="assets/js/features/booking-confirmation.js"></script>
+<script src="assets/js/features/payment-selection.js"></script>
 <script src="assets/js/features/form-navigation.js"></script>
 
 <!-- JavaScript Files - Calendar Features -->
 <script src="assets/js/features/calendar-data.js"></script>
 <script src="assets/js/features/calendar-renderer.js"></script>
 <script src="assets/js/features/time-slots.js"></script>
-<script src="assets/js/features/self-claim-calendar.js"></script>
+<script src="assets/js/features/self-claim-calendar-normal.js"></script>
+<script src="assets/js/features/self-claim-calendar-rush.js"></script>
 
 <!-- JavaScript Files - Legacy Support -->
 <script src="assets/js/validation.js"></script>
