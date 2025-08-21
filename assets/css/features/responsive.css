@@ -92,25 +92,6 @@
         flex: 1;
         min-width: 100px;
     }
-    
-    /* Receipt responsive */
-    .booking-receipt {
-        padding: 16px;
-        margin: 15px 0;
-    }
-    
-    .receipt-header h4 {
-        font-size: 1.2rem;
-    }
-    
-    .receipt-actions {
-        flex-direction: column;
-        gap: 8px;
-    }
-    
-    .receipt-actions .btn {
-        width: 100%;
-    }
 }
 
 /* Small mobile (480px) */

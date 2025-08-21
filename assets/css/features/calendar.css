@@ -69,6 +69,8 @@
     gap: 5px;
 }
 
+/* Calendar Grid - No validation styling at all to keep it clean */
+
 /* Calendar Days */
 .calendar-day {
     padding: 10px;

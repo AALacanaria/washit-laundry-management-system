@@ -2,6 +2,7 @@
 class BookingConfirmation {
     constructor() {
         this.bookingRef = null;
+        this.receiptGenerator = new ReceiptGenerator();
     }
 
     // Main confirmation display function
@@ -23,11 +24,14 @@ class BookingConfirmation {
             return;
         }
         
-        // Generate and display receipt
-        const receiptHTML = this.generateReceipt(
+        // Generate and display receipt using dedicated receipt generator
+        const receiptHTML = this.receiptGenerator.generateModalReceipt(
             bookingData, serviceOption, firstName, lastName, 
             contactNumber, email, barangay, address, specialInstructions
         );
+        
+        // Store booking reference from receipt generator
+        this.bookingRef = this.receiptGenerator.bookingRef;
         
         reviewDetails.innerHTML = receiptHTML;
 
@@ -222,7 +226,35 @@ class BookingConfirmation {
         };
     }
 
-    // Build complete receipt HTML
+    getPaymentMethod() {
+        // Try multiple sources for payment method
+        if (window.selectedPaymentMethod) {
+            return window.selectedPaymentMethod;
+        }
+        
+        const paymentInput = document.getElementById('paymentMethod');
+        if (paymentInput && paymentInput.value) {
+            return paymentInput.value;
+        }
+        
+        const selectedCard = document.querySelector('.payment-card.selected');
+        if (selectedCard) {
+            return selectedCard.getAttribute('data-value');
+        }
+        
+        return 'Not selected';
+    }
+
+    formatPaymentMethod(method) {
+        const paymentMap = {
+            'cash': '💵 Cash on Delivery - Pay when we deliver your items',
+            'cashless': '📱 Cashless Payment - Digital payment required before confirmation'
+        };
+        
+        return paymentMap[method] || method;
+    }
+
+    // Build complete receipt HTML (for modal display - with emojis but clean alignment)
     buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData) {
         const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
         const isPickupAndSelfClaim = bookingData.serviceType === 'pickup_selfclaim';
@@ -236,8 +268,14 @@ class BookingConfirmation {
                 day: 'numeric'
             });
             selfClaimSchedule = `
-                <p><strong>🏪 Self-Claim Date:</strong> ${selfClaimDateStr}</p>
-                <p><strong>🕐 Self-Claim Time:</strong> ${bookingData.selfClaimTime}</p>
+                <div class="receipt-line">
+                    <span class="label">🏪 Self-Claim Date:</span>
+                    <span class="value">${selfClaimDateStr}</span>
+                </div>
+                <div class="receipt-line">
+                    <span class="label">🕐 Self-Claim Time:</span>
+                    <span class="value">${bookingData.selfClaimTime}</span>
+                </div>
             `;
         }
         
@@ -251,40 +289,231 @@ class BookingConfirmation {
                 
                 <div class="receipt-section">
                     <h5>📋 Service Details</h5>
-                    <p><strong>Booking Type:</strong> ${isRush ? "🚀 Rush Booking (1.5 days delivery)" : "⏰ Normal Booking (2-3 days delivery)"}</p>
-                    <p><strong>Service Option:</strong> ${sanitizedData.serviceOption}</p>
-                    <p><strong>📅 Pickup Date:</strong> ${timestamps.selectedDateStr}</p>
-                    <p><strong>🕐 Pickup Time:</strong> ${selectedTimeStr}</p>
+                    <div class="receipt-line">
+                        <span class="label">Booking Type:</span>
+                        <span class="value">${isRush ? "🚀 Rush Booking (1.5 days delivery)" : "⏰ Normal Booking (2-3 days delivery)"}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Service Option:</span>
+                        <span class="value">${sanitizedData.serviceOption}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">📅 Pickup Date:</span>
+                        <span class="value">${timestamps.selectedDateStr}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">🕐 Pickup Time:</span>
+                        <span class="value">${selectedTimeStr}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">💳 Payment Method:</span>
+                        <span class="value">${this.formatPaymentMethod(this.getPaymentMethod())}</span>
+                    </div>
                     ${selfClaimSchedule}
-                    ${!isPickupAndSelfClaim ? `<p><strong>Estimated Completion:</strong> ${timestamps.completionDateStr}</p>` : ''}
+                    ${!isPickupAndSelfClaim ? `
+                    <div class="receipt-line">
+                        <span class="label">Estimated Completion:</span>
+                        <span class="value">${timestamps.completionDateStr}</span>
+                    </div>` : ''}
                 </div>
                 
                 <div class="receipt-section">
                     <h5>👤 Customer Information</h5>
-                    <p><strong>Full Name:</strong> ${sanitizedData.fullName}</p>
-                    <p><strong>Contact Number:</strong> ${sanitizedData.contactNumber}</p>
-                    ${sanitizedData.email ? `<p><strong>Email:</strong> ${sanitizedData.email}</p>` : ''}
-                    ${sanitizedData.barangay ? `<p><strong>Barangay:</strong> ${sanitizedData.barangay}</p>` : ''}
-                    ${sanitizedData.address ? `<p><strong>Service Address:</strong> ${sanitizedData.address}</p>` : ''}
-                    ${sanitizedData.specialInstructions ? `<p><strong>Special Instructions:</strong> ${sanitizedData.specialInstructions}</p>` : ''}
+                    <div class="receipt-line">
+                        <span class="label">Full Name:</span>
+                        <span class="value">${sanitizedData.fullName}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Contact Number:</span>
+                        <span class="value">${sanitizedData.contactNumber}</span>
+                    </div>
+                    ${sanitizedData.email ? `
+                    <div class="receipt-line">
+                        <span class="label">Email:</span>
+                        <span class="value">${sanitizedData.email}</span>
+                    </div>` : ''}
+                    ${sanitizedData.barangay ? `
+                    <div class="receipt-line">
+                        <span class="label">Barangay:</span>
+                        <span class="value">${sanitizedData.barangay}</span>
+                    </div>` : ''}
+                    ${sanitizedData.address ? `
+                    <div class="receipt-line">
+                        <span class="label">Address Details:</span>
+                        <span class="value">${sanitizedData.address}</span>
+                    </div>` : ''}
+                    ${sanitizedData.specialInstructions ? `
+                    <div class="receipt-line">
+                        <span class="label">Special Instructions:</span>
+                        <span class="value">${sanitizedData.specialInstructions}</span>
+                    </div>` : ''}
                 </div>
                 
                 <div class="receipt-section receipt-footer">
                     <h5>📞 What's Next?</h5>
-                    <p>• We'll contact you at <strong>${sanitizedData.contactNumber}</strong> within 24 hours to confirm details</p>
-                    <p>• Keep this booking reference: <strong>${this.bookingRef}</strong></p>
-                    ${isPickupAndSelfClaim ? 
-                        `<p>• Our team will arrive at your scheduled time for pickup on <strong>${timestamps.selectedDateStr}</strong></p>
-                         <p>• Please collect your items at our shop on <strong>${bookingData.selfClaimDate ? bookingData.selfClaimDate.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'your selected date'}</strong> at <strong>${bookingData.selfClaimTime || 'your selected time'}</strong></p>
-                         <p>• Payment will be collected upon pickup of items at our shop</p>` :
-                        `<p>• Our team will arrive at your scheduled time for ${sanitizedData.serviceOption.includes('pickup') ? 'pickup' : 'drop-off'}</p>
-                         <p>• Payment will be collected upon ${sanitizedData.serviceOption.includes('delivery') ? 'delivery' : 'pickup'}</p>`
-                    }
+                    <div class="footer-content">
+                        <div class="receipt-line">
+                            <span class="label">• Confirmation Call:</span>
+                            <span class="value">Within 24 hours to ${sanitizedData.contactNumber}</span>
+                        </div>
+                        <div class="receipt-line">
+                            <span class="label">• Keep Reference:</span>
+                            <span class="value">${this.bookingRef}</span>
+                        </div>
+                        ${isPickupAndSelfClaim ? 
+                            `<div class="receipt-line">
+                                <span class="label">• Team Arrival:</span>
+                                <span class="value">Pickup on ${timestamps.selectedDateStr}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">• Item Collection:</span>
+                                <span class="value">At shop on ${bookingData.selfClaimDate ? bookingData.selfClaimDate.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'your selected date'}</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">• Payment Due:</span>
+                                <span class="value">Upon item collection at shop</span>
+                            </div>` :
+                            `<div class="receipt-line">
+                                <span class="label">• Team Arrival:</span>
+                                <span class="value">${sanitizedData.serviceOption.includes('pickup') ? 'Pickup' : 'Drop-off'} at scheduled time</span>
+                            </div>
+                            <div class="receipt-line">
+                                <span class="label">• Payment Due:</span>
+                                <span class="value">Upon ${sanitizedData.serviceOption.includes('delivery') ? 'delivery' : 'pickup'}</span>
+                            </div>`
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Generate PRINT-SPECIFIC receipt HTML (clean format, no emojis)
+    generatePrintReceipt(bookingData, serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
+        // Generate booking reference
+        this.bookingRef = this.generateBookingReference();
+        
+        // Get formatted dates and times
+        const timestamps = this.getFormattedTimestamps(bookingData);
+        const selectedTimeStr = this.getSelectedTimeString(bookingData);
+        
+        // Sanitize all inputs
+        const sanitizedData = this.sanitizeInputs({
+            firstName, lastName, contactNumber, email, barangay, address, specialInstructions, serviceOption
+        });
+        
+        const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
+        const isPickupAndSelfClaim = bookingData.serviceType === 'pickup_selfclaim';
+        
+        // Format self-claim details if applicable
+        let selfClaimSchedule = '';
+        if (isPickupAndSelfClaim && bookingData.selfClaimDate && bookingData.selfClaimTime) {
+            const selfClaimDateStr = bookingData.selfClaimDate.toLocaleDateString('en-PH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            selfClaimSchedule = `
+                <div class="receipt-line">
+                    <span class="label">Self-Claim Date:</span>
+                    <span class="value">${selfClaimDateStr}</span>
+                </div>
+                <div class="receipt-line">
+                    <span class="label">Self-Claim Time:</span>
+                    <span class="value">${bookingData.selfClaimTime}</span>
+                </div>
+            `;
+        }
+        
+        return `
+            <div class="booking-receipt">
+                <div class="receipt-header">
+                    <div class="logo-section">
+                        <h2>WASH.IT</h2>
+                        <h3>LAUNDRY SERVICE</h3>
+                    </div>
+                    <div class="receipt-info">
+                        <p>BOOKING CONFIRMATION</p>
+                        <p>Reference: ${this.bookingRef}</p>
+                        <p>Date: ${timestamps.bookingDate}</p>
+                    </div>
                 </div>
                 
-                <div class="receipt-actions">
-                    <button onclick="window.print()" class="btn btn-secondary btn-sm">🖨️ Print Receipt</button>
-                    <button onclick="location.reload()" class="btn btn-primary btn-sm">📝 New Booking</button>
+                <div class="receipt-section">
+                    <h4 class="section-title">SERVICE DETAILS</h4>
+                    <div class="receipt-line">
+                        <span class="label">Booking Type:</span>
+                        <span class="value">${isRush ? "Rush Service (1.5 days)" : "Standard Service (2-3 days)"}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Service Option:</span>
+                        <span class="value">${sanitizedData.serviceOption}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Pickup Date:</span>
+                        <span class="value">${timestamps.selectedDateStr}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Pickup Time:</span>
+                        <span class="value">${selectedTimeStr}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Payment Method:</span>
+                        <span class="value">${this.formatPaymentMethod(this.getPaymentMethod())}</span>
+                    </div>
+                    ${selfClaimSchedule}
+                    ${!isPickupAndSelfClaim ? `
+                    <div class="receipt-line">
+                        <span class="label">Est. Completion:</span>
+                        <span class="value">${timestamps.completionDateStr}</span>
+                    </div>` : ''}
+                </div>
+                
+                <div class="receipt-section">
+                    <h4 class="section-title">CUSTOMER INFORMATION</h4>
+                    <div class="receipt-line">
+                        <span class="label">Full Name:</span>
+                        <span class="value">${sanitizedData.fullName}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Contact Number:</span>
+                        <span class="value">${sanitizedData.contactNumber}</span>
+                    </div>
+                    ${sanitizedData.email ? `
+                    <div class="receipt-line">
+                        <span class="label">Email:</span>
+                        <span class="value">${sanitizedData.email}</span>
+                    </div>` : ''}
+                    ${sanitizedData.barangay ? `
+                    <div class="receipt-line">
+                        <span class="label">Barangay:</span>
+                        <span class="value">${sanitizedData.barangay}</span>
+                    </div>` : ''}
+                    ${sanitizedData.address ? `
+                    <div class="receipt-line">
+                        <span class="label">Address Details:</span>
+                        <span class="value">${sanitizedData.address}</span>
+                    </div>` : ''}
+                    ${sanitizedData.specialInstructions ? `
+                    <div class="receipt-line">
+                        <span class="label">Special Instructions:</span>
+                        <span class="value">${sanitizedData.specialInstructions}</span>
+                    </div>` : ''}
+                </div>
+                
+                <div class="receipt-section receipt-footer">
+                    <h4 class="section-title">IMPORTANT INFORMATION</h4>
+                    <div class="footer-content">
+                        <p>• Confirmation call within 24 hours to ${sanitizedData.contactNumber}</p>
+                        <p>• Please keep this booking reference: ${this.bookingRef}</p>
+                        ${isPickupAndSelfClaim ? 
+                            `<p>• Pickup service at scheduled time on ${timestamps.selectedDateStr}</p>
+                             <p>• Item collection at shop on ${bookingData.selfClaimDate ? bookingData.selfClaimDate.toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : 'selected date'}</p>
+                             <p>• Payment due upon item collection</p>` :
+                            `<p>• ${sanitizedData.serviceOption.includes('pickup') ? 'Pickup' : 'Drop-off'} service at scheduled time</p>
+                             <p>• Payment due upon ${sanitizedData.serviceOption.includes('delivery') ? 'delivery' : 'pickup'}</p>`
+                        }
+                    </div>
                 </div>
             </div>
         `;
@@ -370,13 +599,170 @@ function closeBookingModal() {
 }
 
 function printReceipt() {
-    // Hide modal temporarily for printing
-    const modal = document.getElementById("booking-modal");
-    if (modal) {
-        modal.classList.add("print-mode");
-        window.print();
-        modal.classList.remove("print-mode");
+    // Get the receipt data directly
+    const bookingData = bookingConfirmation.getBookingData();
+    if (!bookingData || !bookingData.selectedDate || !bookingData.selectedTime) {
+        alert('Error: No booking data available for printing');
+        return;
     }
+
+    // Get form data
+    const firstName = document.getElementById('firstName')?.value || 'N/A';
+    const lastName = document.getElementById('lastName')?.value || 'N/A';
+    const contactNumber = document.getElementById('contactNumber')?.value || 'N/A';
+    const email = document.getElementById('email')?.value || '';
+    const barangay = document.getElementById('barangay')?.value || '';
+    const address = document.getElementById('address')?.value || '';
+    const specialInstructions = document.getElementById('specialInstructions')?.value || '';
+    const serviceOption = document.getElementById('serviceOption')?.value || 'N/A';
+
+    // Generate PRINT-SPECIFIC receipt HTML (clean format)
+    const printReceiptHTML = bookingConfirmation.generatePrintReceipt(
+        bookingData, serviceOption, firstName, lastName, 
+        contactNumber, email, barangay, address, specialInstructions
+    );
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Wash.IT Receipt</title>
+            <style>
+                @page {
+                    size: A4;
+                    margin: 0.5in;
+                }
+                
+                body {
+                    font-family: 'Courier New', monospace;
+                    font-size: 11px;
+                    line-height: 1.4;
+                    margin: 0;
+                    padding: 15px;
+                    background: white;
+                    color: black;
+                }
+                
+                .booking-receipt {
+                    max-width: 480px;
+                    margin: 0 auto;
+                    border: 2px solid #000;
+                    background: white;
+                    padding: 0;
+                }
+                
+                .receipt-header {
+                    text-align: center;
+                    padding: 15px;
+                    border-bottom: 2px solid #000;
+                    background: #f8f8f8;
+                }
+                
+                .logo-section h2 {
+                    font-size: 20px;
+                    font-weight: bold;
+                    margin: 0;
+                    letter-spacing: 2px;
+                }
+                
+                .logo-section h3 {
+                    font-size: 12px;
+                    font-weight: normal;
+                    margin: 2px 0 10px 0;
+                    letter-spacing: 1px;
+                }
+                
+                .receipt-info {
+                    font-size: 10px;
+                    margin-top: 10px;
+                }
+                
+                .receipt-info p {
+                    margin: 2px 0;
+                }
+                
+                .receipt-section {
+                    padding: 12px 15px;
+                    border-bottom: 1px solid #ccc;
+                }
+                
+                .receipt-section:last-child {
+                    border-bottom: none;
+                }
+                
+                .section-title {
+                    text-align: center;
+                    font-size: 12px;
+                    font-weight: bold;
+                    margin: 0 0 10px 0;
+                    padding-bottom: 5px;
+                    border-bottom: 1px solid #ddd;
+                    text-decoration: underline;
+                }
+                
+                .receipt-line {
+                    display: flex;
+                    margin: 3px 0;
+                    min-height: 16px;
+                }
+                
+                .receipt-line .label {
+                    width: 140px;
+                    font-weight: bold;
+                    flex-shrink: 0;
+                }
+                
+                .receipt-line .value {
+                    flex: 1;
+                    padding-left: 10px;
+                    border-bottom: 1px dotted #ccc;
+                }
+                
+                .receipt-footer {
+                    background: #f5f5f5;
+                }
+                
+                .footer-content {
+                    text-align: left;
+                }
+                
+                .footer-content p {
+                    margin: 4px 0;
+                    font-size: 10px;
+                    line-height: 1.3;
+                }
+                
+                strong {
+                    font-weight: bold;
+                }
+                
+                @media print {
+                    body {
+                        print-color-adjust: exact;
+                        -webkit-print-color-adjust: exact;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${printReceiptHTML}
+            <script>
+                window.onload = function() {
+                    window.print();
+                    window.onafterprint = function() {
+                        window.close();
+                    };
+                };
+            </script>
+        </body>
+        </html>
+    `;
+    
+    printWindow.document.write(printContent);
+    printWindow.document.close();
 }
 
 function startNewBooking() {

@@ -33,6 +33,19 @@
     transform: translateY(-1px);
 }
 
+/* Validation states for toggle options */
+.toggle-option.btn-invalid {
+    border: 2px solid #e03e2d;
+    background: #fff6f6;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.1);
+}
+
+.toggle-option.btn-valid {
+    border: 2px solid #2ea44f;
+    background: #f6fffa;
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.1);
+}
+
 .toggle-option h3 {
     font-size: 1rem;
     margin-bottom: 4px;

@@ -53,12 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Run full validation
             const valid = validateAll();
             if (!valid) {
-                // Focus first invalid element
-                const firstInvalid = document.querySelector('.input-invalid, .btn-invalid');
-                if (firstInvalid) {
-                    firstInvalid.focus();
-                }
-                alert('Please complete all required fields and selections highlighted in red.');
+                alert('Please complete all required fields and selections highlighted in red. The page will scroll to the first incomplete field.');
                 return;
             }
 

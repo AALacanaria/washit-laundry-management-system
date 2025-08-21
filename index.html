@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="assets/css/components/autofill.css">
     <link rel="stylesheet" href="assets/css/components/email-suggestions.css">
     <link rel="stylesheet" href="assets/css/components/receipt.css">
+    <link rel="stylesheet" href="assets/css/components/receipt-component.css">
     <link rel="stylesheet" href="assets/css/components/simple-toggle.css">
     <link rel="stylesheet" href="assets/css/components/payment-options.css">
     
@@ -265,7 +266,7 @@
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Close</button>
                 <button type="button" class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
-                <button type="button" class="btn btn-success" onclick="startNewBooking()">New Booking</button>
+                <button type="button" class="btn btn-success primary-action" onclick="startNewBooking()">📝 Create New Booking</button>
             </div>
         </div>
     </div>
@@ -283,6 +284,7 @@
 <!-- JavaScript Files - Booking Features -->
 <script src="assets/js/features/booking-selection.js"></script>
 <script src="assets/js/features/service-card-handler.js"></script>
+<script src="assets/js/components/receipt-generator.js"></script>
 <script src="assets/js/features/booking-confirmation.js"></script>
 <script src="assets/js/features/payment-selection.js"></script>
 <script src="assets/js/features/form-navigation.js"></script>

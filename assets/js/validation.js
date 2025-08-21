@@ -168,16 +168,15 @@ function validateBookingTypeVisual() {
     if (bookingType === CONFIG.BOOKING_TYPES.NORMAL) {
         toggleN && toggleN.classList.add('btn-valid'); 
         toggleN && toggleN.classList.remove('btn-invalid');
-        toggleR && toggleR.classList.remove('btn-valid'); 
-        toggleR && toggleR.classList.add('btn-invalid');
+        toggleR && toggleR.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
         return true;
     } else if (bookingType === CONFIG.BOOKING_TYPES.RUSH) {
         toggleR && toggleR.classList.add('btn-valid'); 
         toggleR && toggleR.classList.remove('btn-invalid');
-        toggleN && toggleN.classList.remove('btn-valid'); 
-        toggleN && toggleN.classList.add('btn-invalid');
+        toggleN && toggleN.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
         return true;
     } else {
+        // Only mark invalid when NO booking type is selected
         toggleN && toggleN.classList.remove('btn-valid'); 
         toggleN && toggleN.classList.add('btn-invalid');
         toggleR && toggleR.classList.remove('btn-valid'); 
@@ -204,15 +203,30 @@ function validateDateTimeVisual() {
         ok = ok && !!actualSelfClaimDate && !!actualSelfClaimTime;
     }
     
-    const ts = document.getElementById('timeSlots');
+    // Get specific elements to highlight
+    const calendarGrid = document.getElementById('calendarGrid');
+    const timeSlots = document.getElementById('timeSlots');
+    const selectedTimeSlot = document.querySelector('.time-slot.selected');
     
     if (!ok) {
-        ts && ts.classList.add('input-invalid');
-        ts && ts.classList.remove('input-valid');
+        // Keep both calendar and time slots containers clean - no validation styling
         return false;
     } else {
-        ts && ts.classList.remove('input-invalid'); 
-        ts && ts.classList.add('input-valid');
+        // Both calendar and time slots containers stay completely clean
+        if (calendarGrid) {
+            calendarGrid.classList.remove('input-invalid');
+        }
+        
+        if (timeSlots) {
+            timeSlots.classList.remove('input-invalid');
+        }
+        
+        // Only highlight the selected time slot specifically
+        if (selectedTimeSlot) {
+            selectedTimeSlot.classList.add('input-valid');
+            selectedTimeSlot.classList.remove('input-invalid');
+        }
+        
         return true;
     }
 }
@@ -220,49 +234,110 @@ function validateDateTimeVisual() {
 function validateAll() {
     let ok = true;
     const validationResults = {};
+    const invalidElements = [];
 
     // Service option
     const serviceOption = document.getElementById('serviceOption');
     validationResults.serviceOption = validateSelect(serviceOption);
-    if (!validationResults.serviceOption) ok = false;
+    if (!validationResults.serviceOption) {
+        ok = false;
+        // Add all service cards to invalid elements for scrolling
+        const serviceCards = document.querySelectorAll('.service-card');
+        if (serviceCards.length > 0) {
+            invalidElements.push(serviceCards[0]);
+        }
+    }
 
     // Booking type
     validationResults.bookingType = validateBookingTypeVisual();
-    if (!validationResults.bookingType) ok = false;
+    if (!validationResults.bookingType) {
+        ok = false;
+        const toggleNormal = document.getElementById('toggleNormal');
+        if (toggleNormal) {
+            invalidElements.push(toggleNormal);
+        }
+    }
 
     // Customer info fields
-    const firstName = document.getElementById('firstName');
-    const lastName = document.getElementById('lastName');
-    const contactNumber = document.getElementById('contactNumber');
-    const email = document.getElementById('email');
-    const barangay = document.getElementById('barangay');
-    const address = document.getElementById('address');
+    const customerFields = [
+        { id: 'firstName', validator: validateText },
+        { id: 'lastName', validator: validateText },
+        { id: 'contactNumber', validator: validatePhone },
+        { id: 'email', validator: validateEmail },
+        { id: 'barangay', validator: validateText },
+        { id: 'address', validator: validateText }
+    ];
 
-    validationResults.firstName = validateText(firstName);
-    validationResults.lastName = validateText(lastName);
-    validationResults.contactNumber = validatePhone(contactNumber);
-    validationResults.email = validateEmail(email);
-    validationResults.barangay = validateText(barangay);
-    validationResults.address = validateText(address);
-
-    if (!validationResults.firstName) ok = false;
-    if (!validationResults.lastName) ok = false;
-    if (!validationResults.contactNumber) ok = false;
-    if (!validationResults.email) ok = false;
-    if (!validationResults.barangay) ok = false;
-    if (!validationResults.address) ok = false;
+    customerFields.forEach(field => {
+        const element = document.getElementById(field.id);
+        if (element) {
+            validationResults[field.id] = field.validator(element);
+            if (!validationResults[field.id]) {
+                ok = false;
+                invalidElements.push(element);
+            }
+        }
+    });
 
     // Date & time
     validationResults.dateTime = validateDateTimeVisual();
-    if (!validationResults.dateTime) ok = false;
+    if (!validationResults.dateTime) {
+        ok = false;
+        // Add calendar grid and time slots to invalid elements for scrolling
+        const calendarGrid = document.getElementById('calendarGrid');
+        const timeSlots = document.getElementById('timeSlots');
+        if (calendarGrid) {
+            invalidElements.push(calendarGrid);
+        } else if (timeSlots) {
+            invalidElements.push(timeSlots);
+        }
+    }
 
     // Payment method
     if (typeof validatePaymentMethodVisual === 'function') {
         validationResults.paymentMethod = validatePaymentMethodVisual();
-        if (!validationResults.paymentMethod) ok = false;
+        if (!validationResults.paymentMethod) {
+            ok = false;
+            const paymentCards = document.querySelectorAll('.payment-card');
+            if (paymentCards.length > 0) {
+                invalidElements.push(paymentCards[0]);
+            }
+        }
     }
 
-    // validateAll results computed
+    // If validation failed, scroll to first invalid element
+    if (!ok && invalidElements.length > 0) {
+        scrollToFirstInvalidField(invalidElements[0]);
+    }
 
     return ok;
+}
+
+function scrollToFirstInvalidField(element) {
+    if (!element) return;
+    
+    // Scroll to the element with some offset from top
+    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+    const offset = 100; // 100px from top
+    
+    window.scrollTo({
+        top: elementTop - offset,
+        behavior: 'smooth'
+    });
+    
+    // Focus the element if it's focusable, otherwise focus the first input in its section
+    setTimeout(() => {
+        if (element.focus && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA')) {
+            element.focus();
+        } else {
+            // Find the first focusable input in the same section
+            const section = element.closest('.form-section') || element.closest('[data-section]');
+            if (section) {
+                const firstInput = section.querySelector('input, select, textarea');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }
+        }
+    }, 500);
 }

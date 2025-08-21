@@ -6,6 +6,8 @@
     padding: 10px;
 }
 
+/* Time Slots Container - No validation styling to keep it clean */
+
 /* Time Slots Wrapper */
 .time-slots-wrapper {
     display: flex;
@@ -94,6 +96,21 @@
     border-color: #0056b3;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+}
+
+/* Time Slot Validation States */
+.time-slot.input-invalid {
+    border: 2px solid #e03e2d;
+    background: #fff6f6;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.1);
+}
+
+/* Green validation only for selected time slots */
+.time-slot.selected.input-valid {
+    border: 2px solid #2ea44f;
+    background: #007bff; /* Keep the blue background for selected state */
+    color: white; /* Ensure white text is visible on blue background */
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.1);
 }
 
 /* Time Slot Content */
