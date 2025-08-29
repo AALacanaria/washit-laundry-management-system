@@ -22,11 +22,36 @@
     <link rel="stylesheet" href="assets/css/components/receipt-component.css">
     <link rel="stylesheet" href="assets/css/components/simple-toggle.css">
     <link rel="stylesheet" href="assets/css/components/payment-options.css">
+    <link rel="stylesheet" href="assets/css/components/laundry-items.css">
     
     <!-- CSS Files - Features -->
     <link rel="stylesheet" href="assets/css/features/calendar.css">
     <link rel="stylesheet" href="assets/css/features/time-slots.css">
     <link rel="stylesheet" href="assets/css/features/responsive.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <script>
+        // Test function to manually trigger validation
+        function testValidation() {
+            const result = validateAll();
+            return result;
+        }
+
+        // Test function to manually trigger form submission
+        function testFormSubmit() {
+            const form = document.getElementById('bookingForm');
+            if (form) {
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                form.dispatchEvent(submitEvent);
+            }
+        }
+
+        // Make test functions available globally
+        window.testValidation = testValidation;
+        window.testFormSubmit = testFormSubmit;
+    </script>
 </head>
 <body>
 
@@ -73,7 +98,7 @@
             <!-- Service Option Section -->
             <div class="form-section" data-section="serviceSection">
                 <h3>📋 Service Details</h3>
-                <label class="service-selection-label">Choose Service Option *</label>
+                <h4 class="pickup-header">🧾 Choose Service Option *</h4>
                 <div class="service-options-grid">
                     <div class="service-card" data-value="pickup_delivery" onclick="selectService(this, 'pickup_delivery')">
                         <div class="service-icon">🚚</div>
@@ -98,6 +123,61 @@
             </div>
 
             <!-- Date & Time Section -->
+            
+            <!-- Laundry Items Section (inserted) -->
+            <div class="form-section" data-section="laundryItemsSection" id="laundryItemsSection">
+                <h3>Laundry Items</h3>
+
+                <fieldset aria-labelledby="laundry-legend" class="laundry-fieldset">
+                    <legend id="laundry-legend" class="sr-only">Laundry categories</legend>
+
+                    <div class="laundry-table-wrap">
+                        <h4 class="pickup-header" id="items-desc">🧺 Select the number of items in each category</h4>
+                        <table class="items-table" aria-describedby="items-desc">
+                            <thead>
+                                <tr><th><strong>Item Category</strong></th><th><strong>Item Quantity</strong></th><th><strong>Service Price</strong></th></tr>
+                            </thead>
+                            <tbody id="laundryItemsBody">
+                                <tr data-category="everyday">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Everyday Clothing</strong>
+                                        <small>Shirts, Pants, Dresses, Skirts, Jackets, Sweaters</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="25" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱25/item</strong></td>
+                                </tr>
+                                <tr data-category="delicates">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Delicates & Small Items</strong>
+                                        <small>Socks, Underwear, Handkerchiefs, Light Tops</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="25" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱25/item</strong></td>
+                                </tr>
+                                <tr data-category="bedding">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Beddings & Linens</strong>
+                                        <small>Pillowcases, Bed Sheets, Light Blankets, Towels</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="35" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱35/item</strong></td>
+                                </tr>
+                                <tr data-category="heavy">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Heavy & Bulky Items</strong>
+                                        <small>Thick Blankets, Comforters, Quilts, Large Wool/Fleece Blankets</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="35" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱35/item</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Hidden input to include items JSON in form submit -->
+                    <input type="hidden" id="laundryItemsInput" name="laundryItems">
+                </fieldset>
+            </div>
             <div class="form-section" data-section="scheduleSection">
                 <h3>Book a Schedule</h3>
                 <!-- Pickup/Drop-off Scheduling Header -->
@@ -207,6 +287,10 @@
                     </div>
                 </div>
                 
+                <!-- Map Container for Pickup Address -->
+                <label for="pickupMap">Pickup Address Location (Click on map to set pin)</label>
+                <div id="pickupMap" style="height: 300px; width: 100%; margin-bottom: 10px;"></div>
+                
                 <label for="specialInstructions">Special Instructions (Optional)</label>
                 <input type="text" id="specialInstructions" placeholder="Any special requests or instructions...">
             </div>
@@ -296,9 +380,17 @@
 <script src="assets/js/features/self-claim-calendar-normal.js"></script>
 <script src="assets/js/features/self-claim-calendar-rush.js"></script>
 
+<!-- Leaflet JS - Load BEFORE map.js -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- JavaScript Files - Map Features -->
+<script src="assets/js/features/map.js"></script>
+
 <!-- JavaScript Files - Legacy Support -->
 <script src="assets/js/validation.js"></script>
 <script src="assets/js/main.js"></script>
+<!-- Laundry items component -->
+<script src="assets/js/components/laundry-items.js"></script>
 
 </body>
 </html>

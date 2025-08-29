@@ -217,6 +217,11 @@ class BookingSelection {
                     autoFillManager.fillFormSilently(savedData);
                 }
             }
+
+            // Initialize map if needed when form becomes visible
+            if (typeof initializeMapIfNeeded === 'function') {
+                initializeMapIfNeeded();
+            }
         }, 300);
     }
 

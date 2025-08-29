@@ -10,20 +10,15 @@ class AutoFillManager {
     // Initialize auto-fill system
     initializeAutoFill() {
         if (!this.enabled) return;
-        
-    // AutoFillManager initialization
-        
+
         // Check if we have saved data and auto-fill silently
         const savedData = this.loadUserData();
         if (savedData && Object.keys(savedData).length > 0) {
-            // Found saved data; auto-filling silently
             setTimeout(() => {
                 this.fillFormSilently(savedData);
             }, 500);
-        } else {
-            // No saved data found
         }
-        
+
         // Set up field listeners for saving data
         this.setupFieldListeners();
     }
@@ -43,8 +38,7 @@ class AutoFillManager {
     saveUserData(data) {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(data));
-            // User data saved
-            
+
             // Also save service option for auto-fill
             const serviceOption = document.getElementById('serviceOption');
             if (serviceOption && serviceOption.value) {
@@ -87,14 +81,12 @@ class AutoFillManager {
 
     // Fill form silently with saved data
     fillFormSilently(data) {
-        console.log('AutoFillManager: Filling form silently with data:', data);
-
         // Fill regular fields
         this.fields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field && data[fieldId] && !field.value.trim()) {
                 field.value = data[fieldId];
-                
+
                 // Trigger validation if available
                 if (typeof validateText === 'function' && fieldId !== 'email') {
                     validateText(field);
@@ -115,7 +107,7 @@ class AutoFillManager {
         setTimeout(() => {
             const addressField = document.getElementById('address');
             const currentBookingType = window.bookingType || bookingType;
-            
+
             if (addressField && data.address) {
                 // Ensure address field is properly filled regardless of booking type
                 if (!addressField.value.trim()) {
@@ -124,31 +116,25 @@ class AutoFillManager {
                         validateText(addressField);
                     }
                 }
-                
-                // Address field filled for booking type
             }
         }, 200);
-
-    // Form filled silently
     }
 
     // Show auto-fill banner (kept for backward compatibility)
     showAutoFillBanner(data) {
         // Banner functionality removed - auto-fill now works silently
-    // Silent auto-fill enabled
         return;
     }
 
     // Fill form with saved data
     fillForm() {
         const data = this.savedDataForFill || this.loadUserData();
-    // Filling form with data
 
         this.fields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field && data[fieldId]) {
                 field.value = data[fieldId];
-                
+
                 // Trigger validation if available
                 if (typeof validateText === 'function' && fieldId !== 'email') {
                     validateText(field);
@@ -162,15 +148,13 @@ class AutoFillManager {
         });
 
         this.dismissBanner();
-        
+
         // Auto-scroll to next section after filling
         setTimeout(() => {
             if (typeof autoScrollToNextSection === 'function') {
                 autoScrollToNextSection();
             }
         }, 500);
-
-    // Form filled successfully
     }
 
     // Dismiss auto-fill banner
@@ -179,7 +163,6 @@ class AutoFillManager {
         if (banner) {
             banner.remove();
             this.bannerShown = false;
-            // Auto-fill banner dismissed
         }
     }
 
@@ -187,7 +170,6 @@ class AutoFillManager {
     clearSavedData() {
         try {
             localStorage.removeItem(this.storageKey);
-            // Saved data cleared
         } catch (error) {
             console.error('AutoFillManager: Error clearing saved data:', error);
         }
@@ -223,5 +205,5 @@ function saveUserData(data) {
 
 // Debug function
 window.debugAutoFill = function() {
-    // debug helper available
+    console.log('AutoFill debug data:', autoFillManager.getSavedData());
 };

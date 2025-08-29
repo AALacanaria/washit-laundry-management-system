@@ -1,4 +1,5 @@
-// Validation Functions
+// === Universal Validation Functions ===
+
 function markValid(el) {
     if (!el) return;
     el.classList.remove('input-invalid');
@@ -34,6 +35,187 @@ function ensureConfirmVisible() {
     }
 }
 
+function scrollToFirstInvalidField(element) {
+    if (!element) return;
+
+    // Scroll to the element with some offset from top
+    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+    const offset = 100; // 100px from top
+
+    window.scrollTo({
+        top: elementTop - offset,
+        behavior: 'smooth'
+    });
+
+    // Focus the element if it's focusable, otherwise focus the first input in its section
+    setTimeout(() => {
+        if (element.focus && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA')) {
+            element.focus();
+        } else {
+            // Find the first focusable input in the same section
+            const section = element.closest('.form-section') || element.closest('[data-section]');
+            if (section) {
+                const firstInput = section.querySelector('input, select, textarea');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }
+        }
+    }, 500);
+}
+
+// === Booking Preference Validation ===
+
+function validateBookingTypeVisual() {
+    const toggleN = document.getElementById('toggleNormal');
+    const toggleR = document.getElementById('toggleRush');
+
+    if (bookingType === CONFIG.BOOKING_TYPES.NORMAL) {
+        toggleN && toggleN.classList.add('btn-valid');
+        toggleN && toggleN.classList.remove('btn-invalid');
+        toggleR && toggleR.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
+        return true;
+    } else if (bookingType === CONFIG.BOOKING_TYPES.RUSH) {
+        toggleR && toggleR.classList.add('btn-valid');
+        toggleR && toggleR.classList.remove('btn-invalid');
+        toggleN && toggleN.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
+        return true;
+    } else {
+        // Only mark invalid when NO booking type is selected
+        toggleN && toggleN.classList.remove('btn-valid');
+        toggleN && toggleN.classList.add('btn-invalid');
+        toggleR && toggleR.classList.remove('btn-valid');
+        toggleR && toggleR.classList.add('btn-invalid');
+        return false;
+    }
+}
+
+// === Service Details Validation ===
+
+function validateSelect(el) {
+    if (!el) return false;
+    const v = (el.value || '').trim();
+    if (!v) {
+        // For service cards, mark all cards as invalid
+        if (el.id === 'serviceOption') {
+            const serviceCards = document.querySelectorAll('.service-card');
+            serviceCards.forEach(card => {
+                card.classList.add('input-invalid');
+                card.classList.remove('input-valid');
+            });
+        } else {
+            markInvalid(el);
+        }
+        return false;
+    }
+
+    // For service cards, mark selected card as valid
+    if (el.id === 'serviceOption') {
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            card.classList.remove('input-invalid');
+            if (card.dataset.value === v) {
+                card.classList.add('input-valid');
+            } else {
+                card.classList.remove('input-valid');
+            }
+        });
+    } else {
+        markValid(el);
+    }
+
+    // Auto-scroll if service option is selected
+    if (el.id === 'serviceOption') {
+        setTimeout(() => {
+            const customerSection = document.querySelector('[data-section="customerInfo"]');
+            if (customerSection) {
+                customerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 500);
+    }
+
+    return true;
+}
+
+// === Laundry Items Validation ===
+
+function validateLaundryItems() {
+    const quantityInputs = document.querySelectorAll('.qty-input');
+    let allValid = true;
+    let firstInvalidInput = null;
+
+    quantityInputs.forEach((input, index) => {
+        const value = input.value.trim();
+        const numericValue = parseInt(value, 10);
+
+        // Check if empty or invalid
+        if (value === '' || isNaN(numericValue) || numericValue < 0 || numericValue > 999) {
+            markInvalid(input);
+            allValid = false;
+            if (!firstInvalidInput) {
+                firstInvalidInput = input;
+            }
+        } else {
+            markValid(input);
+        }
+    });
+
+    return {
+        isValid: allValid,
+        firstInvalidElement: firstInvalidInput
+    };
+}
+
+// === Book a Schedule Validation ===
+
+function validateDateTimeVisual() {
+    // Check both local and window variables for selected date and time
+    const actualSelectedDate = selectedDate || window.selectedDate;
+    const actualSelectedTime = selectedTime || window.selectedTime;
+
+    // Check if this is a pickup and self-claim service
+    const currentServiceType = window.selectedServiceType || (document.getElementById('serviceOption') && document.getElementById('serviceOption').value);
+    const isPickupAndSelfClaim = currentServiceType === 'pickup_selfclaim';
+
+    let ok = !!actualSelectedDate && !!actualSelectedTime;
+
+    // For pickup and self-claim, also check if self-claim date and time are selected
+    if (isPickupAndSelfClaim) {
+        const actualSelfClaimDate = selfClaimDate || window.selfClaimDate;
+        const actualSelfClaimTime = selfClaimTime || window.selfClaimTime;
+        ok = ok && !!actualSelfClaimDate && !!actualSelfClaimTime;
+    }
+
+    // Get specific elements to highlight
+    const calendarGrid = document.getElementById('calendarGrid');
+    const timeSlots = document.getElementById('timeSlots');
+    const selectedTimeSlot = document.querySelector('.time-slot.selected');
+
+    if (!ok) {
+        // Keep both calendar and time slots containers clean - no validation styling
+        return false;
+    } else {
+        // Both calendar and time slots containers stay completely clean
+        if (calendarGrid) {
+            calendarGrid.classList.remove('input-invalid');
+        }
+
+        if (timeSlots) {
+            timeSlots.classList.remove('input-invalid');
+        }
+
+        // Only highlight the selected time slot specifically
+        if (selectedTimeSlot) {
+            selectedTimeSlot.classList.add('input-valid');
+            selectedTimeSlot.classList.remove('input-invalid');
+        }
+
+        return true;
+    }
+}
+
+// === Customer Information Validation ===
+
 function validateText(el) {
     if (!el) return false;
     const val = (el.value || '').trim();
@@ -42,7 +224,7 @@ function validateText(el) {
         return false;
     }
     markValid(el);
-    
+
     // Check if customer section is now complete and show Submit section
     // Only show the submit section if all fields are valid, but do not auto-scroll or focus
     setTimeout(() => {
@@ -60,19 +242,19 @@ function validateText(el) {
             }
         }
     }, 100);
-    
+
     return true;
 }
 
 function validateEmail(el) {
     if (!el) return false;
     const v = (el.value || '').trim();
-    if (!CONFIG.VALIDATION.EMAIL_PATTERN.test(v)) { 
-        markInvalid(el); 
-        return false; 
+    if (!CONFIG.VALIDATION.EMAIL_PATTERN.test(v)) {
+        markInvalid(el);
+        return false;
     }
     markValid(el);
-    
+
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
@@ -86,19 +268,19 @@ function validateEmail(el) {
             }
         }
     }, 100);
-    
+
     return true;
 }
 
 function validatePhone(el) {
     if (!el) return false;
     const v = (el.value || '').trim();
-    if (!CONFIG.VALIDATION.PHONE_PATTERN.test(v)) { 
-        markInvalid(el); 
-        return false; 
+    if (!CONFIG.VALIDATION.PHONE_PATTERN.test(v)) {
+        markInvalid(el);
+        return false;
     }
     markValid(el);
-    
+
     setTimeout(() => {
         const customerComplete = ['firstName', 'lastName', 'contactNumber', 'email', 'barangay', 'address'].every(id => {
             const field = document.getElementById(id);
@@ -112,124 +294,50 @@ function validatePhone(el) {
             }
         }
     }, 100);
-    
+
     return true;
 }
 
-function validateSelect(el) {
-    if (!el) return false;
-    const v = (el.value || '').trim();
-    if (!v) { 
-        // For service cards, mark all cards as invalid
-        if (el.id === 'serviceOption') {
-            const serviceCards = document.querySelectorAll('.service-card');
-            serviceCards.forEach(card => {
-                card.classList.add('input-invalid');
-                card.classList.remove('input-valid');
-            });
-        } else {
-            markInvalid(el);
-        }
-        return false; 
-    }
-    
-    // For service cards, mark selected card as valid
-    if (el.id === 'serviceOption') {
-        const serviceCards = document.querySelectorAll('.service-card');
-        serviceCards.forEach(card => {
-            card.classList.remove('input-invalid');
-            if (card.dataset.value === v) {
+// === Payment Method Validation ===
+
+function validatePaymentMethodVisual() {
+    const paymentCards = document.querySelectorAll('.payment-card');
+    const hiddenInput = document.getElementById('paymentMethod');
+
+    if (selectedPaymentMethod) {
+        // Mark selected card as valid
+        paymentCards.forEach(card => {
+            if (card.dataset.value === selectedPaymentMethod) {
+                card.classList.remove('input-invalid');
                 card.classList.add('input-valid');
             } else {
-                card.classList.remove('input-valid');
+                card.classList.remove('input-valid', 'input-invalid');
             }
         });
-    } else {
-        markValid(el);
-    }
-    
-    // Auto-scroll if service option is selected
-    if (el.id === 'serviceOption') {
-        setTimeout(() => {
-            const customerSection = document.querySelector('[data-section="customerInfo"]');
-            if (customerSection) {
-                customerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }, 500);
-    }
-    
-    return true;
-}
 
-function validateBookingTypeVisual() {
-    const toggleN = document.getElementById('toggleNormal');
-    const toggleR = document.getElementById('toggleRush');
-    
-    if (bookingType === CONFIG.BOOKING_TYPES.NORMAL) {
-        toggleN && toggleN.classList.add('btn-valid'); 
-        toggleN && toggleN.classList.remove('btn-invalid');
-        toggleR && toggleR.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
-        return true;
-    } else if (bookingType === CONFIG.BOOKING_TYPES.RUSH) {
-        toggleR && toggleR.classList.add('btn-valid'); 
-        toggleR && toggleR.classList.remove('btn-invalid');
-        toggleN && toggleN.classList.remove('btn-valid', 'btn-invalid'); // Remove both classes from non-selected
+        if (hiddenInput) {
+            hiddenInput.classList.remove('input-invalid');
+            hiddenInput.classList.add('input-valid');
+        }
+
         return true;
     } else {
-        // Only mark invalid when NO booking type is selected
-        toggleN && toggleN.classList.remove('btn-valid'); 
-        toggleN && toggleN.classList.add('btn-invalid');
-        toggleR && toggleR.classList.remove('btn-valid'); 
-        toggleR && toggleR.classList.add('btn-invalid');
+        // Mark all cards as invalid if none selected
+        paymentCards.forEach(card => {
+            card.classList.remove('input-valid');
+            card.classList.add('input-invalid');
+        });
+
+        if (hiddenInput) {
+            hiddenInput.classList.remove('input-valid');
+            hiddenInput.classList.add('input-invalid');
+        }
+
         return false;
     }
 }
 
-function validateDateTimeVisual() {
-    // Check both local and window variables for selected date and time
-    const actualSelectedDate = selectedDate || window.selectedDate;
-    const actualSelectedTime = selectedTime || window.selectedTime;
-    
-    // Check if this is a pickup and self-claim service
-    const currentServiceType = window.selectedServiceType || (document.getElementById('serviceOption') && document.getElementById('serviceOption').value);
-    const isPickupAndSelfClaim = currentServiceType === 'pickup_selfclaim';
-    
-    let ok = !!actualSelectedDate && !!actualSelectedTime;
-    
-    // For pickup and self-claim, also check if self-claim date and time are selected
-    if (isPickupAndSelfClaim) {
-        const actualSelfClaimDate = selfClaimDate || window.selfClaimDate;
-        const actualSelfClaimTime = selfClaimTime || window.selfClaimTime;
-        ok = ok && !!actualSelfClaimDate && !!actualSelfClaimTime;
-    }
-    
-    // Get specific elements to highlight
-    const calendarGrid = document.getElementById('calendarGrid');
-    const timeSlots = document.getElementById('timeSlots');
-    const selectedTimeSlot = document.querySelector('.time-slot.selected');
-    
-    if (!ok) {
-        // Keep both calendar and time slots containers clean - no validation styling
-        return false;
-    } else {
-        // Both calendar and time slots containers stay completely clean
-        if (calendarGrid) {
-            calendarGrid.classList.remove('input-invalid');
-        }
-        
-        if (timeSlots) {
-            timeSlots.classList.remove('input-invalid');
-        }
-        
-        // Only highlight the selected time slot specifically
-        if (selectedTimeSlot) {
-            selectedTimeSlot.classList.add('input-valid');
-            selectedTimeSlot.classList.remove('input-invalid');
-        }
-        
-        return true;
-    }
-}
+// === Main Validation Orchestrator ===
 
 function validateAll() {
     let ok = true;
@@ -279,6 +387,16 @@ function validateAll() {
         }
     });
 
+    // Laundry items validation
+    const laundryValidation = validateLaundryItems();
+    validationResults.laundryItems = laundryValidation.isValid;
+    if (!validationResults.laundryItems) {
+        ok = false;
+        if (laundryValidation.firstInvalidElement) {
+            invalidElements.push(laundryValidation.firstInvalidElement);
+        }
+    }
+
     // Date & time
     validationResults.dateTime = validateDateTimeVisual();
     if (!validationResults.dateTime) {
@@ -294,14 +412,12 @@ function validateAll() {
     }
 
     // Payment method
-    if (typeof validatePaymentMethodVisual === 'function') {
-        validationResults.paymentMethod = validatePaymentMethodVisual();
-        if (!validationResults.paymentMethod) {
-            ok = false;
-            const paymentCards = document.querySelectorAll('.payment-card');
-            if (paymentCards.length > 0) {
-                invalidElements.push(paymentCards[0]);
-            }
+    validationResults.paymentMethod = validatePaymentMethodVisual();
+    if (!validationResults.paymentMethod) {
+        ok = false;
+        const paymentCards = document.querySelectorAll('.payment-card');
+        if (paymentCards.length > 0) {
+            invalidElements.push(paymentCards[0]);
         }
     }
 
@@ -313,31 +429,7 @@ function validateAll() {
     return ok;
 }
 
-function scrollToFirstInvalidField(element) {
-    if (!element) return;
-    
-    // Scroll to the element with some offset from top
-    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
-    const offset = 100; // 100px from top
-    
-    window.scrollTo({
-        top: elementTop - offset,
-        behavior: 'smooth'
-    });
-    
-    // Focus the element if it's focusable, otherwise focus the first input in its section
-    setTimeout(() => {
-        if (element.focus && (element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA')) {
-            element.focus();
-        } else {
-            // Find the first focusable input in the same section
-            const section = element.closest('.form-section') || element.closest('[data-section]');
-            if (section) {
-                const firstInput = section.querySelector('input, select, textarea');
-                if (firstInput) {
-                    firstInput.focus();
-                }
-            }
-        }
-    }, 500);
-}
+// Initialize validation when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Quantity validation is now initialized in main.js after form cloning
+});

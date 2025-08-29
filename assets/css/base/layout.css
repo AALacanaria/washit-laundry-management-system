@@ -117,3 +117,178 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* Map Container Styles */
+#pickupMap {
+    height: 300px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    /* Performance optimizations */
+    contain: layout style paint;
+    will-change: transform;
+}
+
+/* Loading state for map */
+#pickupMap.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Fix Leaflet zoom controls to prevent page scroll */
+.leaflet-control-container .leaflet-control-zoom-in,
+.leaflet-control-container .leaflet-control-zoom-out {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    line-height: 24px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    display: block;
+    margin-bottom: 2px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    position: relative;
+    z-index: 1000;
+}
+
+.leaflet-control-container .leaflet-control-zoom-in:hover,
+.leaflet-control-container .leaflet-control-zoom-out:hover {
+    background-color: #f4f4f4;
+    border-color: #999;
+}
+
+.leaflet-control-container .leaflet-control-zoom-in:active,
+.leaflet-control-container .leaflet-control-zoom-out:active {
+    background-color: #e0e0e0;
+}
+
+/* Prevent zoom controls from causing page scroll */
+.leaflet-control-container a {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+.leaflet-control-container a:focus {
+    outline: none !important;
+}
+
+.leaflet-control-container .leaflet-control-zoom-in,
+.leaflet-control-container .leaflet-control-zoom-out {
+    pointer-events: auto !important;
+}
+
+/* Prevent default link behavior on zoom controls */
+.leaflet-control-container .leaflet-control-zoom a {
+    pointer-events: none;
+}
+
+.leaflet-control-container .leaflet-control-zoom a::before,
+.leaflet-control-container .leaflet-control-zoom a::after {
+    pointer-events: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    content: '';
+}
+
+/* Ensure map tiles load properly */
+.leaflet-container {
+    background: #f8f9fa;
+}
+
+.leaflet-tile {
+    border: none;
+}
+
+/* Fix for map not displaying in hidden containers */
+.leaflet-container.leaflet-fade-anim .leaflet-tile {
+    will-change: auto;
+}
+
+/* User Location Marker Styles */
+.user-location-marker {
+    pointer-events: none;
+}
+
+.user-location-marker div {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Location Notice Styles */
+.location-notice {
+    background: white !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    font-family: inherit !important;
+}
+
+/* Refresh Location Button Styles */
+#refreshLocationBtn {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+#refreshLocationBtn:hover:not(:disabled) {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#refreshLocationBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+#refreshLocationBtn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Improve popup styling for user location */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+.leaflet-popup-content {
+    margin: 10px 12px;
+    font-family: inherit;
+}

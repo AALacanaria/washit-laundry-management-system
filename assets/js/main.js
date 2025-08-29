@@ -1,4 +1,5 @@
 // Form submission handler and initialization
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize calendar data
     initializeCalendarData();
@@ -52,6 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Run full validation
             const valid = validateAll();
+            
             if (!valid) {
                 alert('Please complete all required fields and selections highlighted in red. The page will scroll to the first incomplete field.');
                 return;
@@ -83,6 +85,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 specialInstructionsVal
             );
         });
+        
+        // Debug: Add click listener to submit button
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+
+                // Since natural form submission isn't working, manually trigger form submission
+                e.preventDefault();
+                const form = document.getElementById('bookingForm');
+                if (form) {
+                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                    form.dispatchEvent(submitEvent);
+                }
+            });
+        }
     }
 });
 
@@ -130,6 +147,9 @@ function attachValidators() {
         });
     });
 
+    // Initialize quantity input validation
+    initQuantityValidation();
+
     // Service option validation
     const svc = document.getElementById('serviceOption');
     if (svc) {
@@ -172,6 +192,39 @@ function attachValidators() {
             resetSelfClaimCalendar();
         }
         validateBookingTypeVisual();
+    });
+}
+
+// Initialize quantity input validation
+function initQuantityValidation() {
+    const qtyInputs = document.querySelectorAll('.qty-input');
+    qtyInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            // Same approach as contact number: filter to numbers only and limit to 3 digits
+            let value = this.value.replace(/\D/g, ''); // Remove non-digits
+            if (value.length > 3) {
+                value = value.substring(0, 3); // Limit to 3 digits
+            }
+            this.value = value;
+
+            // Validate and provide visual feedback
+            const numericValue = parseInt(value, 10);
+            if (value === '' || isNaN(numericValue) || numericValue < 0 || numericValue > 999) {
+                markInvalid(this);
+            } else {
+                markValid(this);
+            }
+        });
+
+        input.addEventListener('blur', function() {
+            // Ensure value is valid on blur
+            const value = parseInt(this.value, 10);
+            if (this.value === '' || isNaN(value) || value < 0 || value > 999) {
+                markInvalid(this);
+            } else {
+                markValid(this);
+            }
+        });
     });
 }
 

@@ -52,7 +52,7 @@ class BookingConfirmation {
         window.scrollTo(0, 0);
         document.documentElement.scrollTop = 0;
         document.body.scrollTop = 0;
-        
+
         // Lock the page completely
         const currentScrollY = window.scrollY;
         document.body.style.position = 'fixed';
@@ -62,7 +62,7 @@ class BookingConfirmation {
         document.body.style.width = '100%';
         document.body.style.height = '100%';
         document.body.style.overflow = 'hidden';
-        
+
         // Force modal to display immediately - no transitions
         modal.style.display = 'flex';
         modal.style.position = 'fixed';
@@ -73,10 +73,13 @@ class BookingConfirmation {
         modal.style.zIndex = '999999';
         modal.classList.remove("hidden");
         modal.classList.add("show");
-        
+
+        // Fix accessibility: Remove aria-hidden when modal is shown
+        modal.setAttribute('aria-hidden', 'false');
+
         // Force immediate focus and viewport centering
         modal.focus();
-        
+
         // Double-check modal is visible
         setTimeout(() => {
             modal.scrollIntoView({ behavior: 'instant', block: 'center', inline: 'center' });
@@ -583,6 +586,9 @@ function closeBookingModal() {
         modal.classList.remove("show");
         modal.classList.add("hidden");
         modal.style.display = 'none';
+        
+        // Fix accessibility: Set aria-hidden when modal is hidden
+        modal.setAttribute('aria-hidden', 'true');
         
         // Restore body scroll and position
         document.body.style.position = '';

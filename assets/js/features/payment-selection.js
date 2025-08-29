@@ -36,8 +36,6 @@ function selectPaymentMethod(cardElement, method) {
     if (typeof validatePaymentMethodVisual === 'function') {
         validatePaymentMethodVisual();
     }
-
-    console.log('Payment method selected:', method, 'Flow:', paymentFlow);
 }
 
 function updatePaymentFlow(method) {
@@ -244,44 +242,6 @@ function resetPaymentSelection() {
 // Get current payment method
 function getSelectedPaymentMethod() {
     return selectedPaymentMethod || window.selectedPaymentMethod || "";
-}
-
-// Payment method validation
-function validatePaymentMethodVisual() {
-    const paymentCards = document.querySelectorAll('.payment-card');
-    const hiddenInput = document.getElementById('paymentMethod');
-    
-    if (selectedPaymentMethod) {
-        // Mark selected card as valid
-        paymentCards.forEach(card => {
-            if (card.dataset.value === selectedPaymentMethod) {
-                card.classList.remove('input-invalid');
-                card.classList.add('input-valid');
-            } else {
-                card.classList.remove('input-valid', 'input-invalid');
-            }
-        });
-        
-        if (hiddenInput) {
-            hiddenInput.classList.remove('input-invalid');
-            hiddenInput.classList.add('input-valid');
-        }
-        
-        return true;
-    } else {
-        // Mark all cards as invalid if none selected
-        paymentCards.forEach(card => {
-            card.classList.remove('input-valid');
-            card.classList.add('input-invalid');
-        });
-        
-        if (hiddenInput) {
-            hiddenInput.classList.remove('input-valid');
-            hiddenInput.classList.add('input-invalid');
-        }
-        
-        return false;
-    }
 }
 
 // Auto-scroll to next section after payment selection

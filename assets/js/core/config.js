@@ -1,4 +1,5 @@
 // Configuration and Data
+
 const CONFIG = {
     BOOKING_TYPES: {
         NORMAL: "normal",
