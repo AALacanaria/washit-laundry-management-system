@@ -1,0 +1,344 @@
+/* Business Receipt Styles - Print Optimized */
+/* This CSS is specifically designed for business receipts with pricing information */
+
+@page {
+    size: A4;
+    margin: 0.5in;
+    margin-bottom: 0.75in; /* Extra space for footer */
+}
+
+@media print {
+    body {
+        font-family: var(--font-family);
+        font-size: 11px;
+        line-height: 1.4;
+        margin: 0;
+        padding: 0;
+        background: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .booking-receipt {
+        max-width: 480px;
+        margin: 0 auto;
+        border: 2px solid #000;
+        background: white;
+        padding: 0;
+        box-shadow: none;
+        page-break-inside: avoid;
+    }
+
+    .receipt-header {
+        text-align: center;
+        padding: 15px;
+        border-bottom: 2px solid #000;
+        background: #f8f8f8;
+        page-break-inside: avoid;
+    }
+
+    .logo-section h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        letter-spacing: 2px;
+        color: #000;
+    }
+
+    .logo-section h3 {
+        font-size: 12px;
+        font-weight: normal;
+        margin: 2px 0 10px 0;
+        letter-spacing: 1px;
+        color: #333;
+    }
+
+    .receipt-info {
+        font-size: 10px;
+        margin-top: 10px;
+        color: #000;
+    }
+
+    .receipt-info p {
+        margin: 2px 0;
+        font-weight: bold;
+    }
+
+    .receipt-section {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+
+    .receipt-section:last-child {
+        border-bottom: none;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ddd;
+        text-decoration: underline;
+        color: #000;
+    }
+
+    .receipt-line {
+        display: flex;
+        margin: 3px 0;
+        min-height: 16px;
+        align-items: flex-start;
+    }
+
+    .receipt-line .label {
+        width: 140px;
+        font-weight: bold;
+        flex-shrink: 0;
+        color: #000;
+    }
+
+    .receipt-line .value {
+        flex: 1;
+        padding-left: 10px;
+        border-bottom: 1px dotted #ccc;
+        color: #000;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    /* Special styling for pricing information */
+    .receipt-line.price-line {
+        border-bottom: 1px solid #000;
+        margin: 5px 0;
+    }
+
+    .receipt-line.price-line .value {
+        text-align: right;
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+    }
+
+    .receipt-line.total-line {
+        border-top: 2px solid #000;
+        border-bottom: 2px solid #000;
+        margin: 8px 0;
+        background: #f0f0f0;
+        padding: 5px 0;
+    }
+
+    .receipt-line.total-line .label,
+    .receipt-line.total-line .value {
+        font-size: 12px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .receipt-line.total-line .value {
+        text-align: right;
+    }
+
+    .receipt-footer {
+        background: #f5f5f5;
+        border-top: 2px solid #000;
+        page-break-inside: avoid;
+    }
+
+    .footer-content {
+        text-align: left;
+        color: #000;
+    }
+
+    .footer-content p {
+        margin: 4px 0;
+        font-size: 10px;
+        line-height: 1.3;
+        font-weight: normal;
+    }
+
+    .footer-content p:first-child {
+        font-weight: bold;
+        margin-top: 0;
+    }
+
+    /* Hide elements that shouldn't print */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Ensure proper page breaks */
+    .page-break {
+        page-break-before: always;
+    }
+
+    .avoid-break {
+        page-break-inside: avoid;
+    }
+
+    /* Handle long content gracefully */
+    .receipt-line .value {
+        hyphens: auto;
+        word-break: break-word;
+    }
+
+    /* Special handling for monetary values */
+    .currency {
+        font-family: var(--font-family);
+        font-weight: bold;
+    }
+
+    /* Ensure consistent spacing */
+    .receipt-section h4 {
+        margin: 0 0 8px 0;
+    }
+
+    /* Footer information styling */
+    .receipt-footer .section-title {
+        margin-bottom: 8px;
+    }
+
+    /* Business-specific styling */
+    .business-header {
+        background: #fff;
+        border-bottom: 3px double #000;
+    }
+
+    .business-header .logo-section h2 {
+        color: #000;
+        font-size: 24px;
+    }
+
+    .business-header .logo-section h3 {
+        color: #333;
+        font-size: 14px;
+    }
+
+    /* Print optimization */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    /* Handle widows and orphans */
+    p {
+        orphans: 3;
+        widows: 3;
+    }
+
+    /* Ensure minimum font size for readability */
+    .receipt-line {
+        font-size: 11px;
+    }
+
+    .receipt-line .label {
+        font-size: 11px;
+    }
+
+    .receipt-line .value {
+        font-size: 11px;
+    }
+}
+
+/* Screen styles (minimal, since this is primarily for printing) */
+@media screen {
+    body {
+        font-family: var(--font-family);
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 20px;
+        background: #f5f5f5;
+    }
+
+    .booking-receipt {
+        max-width: 480px;
+        margin: 0 auto;
+        border: 2px solid #000;
+        background: white;
+        padding: 0;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .receipt-header {
+        text-align: center;
+        padding: 15px;
+        border-bottom: 2px solid #000;
+        background: #f8f8f8;
+    }
+
+    .logo-section h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        letter-spacing: 2px;
+    }
+
+    .logo-section h3 {
+        font-size: 12px;
+        font-weight: normal;
+        margin: 2px 0 10px 0;
+        letter-spacing: 1px;
+    }
+
+    .receipt-info {
+        font-size: 10px;
+        margin-top: 10px;
+    }
+
+    .receipt-info p {
+        margin: 2px 0;
+    }
+
+    .receipt-section {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .receipt-section:last-child {
+        border-bottom: none;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        margin: 0 0 10px 0;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #ddd;
+        text-decoration: underline;
+    }
+
+    .receipt-line {
+        display: flex;
+        margin: 3px 0;
+        min-height: 16px;
+    }
+
+    .receipt-line .label {
+        width: 140px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .receipt-line .value {
+        flex: 1;
+        padding-left: 10px;
+        border-bottom: 1px dotted #ccc;
+    }
+
+    .receipt-footer {
+        background: #f5f5f5;
+    }
+
+    .footer-content {
+        text-align: left;
+    }
+
+    .footer-content p {
+        margin: 4px 0;
+        font-size: 10px;
+        line-height: 1.3;
+    }
+}

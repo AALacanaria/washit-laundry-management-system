@@ -1,0 +1,191 @@
+/* Customer Information Section Styles */
+
+/* Auto-fill Banner Components */
+.auto-fill-banner {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+    border: 1px solid #2196f3;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+    animation: slideDown 0.3s ease-out;
+}
+
+.auto-fill-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.auto-fill-icon {
+    font-size: 24px;
+    color: #2196f3;
+    flex-shrink: 0;
+}
+
+.auto-fill-text {
+    flex: 1;
+    color: #1565c0;
+}
+
+.auto-fill-text strong {
+    color: #0d47a1;
+}
+
+.auto-fill-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* Auto-fill Button Styles */
+.auto-fill-btn {
+    background: #2196f3;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.auto-fill-btn:hover {
+    background: #1976d2;
+}
+
+.auto-fill-btn.dismiss {
+    background: transparent;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+}
+
+.auto-fill-btn.dismiss:hover {
+    background: #e3f2fd;
+}
+
+/* Animation Keyframes */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Input Components */
+label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Base Input Styles */
+input, 
+select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    margin-top: 5px;
+    position: relative;
+    z-index: 10;
+}
+
+input:focus, 
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+/* Compact Input Styles */
+.compact-input {
+    width: 100%;
+    max-width: 260px;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* Narrow Input for Stacked Fields */
+.narrow-input {
+    max-width: 260px;
+    width: 100%;
+    padding: 8px 10px;
+}
+
+/* Form Grid Layout */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Input Validation States */
+input.input-valid {
+    border: 2px solid #2ea44f;
+    background: #f6fffa;
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.1);
+}
+
+input.input-invalid {
+    border: 2px solid #e03e2d;
+    background: #fff6f6;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.1);
+}
+
+/* Map Container */
+#pickupMap {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Special Instructions Input */
+#specialInstructions {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* Responsive Auto-fill Banner */
+@media (max-width: 768px) {
+    .auto-fill-content {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .auto-fill-actions {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .auto-fill-btn {
+        flex: 1;
+        min-width: 100px;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .compact-input,
+    .narrow-input {
+        max-width: 100%;
+    }
+}

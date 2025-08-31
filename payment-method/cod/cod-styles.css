@@ -1,0 +1,93 @@
+/* COD Payment Method Specific Styles */
+
+/* COD Payment card specific styling */
+.payment-card[data-value="cash"] .payment-details {
+    background: #fff9e6;
+    border-color: #ffc107;
+}
+
+.payment-card[data-value="cash"] .payment-details small:first-child {
+    color: #856404;
+    font-weight: 500;
+}
+
+/* Enhanced selection states for COD */
+.payment-card[data-value="cash"].selected .payment-details {
+    background: #fff3cd;
+    border-color: #ffc107;
+}
+
+.payment-card[data-value="cash"].selected h4,
+.payment-card[data-value="cash"].selected p {
+    color: #155724;
+}
+
+/* COD Flow status styling */
+.flow-status.cod {
+    border-left-color: #ffc107;
+}
+
+/* COD Payment confirmation styles */
+.cod-confirmation {
+    background: #fff9e6;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.cod-confirmation .cod-icon {
+    color: #856404;
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+.cod-confirmation .cod-message {
+    color: #856404;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* COD specific payment details enhancement */
+.payment-card[data-value="cash"] .payment-icon {
+    color: #ffc107;
+}
+
+/* COD hover effects */
+.payment-card[data-value="cash"]:hover {
+    border-color: #ffc107;
+    box-shadow: 0 3px 12px rgba(255, 193, 7, 0.15);
+}
+
+/* COD loading states */
+.payment-card[data-value="cash"].processing {
+    background: #fffaeb;
+    border-color: #ffc107;
+    opacity: 0.8;
+}
+
+.payment-card[data-value="cash"].processing::after {
+    content: "⏳";
+    background: #ffc107;
+    color: white;
+}
+
+/* COD success animation */
+.cod-success {
+    animation: codConfirm 0.5s ease-out;
+}
+
+@keyframes codConfirm {
+    0% {
+        transform: scale(1);
+        background: #fff9e6;
+    }
+    50% {
+        transform: scale(1.05);
+        background: #fff3cd;
+    }
+    100% {
+        transform: scale(1);
+        background: #fff9e6;
+    }
+}

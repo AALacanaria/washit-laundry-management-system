@@ -23,6 +23,35 @@
         }
     }
 
+    // Initialize event listeners for quantity inputs
+    function initializeEventListeners() {
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        qtyInputs.forEach((input) => {
+            // Get category from parent row's data-category attribute
+            const row = input.closest('tr');
+            const categoryKey = row ? row.getAttribute('data-category') : null;
+            
+            if (categoryKey) {
+                input.addEventListener('input', function() {
+                    const quantity = parseInt(this.value, 10) || 0;
+                    updateQuantity(categoryKey, quantity);
+                });
+
+                input.addEventListener('change', function() {
+                    const quantity = parseInt(this.value, 10) || 0;
+                    updateQuantity(categoryKey, quantity);
+                });
+            }
+        });
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEventListeners);
+    } else {
+        initializeEventListeners();
+    }
+
     // Expose a validation hook used before scheduling/submit
     window.laundryItems = {
         hasItems: () => items.some(i => i.quantity > 0),

@@ -10,23 +10,29 @@
     <link rel="stylesheet" href="assets/css/base/typography.css">
     <link rel="stylesheet" href="assets/css/base/layout.css">
     
-    <!-- CSS Files - Components -->
-    <link rel="stylesheet" href="assets/css/components/buttons.css">
-    <link rel="stylesheet" href="assets/css/components/forms.css">
-    <link rel="stylesheet" href="assets/css/components/sections.css">
-    <link rel="stylesheet" href="assets/css/components/service-cards.css">
-    <link rel="stylesheet" href="assets/css/components/loading.css">
-    <link rel="stylesheet" href="assets/css/components/autofill.css">
+    <!-- CSS Files - Shared Components -->
+    <link rel="stylesheet" href="components/buttons.css">
+    <link rel="stylesheet" href="components/loading.css">
+    <link rel="stylesheet" href="components/sections.css">
+    
+    <!-- CSS Files - Modular Sections -->
+    <link rel="stylesheet" href="booking-preference/booking-preference-styles.css">
+    <link rel="stylesheet" href="booking-preference/normal-rush/normal-rush-styles.css">
+    <link rel="stylesheet" href="service-details/service-details-styles.css">
+    <link rel="stylesheet" href="laundry-items/laundry-items-styles.css">
+    <link rel="stylesheet" href="book-schedule/book-schedule-styles.css">
+    <link rel="stylesheet" href="customer-information/customer-information-styles.css">
+    <link rel="stylesheet" href="payment-method/payment-method-styles.css">
+    <link rel="stylesheet" href="payment-method/cod/cod-styles.css">
+    <link rel="stylesheet" href="payment-method/cashless/cashless-styles.css">
+    <link rel="stylesheet" href="confirm-booking/confirm-booking-styles.css">
+    
+    <!-- CSS Files - Legacy Components -->
     <link rel="stylesheet" href="assets/css/components/email-suggestions.css">
-    <link rel="stylesheet" href="assets/css/components/receipt.css">
-    <link rel="stylesheet" href="assets/css/components/receipt-component.css">
-    <link rel="stylesheet" href="assets/css/components/simple-toggle.css">
-    <link rel="stylesheet" href="assets/css/components/payment-options.css">
-    <link rel="stylesheet" href="assets/css/components/laundry-items.css">
+    <link rel="stylesheet" href="assets/receipts/customer/customer-receipt-styles.css">
+    <link rel="stylesheet" href="assets/receipts/business/business-receipt-styles.css">
     
     <!-- CSS Files - Features -->
-    <link rel="stylesheet" href="assets/css/features/calendar.css">
-    <link rel="stylesheet" href="assets/css/features/time-slots.css">
     <link rel="stylesheet" href="assets/css/features/responsive.css">
 
     <!-- Leaflet CSS -->
@@ -60,13 +66,25 @@
 
     <!-- Step 1: Booking Type -->
     <div id="step1" class="centered-section">
-        <p class="booking-step-p">Choose your booking preference:</p>
-        <div class="toggle-container">
-            <div class="toggle-option" onclick="selectBookingType('normal')" id="toggleNormal">
+        <h4 class="pickup-header" id="booking-preference-label">🔄 Choose your booking preference: <span style="color:red">*</span></h4>
+        <div class="toggle-container" role="radiogroup" aria-labelledby="booking-preference-label">
+            <div class="toggle-option" 
+                 onclick="selectBookingType('normal')" 
+                 id="toggleNormal"
+                 role="radio"
+                 aria-checked="false"
+                 tabindex="0"
+                 aria-label="Normal booking - Standard 2-3 day processing">
                 <h3>📅 Normal</h3>
                 <p>Standard</p>
             </div>
-            <div class="toggle-option" onclick="selectBookingType('rush')" id="toggleRush">
+            <div class="toggle-option" 
+                 onclick="selectBookingType('rush')" 
+                 id="toggleRush"
+                 role="radio"
+                 aria-checked="false"
+                 tabindex="-1"
+                 aria-label="Rush booking - Express 1.5 day processing">
                 <h3>⚡ Rush</h3>
                 <p>Express</p>
             </div>
@@ -97,8 +115,8 @@
         <form id="bookingForm">
             <!-- Service Option Section -->
             <div class="form-section" data-section="serviceSection">
-                <h3>📋 Service Details</h3>
-                <h4 class="pickup-header">🧾 Choose Service Option *</h4>
+                <h3>Service Details</h3>
+                <h4 class="pickup-header">🧾 Choose Service Option <span style="color:red">*</span></h4>
                 <div class="service-options-grid">
                     <div class="service-card" data-value="pickup_delivery" onclick="selectService(this, 'pickup_delivery')">
                         <div class="service-icon">🚚</div>
@@ -132,7 +150,7 @@
                     <legend id="laundry-legend" class="sr-only">Laundry categories</legend>
 
                     <div class="laundry-table-wrap">
-                        <h4 class="pickup-header" id="items-desc">🧺 Select the number of items in each category</h4>
+                        <h4 class="pickup-header" id="items-desc">🧺 Select the number of items in each category <span style="color:red">*</span></h4>
                         <table class="items-table" aria-describedby="items-desc">
                             <thead>
                                 <tr><th><strong>Item Category</strong></th><th><strong>Item Quantity</strong></th><th><strong>Service Price</strong></th></tr>
@@ -181,7 +199,7 @@
             <div class="form-section" data-section="scheduleSection">
                 <h3>Book a Schedule</h3>
                 <!-- Pickup/Drop-off Scheduling Header -->
-                <h4 class="pickup-header" id="calendarHeader">📅 Choose Pickup Schedule</h4>
+                <h4 class="pickup-header" id="calendarHeader">📅 Choose Pickup Schedule <span style="color:red">*</span></h4>
                 <p class="section-subtext" id="calendarSubtext">
                     Select your preferred pickup date and time:
                 </p>
@@ -209,7 +227,7 @@
                 
                 <!-- Self-Claim Scheduling (hidden by default) -->
                 <div id="selfClaimSection" class="hidden self-claim-section">
-                    <h4 class="selfclaim-header">🏪 Choose Self-claim Schedule</h4>
+                    <h4 class="selfclaim-header">🏪 Choose Self-claim Schedule <span style="color:red">*</span></h4>
                     <p class="section-subtext">
                         Your items will be ready for pickup. Select when you'd like to collect them:
                     </p>
@@ -246,7 +264,7 @@
 
             <!-- Customer Information -->
             <div class="form-section" data-section="customerSection">
-                <h3>👤 Customer Information</h3>
+                <h3>👤 Customer Information <span style="color:red">*</span></h3>
                 
                 <!-- Auto-fill banner will be inserted here -->
                 <div id="autoFillBanner"></div>
@@ -297,7 +315,7 @@
 
             <!-- Payment Method Section -->
             <div class="form-section" data-section="paymentSection">
-                <h3>💳 Payment Method</h3>
+                <h3>💳 Payment Method <span style="color:red">*</span></h3>
                 <p class="section-description">Choose how you'd like to pay for your laundry service</p>
                 
                 <div class="payment-options">
@@ -360,25 +378,33 @@
 <script src="assets/js/core/config.js"></script>
 <script src="assets/js/core/time-slots.js"></script>
 
+<!-- JavaScript Files - Utilities -->
+<script src="utils/validation.js"></script>
+
+<!-- JavaScript Files - Modular Sections -->
+<script src="booking-preference/booking-preference.js"></script>
+<script src="booking-preference/normal-rush/normal.js"></script>
+<script src="booking-preference/normal-rush/rush.js"></script>
+<script src="service-details/service-details.js"></script>
+<script src="laundry-items/laundry-items.js"></script>
+<script src="book-schedule/book-schedule.js"></script>
+<script src="customer-information/customer-information.js"></script>
+<script src="payment-method/payment-method.js"></script>
+<script src="payment-method/cod/cod.js"></script>
+<script src="payment-method/cashless/cashless.js"></script>
+<script src="confirm-booking/confirm-booking.js"></script>
+
 <!-- JavaScript Files - Core Features -->
-<script src="assets/js/features/autofill-manager.js"></script>
 <script src="assets/js/features/email-suggestions.js"></script>
 <script src="assets/js/features/autofill-init.js"></script>
-
-<!-- JavaScript Files - Booking Features -->
-<script src="assets/js/features/booking-selection.js"></script>
-<script src="assets/js/features/service-card-handler.js"></script>
-<script src="assets/js/components/receipt-generator.js"></script>
-<script src="assets/js/features/booking-confirmation.js"></script>
-<script src="assets/js/features/payment-selection.js"></script>
+<script src="assets/receipts/customer/customer-receipt.js"></script>
+<script src="assets/receipts/business/business-receipt.js"></script>
 <script src="assets/js/features/form-navigation.js"></script>
 
 <!-- JavaScript Files - Calendar Features -->
 <script src="assets/js/features/calendar-data.js"></script>
 <script src="assets/js/features/calendar-renderer.js"></script>
 <script src="assets/js/features/time-slots.js"></script>
-<script src="assets/js/features/self-claim-calendar-normal.js"></script>
-<script src="assets/js/features/self-claim-calendar-rush.js"></script>
 
 <!-- Leaflet JS - Load BEFORE map.js -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -387,10 +413,7 @@
 <script src="assets/js/features/map.js"></script>
 
 <!-- JavaScript Files - Legacy Support -->
-<script src="assets/js/validation.js"></script>
 <script src="assets/js/main.js"></script>
-<!-- Laundry items component -->
-<script src="assets/js/components/laundry-items.js"></script>
 
 </body>
 </html>

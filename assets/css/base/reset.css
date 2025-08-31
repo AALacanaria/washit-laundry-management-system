@@ -1,4 +1,7 @@
 /* CSS Reset and Base Elements */
+
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Poppins:wght@500&family=Merriweather:wght@400&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -7,7 +10,6 @@
 
 /* Base body styles */
 body {
-    font-family: "Segoe UI", Arial, sans-serif;
     line-height: 1.5;
     color: #333;
 }

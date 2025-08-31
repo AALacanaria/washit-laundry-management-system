@@ -1,0 +1,218 @@
+/* Cashless Payment Method Specific Styles */
+
+/* Cashless Payment card specific styling */
+.payment-card[data-value="cashless"] .payment-details {
+    background: #e6f3ff;
+    border-color: #1170e4;
+}
+
+.payment-card[data-value="cashless"] .payment-details small:first-child {
+    color: #0c4a8a;
+    font-weight: 500;
+}
+
+/* Enhanced selection states for Cashless */
+.payment-card[data-value="cashless"].selected .payment-details {
+    background: #cce7ff;
+    border-color: #1170e4;
+}
+
+.payment-card[data-value="cashless"].selected h4,
+.payment-card[data-value="cashless"].selected p {
+    color: #0c4a8a;
+}
+
+/* Cashless Flow status styling */
+.flow-status.cashless {
+    border-left-color: #1170e4;
+}
+
+/* Cashless Payment confirmation styles */
+.cashless-confirmation {
+    background: #e6f3ff;
+    border: 1px solid #1170e4;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.cashless-confirmation .cashless-icon {
+    color: #1170e4;
+    font-size: 1.2rem;
+    margin-right: 8px;
+}
+
+.cashless-confirmation .cashless-message {
+    color: #0c4a8a;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* Cashless specific payment details enhancement */
+.payment-card[data-value="cashless"] .payment-icon {
+    color: #1170e4;
+}
+
+/* Cashless hover effects */
+.payment-card[data-value="cashless"]:hover {
+    border-color: #1170e4;
+    box-shadow: 0 3px 12px rgba(17, 112, 228, 0.15);
+}
+
+/* Cashless loading states */
+.payment-card[data-value="cashless"].processing {
+    background: #f0f7ff;
+    border-color: #1170e4;
+    opacity: 0.8;
+}
+
+.payment-card[data-value="cashless"].processing::after {
+    content: "💳";
+    background: #1170e4;
+    color: white;
+}
+
+/* Payment Gateway Modal Simulation */
+#payment-gateway-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+#payment-gateway-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#payment-gateway-modal .modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+#payment-gateway-modal .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+#payment-gateway-modal.show .modal-content {
+    transform: scale(1);
+}
+
+.payment-simulator h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.payment-options-sim {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 20px 0;
+}
+
+.payment-method-sim {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e9ecef;
+    border-top: 4px solid #1170e4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+.payment-note {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 16px;
+    font-style: italic;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Cashless success animation */
+.cashless-success {
+    animation: cashlessConfirm 0.5s ease-out;
+}
+
+@keyframes cashlessConfirm {
+    0% {
+        transform: scale(1);
+        background: #e6f3ff;
+    }
+    50% {
+        transform: scale(1.05);
+        background: #cce7ff;
+    }
+    100% {
+        transform: scale(1);
+        background: #e6f3ff;
+    }
+}
+
+/* Payment gateway buttons */
+.gateway-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.gateway-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gateway-btn.primary {
+    background: #1170e4;
+    color: white;
+}
+
+.gateway-btn.primary:hover {
+    background: #0d5aa7;
+}
+
+.gateway-btn.secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.gateway-btn.secondary:hover {
+    background: #5a6268;
+}

@@ -1,0 +1,354 @@
+/* Calendar Feature Styles */
+
+/* Calendar Container */
+.calendar-container {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+/* Calendar and Time Slots Layout */
+.calendar-time-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+    min-height: 400px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+/* Calendar Header Navigation */
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 0 10px;
+}
+
+.calendar-navigation button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #007bff;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.calendar-navigation button:hover {
+    background: #e3f2fd;
+}
+
+.calendar-nav {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #007bff;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+/* Calendar Grid - No validation styling at all to keep it clean */
+
+/* Calendar Days */
+.calendar-day {
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.2s;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar-day:hover {
+    background: #e3f2fd;
+}
+
+.calendar-day.available {
+    background: #e8f5e8;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.calendar-day.unavailable {
+    background: #ffebee;
+    color: #c62828;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.calendar-day.selected {
+    background: #007bff;
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-day.today {
+    border: 2px solid #007bff;
+    font-weight: 600;
+}
+
+/* Calendar Headers */
+.calendar-container h4 {
+    text-align: center;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Calendar Day Headers */
+.calendar-day-header {
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+    background-color: #f8f9fa;
+    color: #666;
+    font-size: 0.9rem;
+    border-radius: 3px;
+}
+
+/* Responsive Calendar */
+@media (max-width: 768px) {
+    .calendar-time-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        min-height: auto;
+    }
+    
+    .calendar-grid {
+        gap: 3px;
+    }
+    
+    .calendar-day {
+        padding: 8px;
+        font-size: 0.9rem;
+        min-height: 35px;
+    }
+    
+    .calendar-navigation {
+        padding: 0 5px;
+    }
+    
+    .calendar-navigation button {
+        padding: 3px 8px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-container {
+        padding: 15px;
+    }
+    
+    .calendar-day {
+        padding: 6px;
+        font-size: 0.8rem;
+        min-height: 30px;
+    }
+}
+
+/* Time Slots Feature Styles */
+
+/* Time Slots Container */
+.time-slots-container {
+    width: 100%;
+    padding: 10px;
+}
+
+/* Time Slots Wrapper */
+.time-slots-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+/* Time Slots Group */
+.time-slots-group {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 0;
+    width: 100%;
+}
+
+/* AM/PM Divider */
+.am-pm-divider {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0;
+    height: 20px;
+}
+
+.am-pm-divider::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    height: 1px;
+    background: #ddd;
+    z-index: 0;
+}
+
+.am-pm-divider span {
+    position: relative;
+    z-index: 1;
+    padding: 0 10px;
+    background: white;
+    color: #666;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Time Slots Note */
+.time-slots-note {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 12px;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px dashed #eee;
+}
+
+/* Individual Time Slot */
+.time-slot {
+    padding: 8px 6px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    min-height: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    color: #333;
+    font-size: 0.8rem;
+}
+
+.time-slot:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+}
+
+.time-slot.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+}
+
+/* Time Slot Validation States */
+.time-slot.input-invalid {
+    border: 2px solid #e03e2d;
+    background: #fff6f6;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.1);
+}
+
+.time-slot.selected.input-valid {
+    border: 2px solid #2ea44f;
+    background: #007bff;
+    color: white;
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.1);
+}
+
+/* Time Slot Content */
+.time-slot .time-label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.time-slot .slot-count {
+    font-size: 0.65rem;
+    opacity: 0.8;
+    margin-top: 2px;
+    font-weight: normal;
+}
+
+/* Unavailable Time Slots */
+.time-slot.unavailable {
+    background: #f5f5f5;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responsive Time Slots */
+@media (max-width: 768px) {
+    .time-slots-group {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .time-slot {
+        padding: 10px 6px;
+        min-height: 45px;
+    }
+    
+    .time-slot .time-label {
+        font-size: 1rem;
+    }
+    
+    .time-slot .slot-count {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .time-slots-group {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    
+    .time-slots-container {
+        padding: 5px;
+    }
+    
+    .time-slot {
+        padding: 8px 5px;
+        min-height: 40px;
+    }
+    
+    .am-pm-divider {
+        margin: 4px 0;
+        height: 16px;
+    }
+    
+    .am-pm-divider span {
+        font-size: 0.85rem;
+        padding: 0 8px;
+    }
+}

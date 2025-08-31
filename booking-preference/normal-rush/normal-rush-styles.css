@@ -1,0 +1,128 @@
+/* Normal and Rush Booking Sub-features Styles */
+
+/* Booking Type Indicator */
+.booking-type-indicator {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-left: 4px solid #007bff;
+    font-size: 0.95rem;
+    color: #495057;
+}
+
+.booking-type-indicator.hidden {
+    display: none;
+}
+
+.booking-type-indicator.normal {
+    border-left-color: #28a745;
+    background: #f8fff9;
+}
+
+.booking-type-indicator.rush {
+    border-left-color: #ffc107;
+    background: #fffef7;
+}
+
+/* Self-Claim Section */
+.self-claim-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #e9ecef;
+    animation: slideDown 0.3s ease-out;
+}
+
+.self-claim-section.hidden {
+    display: none;
+}
+
+.selfclaim-header {
+    color: #495057;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Self-Claim Calendar Specific Styles */
+#selfClaimCalendar {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#selfClaimCalendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.calendar-day-header {
+    padding: 8px;
+    text-align: center;
+    font-weight: 600;
+    color: #666;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+/* Animation for section reveal */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Processing Time Display */
+.processing-time {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #007bff;
+}
+
+.processing-time.normal {
+    border-left-color: #28a745;
+}
+
+.processing-time.rush {
+    border-left-color: #ffc107;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .booking-type-indicator {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .self-claim-section {
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+    
+    .selfclaim-header {
+        font-size: 1rem;
+    }
+    
+    #selfClaimCalendar {
+        padding: 12px;
+    }
+    
+    .calendar-day-header {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+}

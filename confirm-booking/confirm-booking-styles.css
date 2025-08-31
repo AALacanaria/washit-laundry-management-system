@@ -1,0 +1,208 @@
+/* Confirm Booking Section Styles */
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    margin-top: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,123,255,0.2);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+/* Modal Container */
+.modal-container {
+    background: white;
+    border-radius: 12px;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 600px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #28a745;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* Modal Content - Specific to booking confirmation modal */
+#booking-modal .modal-content {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Modal Actions - Specific to booking confirmation modal */
+#booking-modal .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    justify-content: flex-end;
+}
+
+#booking-modal .modal-actions .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+#booking-modal .modal-actions .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+#booking-modal .modal-actions .btn-secondary:hover {
+    background: #5a6268;
+}
+
+#booking-modal .modal-actions .btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+#booking-modal .modal-actions .btn-primary:hover {
+    background: #0056b3;
+}
+
+#booking-modal .modal-actions .btn-success {
+    background: #28a745;
+    color: white;
+}
+
+#booking-modal .modal-actions .btn-success:hover {
+    background: #218838;
+}
+
+#booking-modal .modal-actions .primary-action {
+    order: 1;
+    margin-left: auto;
+}
+
+/* Modal Animation */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Button Validation States */
+.btn-invalid {
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.04);
+    outline: 2px solid rgba(224,62,45,0.08);
+}
+
+.btn-valid {
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.04);
+    outline: 2px solid rgba(46,164,79,0.08);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-container {
+        max-width: 95vw;
+        max-height: 95vh;
+        width: 100%;
+        margin: 20px;
+    }
+    
+    .modal-header {
+        padding: 16px 20px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+        max-height: 70vh;
+    }
+    
+    .modal-actions {
+        padding: 16px 20px;
+        flex-direction: column;
+    }
+    
+    .modal-actions .btn {
+        width: 100%;
+        margin: 0;
+        order: unset !important;
+        margin-left: 0 !important;
+    }
+    
+    .modal-actions .primary-action {
+        order: -1;
+    }
+}

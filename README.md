@@ -35,51 +35,206 @@ A modern, responsive web application for booking laundry services with pickup an
 - **Storage**: LocalStorage for user data persistence
 - **Compatibility**: Modern browsers (ES6+)
 
-## 📁 Project Structure
+## 📁 Project Structure (Modular Architecture)
 
 ```
 washit-bookingform/
 ├── 📄 index.html                          # Main booking form
 ├── 📄 README.md                           # Project documentation
-└── 📁 assets/
+├── 📁 booking-preference/                 # Section 1: Booking Type Selection
+│   ├── booking-preference-styles.css     # Toggle switch and booking type styles
+│   ├── booking-preference.js             # Booking type selection logic
+│   └── 📁 normal-rush/                   # Sub-features for Normal/Rush
+│       ├── normal-rush-styles.css        # Styles for normal/rush features
+│       ├── normal.js                     # Normal booking specific logic
+│       └── rush.js                       # Rush booking specific logic
+├── 📁 service-details/                   # Section 2: Service Options
+│   ├── service-details-styles.css       # Service card styling
+│   └── service-details.js               # Service selection logic
+├── 📁 laundry-items/                     # Section 3: Laundry Items
+│   ├── laundry-items-styles.css         # Items table and pricing styles
+│   └── laundry-items.js                 # Items calculation logic
+├── 📁 book-schedule/                     # Section 4: Schedule Booking
+│   ├── book-schedule-styles.css         # Calendar and time slots styles
+│   └── book-schedule.js                 # Calendar and scheduling logic
+├── 📁 customer-information/              # Section 5: Customer Details
+│   ├── customer-information-styles.css  # Form inputs and autofill styles
+│   └── customer-information.js          # Customer data management
+├── 📁 payment-method/                    # Section 6: Payment Selection
+│   ├── payment-method-styles.css        # Payment card styles
+│   └── payment-method.js                # Payment method logic
+├── 📁 confirm-booking/                   # Section 7: Booking Confirmation
+│   ├── confirm-booking-styles.css       # Modal and receipt styles
+│   └── confirm-booking.js               # Confirmation and receipt logic
+├── 📁 components/                        # Shared UI Components
+│   ├── buttons.css                       # Button styles and states
+│   ├── loading.css                       # Loading animations
+│   └── sections.css                      # Form sections and layout
+├── 📁 utils/                             # Shared Utilities
+│   └── validation.js                     # Form validation utilities
+└── 📁 assets/                            # Legacy and Shared Assets
     ├── 📁 css/
-    │   ├── 📁 base/                       # Foundation styles
-    │   │   ├── reset.css                  # CSS reset and utilities
-    │   │   ├── typography.css             # Typography and fonts
-    │   │   └── layout.css                 # Layout and grid systems
-    │   ├── 📁 components/                 # UI component styles
-    │   │   ├── buttons.css                # Button styles and states
-    │   │   ├── forms.css                  # Form inputs and validation
-    │   │   ├── sections.css               # Form sections and layout
-    │   │   ├── service-cards.css          # Service selection cards
-    │   │   ├── toggle-booking.css         # Toggle switch UI
-    │   │   ├── loading.css                # Loading animations
-    │   │   ├── autofill.css               # Auto-fill banner
-    │   │   ├── email-suggestions.css      # Email dropdown
-    │   │   └── receipt.css                # Booking confirmation
-    │   └── 📁 features/                   # Feature-specific styles
-    │       ├── calendar.css               # Calendar interface
-    │       ├── time-slots.css             # Time slot selection
-    │       └── responsive.css             # Mobile responsiveness
-    └── 📁 js/
-        ├── 📁 core/                       # Core configuration
-        │   ├── config.js                  # Global settings
-        │   └── time-slots.js              # Time slot definitions
-        ├── 📁 features/                   # Feature modules
-        │   ├── autofill-manager.js        # User data management
-        │   ├── autofill-init.js           # Auto-fill initialization
-        │   ├── email-suggestions.js       # Email auto-complete
-        │   ├── booking-selection.js       # Booking type logic
-        │   ├── service-card-handler.js    # Service selection
-        │   ├── booking-confirmation.js    # Receipt generation
-        │   ├── form-navigation.js         # Form navigation
-        │   ├── calendar-data.js           # Calendar data management
-        │   ├── calendar-renderer.js       # Calendar display
-        │   ├── time-slots.js              # Time slot rendering
-        │   └── self-claim-calendar.js     # Self-claim specific logic
-        ├── validation.js                  # Form validation
-        └── main.js                        # Main initialization
+    │   ├── 📁 base/                      # Foundation styles
+    │   │   ├── reset.css                 # CSS reset and utilities
+    │   │   ├── typography.css            # Typography and fonts
+    │   │   └── layout.css                # Layout and grid systems
+    │   ├── 📁 components/                # Legacy component styles
+    │   └── 📁 features/                  # Legacy feature styles
+    ├── 📁 js/
+    │   ├── 📁 core/                      # Core configuration
+    │   │   ├── config.js                 # Global settings
+    │   │   └── time-slots.js             # Time slot definitions
+    │   ├── 📁 features/                  # Legacy feature modules
+    │   ├── validation.js                 # Form validation (legacy)
+    │   └── main.js                       # Main initialization
+    └── 📁 receipts/                      # Receipt generation
+        ├── 📁 customer/                  # Customer receipt templates
+        └── 📁 business/                  # Business receipt templates
 ```
+
+## 🏗️ Modular Architecture
+
+### 7 Main Sections
+
+1. **Booking Preference** (`booking-preference/`)
+   - Toggle between Normal and Rush booking
+   - Sub-features for booking type specific logic
+   - Processing time and pricing display
+
+2. **Service Details** (`service-details/`)
+   - Service option selection (Pickup/Delivery, etc.)
+   - Visual card-based interface
+   - Service description and pricing
+
+3. **Laundry Items** (`laundry-items/`)
+   - Item category selection and quantity
+   - Dynamic pricing calculation
+   - Item validation and limits
+
+4. **Book Schedule** (`book-schedule/`)
+   - Calendar interface for date selection
+   - Time slot availability and selection
+   - Self-claim scheduling logic
+
+5. **Customer Information** (`customer-information/`)
+   - Customer data input forms
+   - Auto-fill functionality
+   - Address and contact validation
+
+6. **Payment Method** (`payment-method/`)
+   - Payment option selection
+   - COD vs Cashless payment options
+   - Payment validation
+
+7. **Confirm Booking** (`confirm-booking/`)
+   - Booking review and confirmation
+   - Receipt generation and display
+   - Modal interface for confirmation
+
+### Shared Resources
+
+- **Components** (`components/`) - Reusable UI components
+- **Utils** (`utils/`) - Shared utility functions
+- **Assets** (`assets/`) - Images, icons, legacy code
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Local web server (for development)
+
+### Installation
+
+1. **Clone or download** the project files
+2. **Open** `index.html` in a web browser, or
+3. **Serve** via local web server for development:
+
+```bash
+# Using Python
+python -m http.server 8000
+
+# Using Node.js (http-server)
+npx http-server
+
+# Using PHP
+php -S localhost:8000
+```
+
+### Usage
+
+1. **Select Booking Type** - Choose between Normal or Rush booking using the toggle switch
+2. **Choose Service** - Select from pickup/delivery options using the card interface
+3. **Select Laundry Items** - Choose item categories and quantities
+4. **Pick Date & Time** - Use the calendar to select your preferred slot
+5. **Fill Customer Details** - Enter your contact and address information
+6. **Choose Payment Method** - Select COD or Cashless payment
+7. **Review & Confirm** - Check your booking details and submit
+
+## 🎨 Modular Design Principles
+
+### Naming Convention
+- **Folders**: `kebab-case` (e.g., `booking-preference`)
+- **Files**: `{section-name}-styles.css` and `{section-name}.js`
+- **Sub-features**: Organized in subfolders with descriptive names
+
+### File Organization
+- Each section is self-contained with its own CSS and JS
+- Shared components are centralized in `/components/`
+- Utilities are in `/utils/`
+- Legacy code remains in `/assets/` for backwards compatibility
+
+### Import Structure
+- CSS imports are grouped by: Base → Components → Sections → Legacy
+- JS imports are grouped by: Core → Utils → Sections → Legacy
+- Dependencies are loaded in correct order
+
+## 🔧 Development Guidelines
+
+### Adding New Sections
+1. Create folder: `/new-section/`
+2. Add files: `new-section-styles.css` and `new-section.js`
+3. Update `index.html` imports
+4. Follow existing patterns for consistency
+
+### Adding Sub-features
+1. Create subfolder within section: `/section-name/sub-feature/`
+2. Add files following naming convention
+3. Import in main section or `index.html` as needed
+
+### Shared Components
+- Add reusable CSS to `/components/`
+- Add utility functions to `/utils/`
+- Update imports in `index.html`
+
+## 📱 Browser Support & Performance
+
+- **Modern browsers**: Chrome 60+, Firefox 55+, Safari 11+, Edge 79+
+- **Mobile-first**: Responsive design with touch-friendly interfaces
+- **Performance**: Modular loading for faster initial page loads
+- **Accessibility**: WCAG 2.1 AA compliant form elements
+
+## 🧪 Testing
+
+The modular structure makes testing easier:
+- Each section can be tested independently
+- Shared utilities can be unit tested
+- CSS components can be visually tested in isolation
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 👥 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/new-section`)
+3. Follow the modular architecture patterns
+4. Test your changes across all sections
+5. Submit a Pull Request
+
+---
+
+**Built with ❤️ using modular architecture for maintainable laundry booking**
 
 ## 🚀 Getting Started
 

@@ -254,7 +254,7 @@ body {
     background: white !important;
     border-radius: 4px !important;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
-    font-family: inherit !important;
+    font-family: var(--font-family) !important;
 }
 
 /* Refresh Location Button Styles */
@@ -290,5 +290,5 @@ body {
 
 .leaflet-popup-content {
     margin: 10px 12px;
-    font-family: inherit;
+    font-family: var(--font-family);
 }

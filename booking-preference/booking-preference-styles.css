@@ -1,0 +1,273 @@
+/* Simple Toggle Booking UI Styles */
+
+/* .pickup-header: Styles the header for pickup-related sections */
+.pickup-header {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1565c0;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+/* .toggle-container: Container for the booking preference toggle options */
+.toggle-container {
+    background: #f1f3f5;
+    border-radius: 16px;
+    padding: 6px;
+    display: flex;
+    position: relative;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+}
+
+/* .toggle-option: Individual toggle button for booking preference */
+.toggle-option {
+    flex: 1;
+    padding: 16px 14px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 12px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 85px;
+    gap: 6px;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border: 2px solid rgba(0,0,0,0.12);
+}
+
+/* .toggle-option:not(.active): Styles for inactive toggle options */
+.toggle-option:not(.active) {
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+/* .toggle-option:not(.active):hover: Hover effect for inactive toggle options */
+.toggle-option:not(.active):hover {
+    background: rgba(255,255,255,0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border: 2px solid rgba(17,112,228,0.3);
+}
+
+/* .toggle-option.active:hover: Hover effect for active toggle option */
+.toggle-option.active:hover {
+    cursor: default;
+    transform: translateY(-2px); /* Keep the active transform */
+    box-shadow: 0 8px 32px rgba(17,112,228,0.2); /* Keep the active shadow */
+}
+
+/* .toggle-option:not(.active):focus: Focus effect for inactive toggle options */
+.toggle-option:not(.active):focus {
+    outline: none;
+    background: rgba(255,255,255,0.7);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 3px rgba(17,112,228,0.4);
+    border: 2px solid rgba(17,112,228,0.3);
+}
+
+/* .toggle-option.active:focus: Focus effect for active toggle option */
+.toggle-option.active:focus {
+    outline: none;
+    box-shadow: 0 8px 32px rgba(17,112,228,0.2), 0 0 0 3px rgba(17,112,228,0.4);
+}
+
+/* .toggle-option.active: Styles for the active toggle option */
+.toggle-option.active {
+    background: white;
+    box-shadow: 0 8px 32px rgba(17,112,228,0.2);
+    color: #1170e4;
+    font-weight: 600;
+    border: 2px solid #1170e4;
+    transform: translateY(-2px);
+    animation: toggleActivate 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: default;
+    opacity: 0.9;
+}
+
+/* .toggle-option.btn-invalid: Validation state for invalid toggle option */
+.toggle-option.btn-invalid {
+    border: 2px solid #e03e2d;
+    background: #fff6f6;
+    box-shadow: 0 0 0 3px rgba(224,62,45,0.1);
+}
+
+/* .toggle-option.btn-valid: Validation state for valid toggle option */
+.toggle-option.btn-valid {
+    border: 2px solid #2ea44f;
+    background: #f6fffa;
+    box-shadow: 0 0 0 3px rgba(46,164,79,0.1);
+}
+
+/* .toggle-option h3: Styles for the main label/title in a toggle option */
+.toggle-option h3 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2c3e50;
+}
+
+/* .toggle-option p: Styles for the description in a toggle option */
+.toggle-option p {
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    line-height: 1.4;
+}
+
+/* .toggle-option.active h3: Color for the main label in an active toggle option */
+.toggle-option.active h3 {
+    color: #1170e4;
+}
+
+/* .toggle-option.active p: Color for the description in an active toggle option */
+.toggle-option.active p {
+    color: #495057;
+    font-weight: 600;
+}
+
+/* .toggle-option.loading: Styles for a loading state in a toggle option */
+.toggle-option.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* .toggle-option.loading::after: Spinner for loading state */
+.toggle-option.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid #1170e4;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: toggleSpinner 0.8s linear infinite;
+}
+
+@keyframes toggleSpinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes toggleActivate {
+    0% {
+        transform: translateY(0) scale(1);
+        box-shadow: 0 4px 16px rgba(17,112,228,0.1);
+    }
+    50% {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(17,112,228,0.3);
+    }
+    100% {
+        transform: translateY(-2px) scale(1);
+        box-shadow: 0 8px 32px rgba(17,112,228,0.2);
+    }
+}
+
+/* .booking-details: Container for booking details shown after selecting a preference */
+.booking-details {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+/* .detail-item: Row for a label-value pair in booking details */
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+/* .detail-item:last-child: Removes margin from the last detail item */
+.detail-item:last-child {
+    margin-bottom: 0;
+}
+
+/* .detail-label: Styles for the label in a detail item */
+.detail-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* .detail-value: Styles for the value in a detail item */
+.detail-value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* .detail-value.highlight: Highlighted value in booking details */
+.detail-value.highlight {
+    color: #1170e4;
+}
+
+/* Responsive styles for mobile */
+@media (max-width: 640px) {
+    /* .toggle-container: Responsive adjustments for toggle container */
+    .toggle-container {
+        margin-bottom: 20px;
+        padding: 4px;
+        border-radius: 12px;
+    }
+    
+    /* .toggle-option: Responsive adjustments for toggle option */
+    .toggle-option {
+        padding: 14px 12px;
+        min-height: 75px;
+        gap: 4px;
+    }
+    
+    /* .toggle-option:not(.active): Responsive tap highlight for inactive toggle */
+    .toggle-option:not(.active) {
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* .toggle-option.active: Responsive opacity for active toggle */
+    .toggle-option.active {
+        cursor: default;
+        opacity: 0.9;
+    }
+    
+    /* .booking-details: Responsive padding for booking details */
+    .booking-details {
+        padding: 16px;
+    }
+    
+    /* .detail-item: Responsive layout for detail item */
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        margin-bottom: 16px;
+    }
+    
+    /* .detail-label, .detail-value: Responsive font size for detail items */
+    .detail-label,
+    .detail-value {
+        font-size: 0.85rem;
+    }
+}

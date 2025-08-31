@@ -1,0 +1,214 @@
+/* Payment Method Section - General Styles */
+
+/* Section description styling */
+.section-description {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+/* Payment options grid layout */
+.payment-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+/* Base payment card styles */
+.payment-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.payment-card:hover {
+    border-color: #1170e4;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+}
+
+/* Selected state for all payment cards */
+.payment-card.selected {
+    border-color: #28a745;
+    background: #f8fff9;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px rgba(40, 167, 69, 0.15);
+}
+
+.payment-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Common payment card elements */
+.payment-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.payment-card h4 {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: 600;
+}
+
+.payment-card p {
+    color: #666;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+}
+
+.payment-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #e9ecef;
+}
+
+.payment-details small {
+    color: #666;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Loading state for payment cards */
+.payment-card.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* Validation states */
+.payment-card.input-invalid {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.payment-card.input-valid {
+    border-color: #28a745;
+    background: #f8fff9;
+}
+
+/* Payment Flow Information Display */
+.payment-flow-info {
+    margin: 16px 0;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #1170e4;
+    animation: slideInDown 0.3s ease-out;
+}
+
+.payment-flow-info.highlight {
+    background: #e6f3ff;
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.flow-status {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.booking-confirmed {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.booking-pending {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.payment-pending {
+    background: #ffeaa7;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.payment-required {
+    background: #cce7ff;
+    color: #0c4a8a;
+    border: 1px solid #1170e4;
+}
+
+.flow-description {
+    margin: 8px 0 0 0;
+    color: #495057;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .payment-options {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .payment-card {
+        padding: 14px;
+    }
+    
+    .payment-icon {
+        font-size: 1.8rem;
+    }
+    
+    .payment-card h4 {
+        font-size: 1rem;
+    }
+    
+    .payment-details {
+        padding: 8px;
+    }
+}
