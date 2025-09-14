@@ -52,7 +52,7 @@ washit-laundry-management-system/
 
 ### Quick Start
 
-1. **Homepage**: Open `washit.html` in your browser
+1. **Homepage**: Open `index.html` in your browser
 2. **Booking**: Click "START BOOKING NOW!" to access the booking form
 3. **Local Development**: Use a local web server for full functionality
 
@@ -69,11 +69,11 @@ npx http-server
 php -S localhost:8000
 ```
 
-Then visit `http://localhost:8000/washit.html`
+Then visit `http://localhost:8000/index.html`
 
 ## ✨ Features
 
-### 🏠 Homepage (`washit.html`)
+### 🏠 Homepage (`index.html`)
 - **Modern Hero Section** - Eye-catching introduction with company branding
 - **Enhanced Navigation** - Optimized logo sizing and responsive menu
 - **Service Showcase** - Detailed feature descriptions with visual elements

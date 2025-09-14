@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wash.IT - Transforming Laundry Services</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Homepage Styles -->
+    <link rel="stylesheet" href="features/homepage/assets/css/landing-page-styles.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/main.css">
+    
+    <!-- Component Styles -->
+    <link rel="stylesheet" href="features/homepage/assets/css/components/navigation.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/components/footer.css">
+    
+    <!-- Section Styles -->
+    <link rel="stylesheet" href="features/homepage/assets/css/sections/washit-intro.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/sections/find-shops.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/sections/services.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/sections/partners.css">
+    <link rel="stylesheet" href="features/homepage/assets/css/sections/contact.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="features/shared/assets/images/washit-logo.png" type="image/png">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="assets/images/washit-logo.png" alt="Wash.IT Logo">
+                <span>Wash.IT</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#services">SERVICES</a></li>
+                <li><a href="#partners">PARTNERS</a></li>
+                <li><a href="#contactus">CONTACT US</a></li>
+                <li><a href="https://washit.42web.io/admin/appointments/tracking-page.php" target="_blank" class="track-booking-btn">TRACK BOOKING</a></li>
+                <li><a href="" class="join-btn" id="joinBtn">JOIN US!</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Banner Section -->
+    <section class="main-banner">
+        <div class="main-banner-container">
+            <div class="main-banner-content">
+                <h1>Transforming Laundry Services for Laundry Owners with <span class="brand-highlight">Wash.IT</span></h1>
+                <div class="features-list">
+                    <div class="feature-item pickup">Pickup and Delivery Book Monitoring Feature.</div>
+                    <div class="feature-item booking">Digital Booking List Feature.</div>
+                    <div class="feature-item receipt">Digital Receipt Generator Feature.</div>
+                    <div class="feature-item report">Sales Report Feature.</div>
+                </div>
+                <a href="features/booking-form/booking-form.html" class="cta-button">START BOOKING NOW!</a>
+            </div>
+            <div class="main-banner-image">
+                <div class="washit-logo">
+                    <img src="assets/images/washit-logo.png" alt="Wash.IT Logo">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Find Laundry Shops Section -->
+    <section id="find-shops" class="find-shops">
+        <div class="container">
+            <h2>Find Laundry Shops Near You</h2>
+            <p>Browse available laundry shops in your area. Hover over any pin to see services offered and book directly.</p>
+            <div class="map-container">
+                <div class="map-placeholder">
+                    <p>Filter by Barangay: <select><option>All Areas</option></select></p>
+                    <div class="map-controls">
+                        <button class="nearby-shops-btn">Nearby shops</button>
+                        <button class="hide-btn">Hide</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>Our Services</h2>
+            
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Pickup and Delivery Book Monitoring Feature</h3>
+                    <p>The Pickup and Delivery Book Monitoring feature provides a seamless way to manage and track laundry orders from start to finish. This system automates the scheduling, monitoring, and updating of both pickup and delivery bookings, ensuring that laundry service providers can efficiently coordinate with customers. With real-time status updates and detailed logs, it minimizes errors, enhances customer communication, and streamlines operations, making the entire process more organized and reliable. This ensures timely service while giving both laundry providers and customers full visibility over each transaction.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/pickup-delivery-monitor.png" alt="Pickup and Delivery Book Monitoring Image">
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Digital Booking List Feature</h3>
+                    <p>The Digital Booking List Feature allows laundry service providers to efficiently manage and organize customer bookings in one centralized system. With this feature, all booking details, including customer information, service types, and schedules, are digitally recorded and accessible in real-time. This eliminates the need for manual entry, reduces the risk of scheduling conflicts, and streamlines operations. Users can easily view, edit, or update bookings, ensuring a more convenient and accurate process for both the service provider and the customer.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/digital-booking-list.png" alt="Digital Booking List Feature Image">
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Digital Receipt Generator Feature</h3>
+                    <p>The Digital Receipt Generator Feature simplifies the billing process by automatically creating digital receipts for each completed transaction. After a service is rendered, the system generates a clear, professional receipt that includes all relevant details such as the service provided, total cost, and payment method. These receipts can be easily shared with customers via email or printed, reducing paperwork and providing a seamless, efficient experience for both the service provider and the customer.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/digital-receipt-generator.png" alt="Digital Receipt Generator Image">
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Inventory Feature</h3>
+                    <p>The inventory feature allows laundry service providers to efficiently manage their supplies and equipment. It includes functionalities for tracking stock levels, monitoring usage, and generating alerts for low inventory. Users can categorize items, set reorder points, and view detailed reports on inventory status. This ensures that laundry operations run smoothly without interruptions due to supply shortages.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/inventory.png" alt="Inventory Feature Image">
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Expense Feature</h3>
+                    <p>The expense feature allows users to record, view, and manage all supply and utility expenses in one place. It provides an organized table of expense entries, supports adding new expenses, and enables easy tracking of spending for better financial management.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/expense.png" alt="Supply Inventory Feature Image">
+                </div>
+            </div>
+
+            <div class="service-item">
+                <div class="service-content">
+                    <h3>Report Feature</h3>
+                    <p>The report page provides a summary of sales, expenses, inventory, and key business insights for a selected period. Users can filter data, view trends through charts and tables, and export the report as a PDF. The layout is organized for quick reference and easy interpretation.</p>
+                </div>
+                <div class="service-image">
+                    <img src="https://washit.42web.io/landing-page/img/m_report.png" alt="Report Feature Image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section id="partners" class="partners">
+        <div class="container">
+            <h2>Our Partners</h2>
+            <div class="partners-grid">
+                <div class="partner-item">
+                    <img src="https://washit.42web.io/uploads/avatars/1750320060_KR_LaundryHub.png" alt="Kylie Rose Laundry Hub">
+                    <h3>Kylie Rose Laundry Hub</h3>
+                    <p>Trancoville, Baguio City</p>
+                </div>
+                <div class="partner-item">
+                    <img src="https://washit.42web.io/uploads/avatars/1750320120_M_DGuzman.png" alt="M. De Guzman Laundry Shop">
+                    <h3>M. De Guzman Laundry Shop</h3>
+                    <p>Trancoville, Baguio City</p>
+                </div>
+                <div class="partner-item">
+                    <img src="https://washit.42web.io/uploads/avatars/1750320120_SPA_Laundry_Hub.png" alt="Sam, Paull, Adrianne Laundry Hub">
+                    <h3>Sam, Paull, Adrianne Laundry Hub</h3>
+                    <p>Trancoville, Baguio City</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contactus" class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>We're here to support you. Reach out with any questions or assistance you need.</p>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <strong>Email:</strong> washitlms@gmail.com
+                    </div>
+                    <div class="contact-item">
+                        <strong>Phone:</strong> (+63)9610166195
+                    </div>
+                    <div class="contact-item">
+                        <strong>Address:</strong> University of the Cordilleras, Gov. Pack Rd., Baguio City, Benguet
+                    </div>
+                </div>
+                
+                <form class="contact-form">
+                    <input type="text" placeholder="Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <textarea placeholder="Message" rows="5" required></textarea>
+                    <button type="submit">SEND MESSAGE</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="assets/images/washit-logo.png" alt="Wash.IT Logo">
+                    <span>Wash.IT</span>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Additional Links</h4>
+                    <ul>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#partners">Partners</a></li>
+                        <li><a href="#contactus">Contact Us</a></li>
+                        <li><a href="features/booking-form/booking-form.html">Book Now</a></li>
+                        <li><a href="https://washit.42web.io/admin/login.php" target="_blank">Join Us!</a></li>
+                        <li><a href="https://washit.42web.io/admin/appointments/tracking-page.php" target="_blank">Track Booking</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>A Capstone Project built by Giacao, Mike Joshua S. | Ramos, Denver Ivan A. | Lacanaria, Armel B.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Landing Page Interactions -->
+    <script src="features/homepage/assets/js/landing-page-interactions.js"></script>
+    
+    <!-- Join Button Text Change -->
+    <script>
+        const joinBtn = document.getElementById('joinBtn');
+        joinBtn.addEventListener('mouseenter', function() {
+            this.textContent = 'SIGNUP/LOGIN';
+        });
+        joinBtn.addEventListener('mouseleave', function() {
+            this.textContent = 'JOIN US!';
+        });
+    </script>
+</body>
+</html>
