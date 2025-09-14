@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wash.IT Booking Form</title>
+    
+    <!-- CSS Files - Base Styles -->
+    <link rel="stylesheet" href="assets/css/base/reset.css">
+    <link rel="stylesheet" href="assets/css/base/typography.css">
+    <link rel="stylesheet" href="assets/css/base/layout.css">
+    
+    <!-- CSS Files - Shared Components -->
+    <link rel="stylesheet" href="components/buttons.css">
+    <link rel="stylesheet" href="components/loading.css">
+    <link rel="stylesheet" href="components/sections.css">
+    
+    <!-- CSS Files - Modular Sections -->
+    <link rel="stylesheet" href="booking-preference/booking-preference-styles.css">
+    <link rel="stylesheet" href="booking-preference/normal-rush/normal-rush-styles.css">
+    <link rel="stylesheet" href="service-details/service-details-styles.css">
+    <link rel="stylesheet" href="laundry-items/laundry-items-styles.css">
+    <link rel="stylesheet" href="book-schedule/book-schedule-styles.css">
+    <link rel="stylesheet" href="customer-information/customer-information-styles.css">
+    <link rel="stylesheet" href="payment-method/payment-method-styles.css">
+    <link rel="stylesheet" href="payment-method/cod/cod-styles.css">
+    <link rel="stylesheet" href="payment-method/cashless/cashless-styles.css">
+    <link rel="stylesheet" href="confirm-booking/confirm-booking-styles.css">
+    
+    <!-- CSS Files - Legacy Components -->
+    <link rel="stylesheet" href="assets/css/components/email-suggestions.css">
+    <link rel="stylesheet" href="assets/receipts/customer/customer-receipt-styles.css">
+    <link rel="stylesheet" href="assets/receipts/business/business-receipt-styles.css">
+    
+    <!-- CSS Files - Features -->
+    <link rel="stylesheet" href="assets/css/features/responsive.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <script>
+        // Test function to manually trigger validation
+        function testValidation() {
+            const result = validateAll();
+            return result;
+        }
+
+        // Test function to manually trigger form submission
+        function testFormSubmit() {
+            const form = document.getElementById('bookingForm');
+            if (form) {
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                form.dispatchEvent(submitEvent);
+            }
+        }
+
+        // Make test functions available globally
+        window.testValidation = testValidation;
+        window.testFormSubmit = testFormSubmit;
+    </script>
+</head>
+<body>
+
+<div class="booking-container">
+    <h2>Book Your Laundry Service</h2>
+
+    <!-- Step 1: Booking Type -->
+    <div id="step1" class="centered-section">
+        <h4 class="pickup-header" id="booking-preference-label">🔄 Choose your booking preference: <span style="color:red">*</span></h4>
+        <div class="toggle-container" role="radiogroup" aria-labelledby="booking-preference-label">
+            <div class="toggle-option" 
+                 onclick="selectBookingType('normal')" 
+                 id="toggleNormal"
+                 role="radio"
+                 aria-checked="false"
+                 tabindex="0"
+                 aria-label="Normal booking - Standard 2-3 day processing">
+                <h3>📅 Normal</h3>
+                <p>Standard</p>
+            </div>
+            <div class="toggle-option" 
+                 onclick="selectBookingType('rush')" 
+                 id="toggleRush"
+                 role="radio"
+                 aria-checked="false"
+                 tabindex="-1"
+                 aria-label="Rush booking - Express 1.5 day processing">
+                <h3>⚡ Rush</h3>
+                <p>Express</p>
+            </div>
+        </div>
+        <div class="booking-details hidden" id="bookingDetails">
+            <div class="detail-item">
+                <span class="detail-label">Processing Time:</span>
+                <span class="detail-value" id="processingTime">2-3 days</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Pricing:</span>
+                <span class="detail-value" id="pricing">Standard rate</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Availability:</span>
+                <span class="detail-value highlight" id="availability">All time slots</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complete Form (hidden by default) -->
+    <div class="form-steps hidden" id="formSteps">
+    <!-- Booking Type Indicator (hidden by default) -->
+    <div class="booking-type-indicator hidden" id="bookingTypeIndicator">
+            <strong id="bookingTypeText">Normal Booking</strong> - 3-day processing time
+        </div>
+
+        <form id="bookingForm">
+            <!-- Service Option Section -->
+            <div class="form-section" data-section="serviceSection">
+                <h3>Service Details</h3>
+                <h4 class="pickup-header">🧾 Choose Service Option <span style="color:red">*</span></h4>
+                <div class="service-options-grid">
+                    <div class="service-card" data-value="pickup_delivery" onclick="selectService(this, 'pickup_delivery')">
+                        <div class="service-icon">🚚</div>
+                        <h4>Pickup & Delivery</h4>
+                        <p>We pick up and deliver your items</p>
+                    </div>
+                    
+                    <div class="service-card" data-value="pickup_selfclaim" onclick="selectService(this, 'pickup_selfclaim')">
+                        <div class="service-icon">🏪</div>
+                        <h4>Pickup & Self-Claim</h4>
+                        <p>We pick up, you collect at shop</p>
+                    </div>
+                    
+                    <div class="service-card" data-value="dropoff_delivery" onclick="selectService(this, 'dropoff_delivery')">
+                        <div class="service-icon">📦</div>
+                        <h4>Drop-off & Delivery</h4>
+                        <p>You drop off, we deliver</p>
+                    </div>
+                </div>
+                <!-- Hidden input to maintain form compatibility -->
+                <input type="hidden" id="serviceOption" name="serviceOption" required>
+            </div>
+
+            <!-- Date & Time Section -->
+            
+            <!-- Laundry Items Section (inserted) -->
+            <div class="form-section" data-section="laundryItemsSection" id="laundryItemsSection">
+                <h3>Laundry Items</h3>
+
+                <fieldset aria-labelledby="laundry-legend" class="laundry-fieldset">
+                    <legend id="laundry-legend" class="sr-only">Laundry categories</legend>
+
+                    <div class="laundry-table-wrap">
+                        <h4 class="pickup-header" id="items-desc">🧺 Select the number of items in each category <span style="color:red">*</span></h4>
+                        <table class="items-table" aria-describedby="items-desc">
+                            <thead>
+                                <tr><th><strong>Item Category</strong></th><th><strong>Item Quantity</strong></th><th><strong>Service Price</strong></th></tr>
+                            </thead>
+                            <tbody id="laundryItemsBody">
+                                <tr data-category="everyday">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Everyday Clothing</strong>
+                                        <small>Shirts, Pants, Dresses, Skirts, Jackets, Sweaters</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="25" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱25/item</strong></td>
+                                </tr>
+                                <tr data-category="delicates">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Delicates & Small Items</strong>
+                                        <small>Socks, Underwear, Handkerchiefs, Light Tops</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="25" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱25/item</strong></td>
+                                </tr>
+                                <tr data-category="bedding">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Beddings & Linens</strong>
+                                        <small>Pillowcases, Bed Sheets, Light Blankets, Towels</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="35" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱35/item</strong></td>
+                                </tr>
+                                <tr data-category="heavy">
+                                    <td data-label="Item Category">
+                                        <strong class="category-name">Heavy & Bulky Items</strong>
+                                        <small>Thick Blankets, Comforters, Quilts, Large Wool/Fleece Blankets</small>
+                                    </td>
+                                    <td data-label="Item Quantity"><input type="number" min="0" max="999" step="1" class="qty-input" data-price="35" placeholder="Max 30 items" required /></td>
+                                    <td data-label="Service Price" class="price-cell"><strong>₱35/item</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Hidden input to include items JSON in form submit -->
+                    <input type="hidden" id="laundryItemsInput" name="laundryItems">
+                </fieldset>
+            </div>
+            <div class="form-section" data-section="scheduleSection">
+                <h3>Book a Schedule</h3>
+                <!-- Pickup/Drop-off Scheduling Header -->
+                <h4 class="pickup-header" id="calendarHeader">📅 Choose Pickup Schedule <span style="color:red">*</span></h4>
+                <p class="section-subtext" id="calendarSubtext">
+                    Select your preferred pickup date and time:
+                </p>
+                
+                <div class="calendar-time-container">
+                    <!-- Calendar -->
+                    <div class="calendar-wrapper">
+                        <div id="calendar">
+                            <div class="calendar-navigation">
+                                <button type="button" onclick="previousMonth()">◀</button>
+                                <h4 id="currentMonth">August 2025</h4>
+                                <button type="button" onclick="nextMonth()">▶</button>
+                            </div>
+                            <div id="calendarGrid" class="calendar-grid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Time Slots -->
+                    <div class="time-slots-wrapper">
+                        <div id="timeSlots" class="time-slots-container">
+                            <p class="time-slots-placeholder">Please select a date first</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Self-Claim Scheduling (hidden by default) -->
+                <div id="selfClaimSection" class="hidden self-claim-section">
+                    <h4 class="selfclaim-header">🏪 Choose Self-claim Schedule <span style="color:red">*</span></h4>
+                    <p class="section-subtext">
+                        Your items will be ready for pickup. Select when you'd like to collect them:
+                    </p>
+                    
+                    <div class="calendar-time-container">
+                        <!-- Self-Claim Calendar -->
+                        <div class="calendar-wrapper">
+                            <div id="selfClaimCalendar">
+                                <div class="calendar-navigation">
+                                    <button type="button" onclick="previousMonthSelfClaim()">◀</button>
+                                    <h4 id="currentMonthSelfClaim">Loading...</h4>
+                                    <button type="button" onclick="nextMonthSelfClaim()">▶</button>
+                                </div>
+                                <div id="selfClaimCalendarGrid" class="calendar-grid"></div>
+                            </div>
+                        </div>
+
+                        <!-- Self-Claim Time Slots -->
+                        <div class="time-slots-wrapper">
+                            <div id="selfClaimTimeSlots" class="time-slots-container">
+                                    <p class="time-slots-placeholder">Please select a claim date first</p>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Option Indicator (moved here from service section) -->
+                <div class="service-option-indicator hidden mt-20" id="serviceOptionIndicator">
+                    <div class="service-description" id="serviceDescription">
+                        Service details will appear here
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Information -->
+            <div class="form-section" data-section="customerSection">
+                <h3>👤 Customer Information <span style="color:red">*</span></h3>
+                
+                <!-- Auto-fill banner will be inserted here -->
+                <div id="autoFillBanner"></div>
+                
+                <!-- First Name, Last Name -->
+                <div class="form-grid">
+                    <div>
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" required>
+                    </div>
+                    <div>
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" required>
+                    </div>
+                </div>
+                
+                <!-- Contact Number, Email -->
+                <div class="form-grid">
+                    <div>
+                        <label for="contactNumber">Contact Number *</label>
+                        <input type="tel" id="contactNumber" pattern="09[0-9]{9}" placeholder="09XXXXXXXXX" maxlength="11" required>
+                    </div>
+                    <div>
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" placeholder="your-email@example.com" required>
+                    </div>
+                </div>
+                
+                <!-- Barangay, Address Information -->
+                <div class="form-grid">
+                    <div>
+                        <label for="barangay">Barangay *</label>
+                        <input type="text" id="barangay" required>
+                    </div>
+                    <div>
+                        <label for="address">Address Details *</label>
+                        <input type="text" id="address" placeholder="House No., Street, Subdivision, etc." required>
+                    </div>
+                </div>
+                
+                <!-- Map Container for Pickup Address -->
+                <label for="pickupMap">Pickup Address Location (Click on map to set pin)</label>
+                <div id="pickupMap" style="height: 300px; width: 100%; margin-bottom: 10px;"></div>
+                
+                <label for="specialInstructions">Special Instructions (Optional)</label>
+                <input type="text" id="specialInstructions" placeholder="Any special requests or instructions...">
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="form-section" data-section="paymentSection">
+                <h3>💳 Payment Method <span style="color:red">*</span></h3>
+                <p class="section-description">Choose how you'd like to pay for your laundry service</p>
+                
+                <div class="payment-options">
+                    <div class="payment-card" data-value="cash" onclick="selectPaymentMethod(this, 'cash')">
+                        <div class="payment-icon">💵</div>
+                        <h4>Cash on Delivery (COD)</h4>
+                        <p>Pay when you receive your laundry</p>
+                        <div class="payment-details">
+                            <small>• Booking confirmed immediately</small>
+                            <small>• Pay at pickup/delivery time</small>
+                            <small>• Exact amount preferred</small>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-card" data-value="cashless" onclick="selectPaymentMethod(this, 'cashless')">
+                        <div class="payment-icon">📱</div>
+                        <h4>Cashless Payment</h4>
+                        <p>GCash, Maya, Online Banking</p>
+                        <div class="payment-details">
+                            <small>• Payment required before confirmation</small>
+                            <small>• Secure digital transaction</small>
+                            <small>• No payment needed on delivery</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hidden input to maintain form compatibility -->
+                <input type="hidden" id="paymentMethod" name="paymentMethod" required>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="form-section" data-section="confirmSection">
+                <h3>✅ Confirm Booking</h3>
+                <p>Please review all information and submit your booking request.</p>
+                <button type="submit" class="btn btn-primary submit-btn">Submit Booking</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Booking Confirmation Modal (hidden by default) -->
+    <div id="booking-modal" class="modal-overlay hidden" tabindex="-1" role="dialog" aria-labelledby="booking-modal-title" aria-hidden="true">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="booking-modal-title">🎉 Booking Confirmed!</h3>
+                <button type="button" class="modal-close" onclick="closeBookingModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="reviewDetails"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeBookingModal()">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printReceipt()">Print Receipt</button>
+                <button type="button" class="btn btn-success primary-action" onclick="startNewBooking()">📝 Create New Booking</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Files - Core Configuration -->
+<script src="assets/js/core/config.js"></script>
+<script src="assets/js/core/time-slots.js"></script>
+
+<!-- JavaScript Files - Utilities -->
+<script src="utils/validation.js"></script>
+
+<!-- JavaScript Files - Modular Sections -->
+<script src="booking-preference/booking-preference.js"></script>
+<script src="booking-preference/normal-rush/normal.js"></script>
+<script src="booking-preference/normal-rush/rush.js"></script>
+<script src="service-details/service-details.js"></script>
+<script src="laundry-items/laundry-items.js"></script>
+<script src="book-schedule/book-schedule.js"></script>
+<script src="customer-information/customer-information.js"></script>
+<script src="payment-method/payment-method.js"></script>
+<script src="payment-method/cod/cod.js"></script>
+<script src="payment-method/cashless/cashless.js"></script>
+<script src="confirm-booking/confirm-booking.js"></script>
+
+<!-- JavaScript Files - Core Features -->
+<script src="assets/js/features/email-suggestions.js"></script>
+<script src="assets/js/features/autofill-init.js"></script>
+<script src="assets/receipts/customer/customer-receipt.js"></script>
+<script src="assets/receipts/business/business-receipt.js"></script>
+<script src="assets/js/features/form-navigation.js"></script>
+
+<!-- JavaScript Files - Calendar Features -->
+<script src="assets/js/features/calendar-data.js"></script>
+<script src="assets/js/features/calendar-renderer.js"></script>
+<script src="assets/js/features/time-slots.js"></script>
+
+<!-- Leaflet JS - Load BEFORE map.js -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- JavaScript Files - Map Features -->
+<script src="assets/js/features/map.js"></script>
+
+<!-- JavaScript Files - Legacy Support -->
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>

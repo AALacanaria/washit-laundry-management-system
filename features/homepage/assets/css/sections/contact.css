@@ -1,0 +1,126 @@
+/* Contact Section Styles */
+.contact {
+    padding: 80px 0;
+}
+
+.contact h2 {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #1e40af;
+    letter-spacing: -0.02em;
+}
+
+.contact > p {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 400;
+    margin-bottom: 60px;
+    color: #64748b;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+}
+
+.contact-info {
+    background: #f8fafc;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.contact-item {
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 20px;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.5;
+}
+
+.contact-item strong {
+    color: #1e40af;
+    font-weight: 600;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.contact-form input,
+.contact-form textarea {
+    font-family: 'Inter', sans-serif;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition: border-color 0.3s ease;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.contact-form button {
+    font-family: 'Inter', sans-serif;
+    background: #3b82f6;
+    color: white;
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.contact-form button:hover {
+    background: #1d4ed8;
+}
+
+/* Contact Responsive */
+/* Tablet/iPad Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .contact-content {
+        gap: 40px;
+    }
+    
+    .contact h2 {
+        font-size: 28px;
+    }
+    
+    .contact p {
+        font-size: 16px;
+    }
+    
+    .contact-form input,
+    .contact-form textarea {
+        font-size: 15px;
+    }
+    
+    .contact-form button {
+        font-size: 15px;
+        padding: 12px 24px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,88 @@
+/* Typography Styles */
+
+/* CSS Custom Properties for Font Family */
+:root {
+    --font-family: Arial, Helvetica, sans-serif;
+    --heading-font: 'Poppins', Arial, Helvetica, sans-serif;
+    --paragraph-font: 'Montserrat', Arial, Helvetica, sans-serif;
+}
+
+/* Universal Font Family Application */
+body {
+    font-family: var(--font-family);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 10px;
+    font-family: var(--heading-font);
+}
+
+h1 {
+    /* Font family now inherited from h1-h6 rule above */
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 1.1rem;
+}
+
+h4 {
+    font-size: 1.05rem;
+}
+
+h5 {
+    font-size: 1rem;
+}
+
+/* Paragraphs */
+p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    font-family: var(--paragraph-font);
+}
+
+/* Text alignment utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Font weight utilities */
+.font-weight-normal {
+    font-weight: 400;
+}
+
+.font-weight-medium {
+    font-weight: 500;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+}
+
+/* Font size utilities */
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-base {
+    font-size: 1rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}

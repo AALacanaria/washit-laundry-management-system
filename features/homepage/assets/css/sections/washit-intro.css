@@ -1,0 +1,239 @@
+/* Main Banner Section Styles */
+.main-banner {
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 90px 0 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+}
+
+.main-banner-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+    min-height: calc(100vh - 90px);
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 40px;
+    gap: 40px;
+}
+
+.main-banner-content {
+    padding-right: 40px;
+    padding-left: 20px;
+}
+
+.main-banner-content h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 32px;
+    line-height: 1.2;
+    color: #1a1a1a;
+    letter-spacing: -0.02em;
+}
+
+.brand-highlight {
+    color: #3b82f6;
+}
+
+.main-banner-content h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 56px;
+    margin-bottom: 32px;
+    color: #3b82f6;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.features-list {
+    margin-bottom: 48px;
+}
+
+.feature-item {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 18px;
+    padding-left: 40px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.feature-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background: #1e40af;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+}
+
+.feature-item.pickup::before {
+    content: "🚚";
+}
+
+.feature-item.booking::before {
+    content: "📋";
+}
+
+.feature-item.receipt::before {
+    content: "🧾";
+}
+
+.feature-item.report::before {
+    content: "📊";
+}
+
+.cta-button {
+    font-family: 'Inter', sans-serif;
+    display: inline-block;
+    background: #1d4ed8;
+    color: white;
+    padding: 20px 40px;
+    text-decoration: none;
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 14px rgba(29, 78, 216, 0.3);
+    margin-top: 10px;
+}
+
+.cta-button:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(29, 78, 216, 0.4);
+}
+
+.main-banner-image {
+    text-align: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.washit-logo {
+    width: 100%;
+    height: 600px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.washit-logo img {
+    max-width: 120%;
+    max-height: 120%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.main-banner-image img {
+    max-width: 100%;
+    height: auto;
+    max-height: 600px;
+}
+
+/* Main Banner Responsive */
+/* Tablet/iPad Responsive */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .main-banner-container {
+        grid-template-columns: 1fr 1fr;
+        padding: 40px 30px;
+        gap: 30px;
+    }
+    
+    .main-banner-content h1 {
+        font-size: 42px;
+        line-height: 1.2;
+    }
+    
+    .feature-item {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+    
+    .washit-logo {
+        height: 450px;
+    }
+    
+    .washit-logo img {
+        max-width: 110%;
+        max-height: 110%;
+    }
+    
+    .cta-button {
+        font-size: 19px;
+        padding: 18px 36px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .main-banner-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 40px 20px;
+        gap: 40px;
+    }
+    
+    .main-banner-content {
+        padding-right: 0;
+        padding-left: 0;
+        order: 2;
+    }
+    
+    .main-banner-image {
+        order: 1;
+    }
+    
+    .main-banner-content h1 {
+        font-size: 28px;
+        line-height: 1.3;
+    }
+    
+    .feature-item {
+        font-size: 18px;
+        padding-left: 35px;
+        margin-bottom: 15px;
+    }
+    
+    .feature-item::before {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+    
+    .washit-logo {
+        width: 100%;
+        height: 300px;
+    }
+    
+    .washit-logo img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    
+    .cta-button {
+        font-size: 18px;
+        padding: 16px 32px;
+    }
+}
