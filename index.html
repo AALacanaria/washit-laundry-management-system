@@ -19,11 +19,17 @@
     <link rel="stylesheet" href="features/homepage/assets/css/components/footer.css">
     
     <!-- Section Styles -->
-    <link rel="stylesheet" href="features/homepage/assets/css/sections/washit-intro.css">
-    <link rel="stylesheet" href="features/homepage/assets/css/sections/find-shops.css">
-    <link rel="stylesheet" href="features/homepage/assets/css/sections/services.css">
-    <link rel="stylesheet" href="features/homepage/assets/css/sections/partners.css">
-    <link rel="stylesheet" href="features/homepage/assets/css/sections/contact.css">
+    <link rel="stylesheet" href="features/homepage/main-banner/assets/css/washit-intro.css">
+    <link rel="stylesheet" href="features/homepage/services/assets/css/services.css">
+    <link rel="stylesheet" href="features/homepage/partners/assets/css/partners.css">
+    <link rel="stylesheet" href="features/homepage/contact/assets/css/contact.css">
+    
+    <!-- Find Laundry Shops Styles -->
+    <link rel="stylesheet" href="features/homepage/find-laundry-shops/assets/css/find-laundry-shops.css">
+    <link rel="stylesheet" href="features/homepage/find-laundry-shops/assets/css/shop-cards.css">
+    
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     
     <!-- Favicon -->
     <link rel="icon" href="features/shared/assets/images/washit-logo.png" type="image/png">
@@ -57,7 +63,7 @@
                     <div class="feature-item receipt">Digital Receipt Generator Feature.</div>
                     <div class="feature-item report">Sales Report Feature.</div>
                 </div>
-                <a href="features/booking-form/booking-form.html" class="cta-button">START BOOKING NOW!</a>
+                <a href="#find-shops" class="cta-button">START BOOKING NOW!</a>
             </div>
             <div class="main-banner-image">
                 <div class="washit-logo">
@@ -72,14 +78,32 @@
         <div class="container">
             <h2>Find Laundry Shops Near You</h2>
             <p>Browse available laundry shops in your area. Hover over any pin to see services offered and book directly.</p>
+            
+            <!-- Shop Cards Section -->
+            <div class="shop-cards-container">
+                <div class="shop-cards-grid">
+                    <!-- Shop cards will be populated by JavaScript -->
+                </div>
+            </div>
+            
             <div class="map-container">
-                <div class="map-placeholder">
-                    <p>Filter by Barangay: <select><option>All Areas</option></select></p>
-                    <div class="map-controls">
-                        <button class="nearby-shops-btn">Nearby shops</button>
-                        <button class="hide-btn">Hide</button>
+                <div class="map-controls">
+                    <div class="filter-control">
+                        <label for="barangay-filter">Filter by Barangay:</label>
+                        <select id="barangay-filter">
+                            <option value="">All Areas</option>
+                            <option value="trancoville">Trancoville</option>
+                            <option value="session-road">Session Road</option>
+                            <option value="burnham-park">Burnham Park</option>
+                            <option value="sm-baguio">SM Baguio</option>
+                        </select>
+                    </div>
+                    <div class="map-buttons">
+                        <button class="nearby-shops-btn map-btn" onclick="findNearbyShops()">Find Nearby Shops</button>
+                        <button class="hide-btn map-btn" onclick="toggleMap()">Hide Map</button>
                     </div>
                 </div>
+                <div id="map"></div>
             </div>
         </div>
     </section>
@@ -235,15 +259,17 @@
     <!-- Landing Page Interactions -->
     <script src="features/homepage/assets/js/landing-page-interactions.js"></script>
     
+    <!-- Navigation JavaScript -->
+    <script src="features/homepage/navigation/assets/js/navigation.js"></script>
+    
+    <!-- Leaflet JS for Maps -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Find Laundry Shops JavaScript -->
+    <script src="features/homepage/find-laundry-shops/assets/js/find-laundry-shops.js"></script>
+    <script src="features/homepage/find-laundry-shops/assets/js/shop-cards.js"></script>
+    
     <!-- Join Button Text Change -->
-    <script>
-        const joinBtn = document.getElementById('joinBtn');
-        joinBtn.addEventListener('mouseenter', function() {
-            this.textContent = 'SIGNUP/LOGIN';
-        });
-        joinBtn.addEventListener('mouseleave', function() {
-            this.textContent = 'JOIN US!';
-        });
-    </script>
+    <script src="features/homepage/navigation/assets/js/join-button.js"></script>
 </body>
 </html>

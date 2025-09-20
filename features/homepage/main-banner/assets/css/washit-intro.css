@@ -2,8 +2,8 @@
 .main-banner {
     background: #ffffff;
     color: #1a1a1a;
-    padding: 90px 0 0;
-    min-height: 100vh;
+    padding: 30px 0 0;
+    min-height: 80vh;
     display: flex;
     align-items: center;
     position: relative;
@@ -15,11 +15,11 @@
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
     align-items: center;
-    min-height: calc(100vh - 90px);
+    min-height: calc(80vh - 30px);
     max-width: 1400px;
     margin: 0 auto;
-    padding: 40px 40px;
-    gap: 40px;
+    padding: 30px 40px;
+    gap: 30px;
 }
 
 .main-banner-content {

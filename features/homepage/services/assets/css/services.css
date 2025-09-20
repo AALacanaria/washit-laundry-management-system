@@ -1,6 +1,6 @@
 /* Services Section Styles */
 .services {
-    padding: 80px 0;
+    padding: 50px 0;
 }
 
 .services h2 {
@@ -8,7 +8,7 @@
     text-align: center;
     font-size: 42px;
     font-weight: 700;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     color: #1e40af;
     letter-spacing: -0.02em;
 }
@@ -16,8 +16,8 @@
 .service-item {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 50px;
-    margin-bottom: 60px;
+    gap: 40px;
+    margin-bottom: 40px;
     align-items: center;
 }
 
