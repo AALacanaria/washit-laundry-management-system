@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create custom WashIt icon for markers
     var washitIcon = L.icon({
-        iconUrl: './features/shared/assets/images/washit-logo.png',
+        iconUrl: './assets/images/washit-map-pin.png',
         iconSize: [40, 40], // Size of the icon
         iconAnchor: [20, 40], // Point of the icon which will correspond to marker's location
         popupAnchor: [0, -40], // Point from which the popup should open relative to the iconAnchor
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function() {
     testImg.onerror = function() {
         // Failed to load logo
     };
-    testImg.src = './features/shared/assets/images/washit-logo.png';
+    testImg.src = './assets/images/washit-map-pin.png';
 
     // Add laundry shop markers - Partner shops in Trancoville, Baguio City
     var shops = getMapShopData();
