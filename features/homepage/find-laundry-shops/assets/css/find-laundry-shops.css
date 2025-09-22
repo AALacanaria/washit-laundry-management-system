@@ -116,8 +116,7 @@
 }
 
 #map {
-    height: 360px;
-    width: 100%;
+    /* Removed width: 100% and height to allow flexbox control */
     border-radius: 8px;
     margin-top: 8px;
     border: 1px solid #e5e7eb;
@@ -198,7 +197,7 @@
     }
     
     #map {
-        height: 280px;
+        height: 350px;
     }
     
     .map-container {

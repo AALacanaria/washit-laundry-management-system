@@ -26,6 +26,7 @@
     
     <!-- Find Laundry Shops Styles -->
     <link rel="stylesheet" href="features/homepage/find-laundry-shops/assets/css/find-laundry-shops.css">
+    <link rel="stylesheet" href="features/homepage/find-laundry-shops/assets/css/find-laundry-shops-styles.css">
     <link rel="stylesheet" href="features/homepage/find-laundry-shops/assets/css/shop-cards.css">
     
     <!-- Leaflet CSS for Maps -->
@@ -85,6 +86,69 @@
                     <!-- Shop cards will be populated by JavaScript -->
                 </div>
             </div>
+
+            <!-- Shop Details Modal -->
+            <div class="shop-modal-overlay" id="shopModal">
+                <div class="shop-modal">
+                    <button class="shop-modal-close" id="closeModal">×</button>
+                    
+                    <div class="shop-modal-header">
+                        <div class="shop-hero">
+                            <div class="shop-hero-logo">
+                                <img id="modalLogo" src="" alt="Shop Logo">
+                                <span id="modalLogoFallback" class="fallback-initial" aria-hidden="true"></span>
+                            </div>
+                            <div class="shop-hero-content">
+                                <h2 id="modalShopName"></h2>
+                                <p class="shop-hero-tagline" id="modalTagline"></p>
+                                <div class="shop-hero-meta">
+                                    <div class="shop-modal-hours" id="modalHours"></div>
+                                    <div class="shop-modal-rating" id="modalRating"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="shop-modal-content">
+                        <div class="shop-modal-section">
+                            <h3>🛍️ Services Offered</h3>
+                            <div class="shop-modal-services" id="modalServices">
+                                <!-- Services will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="shop-modal-section">
+                            <h3>🕒 Operating Hours</h3>
+                            <div class="shop-modal-hours-detail" id="modalFullHours">
+                                <!-- Hours will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="shop-modal-section">
+                            <h3>📍 Location & Contact</h3>
+                            <div class="shop-modal-contact" id="modalContact">
+                                <!-- Contact info will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="shop-modal-section">
+                            <h3>💳 Payment Methods</h3>
+                            <div class="shop-modal-payments" id="modalPayments">
+                                <!-- Payment methods will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="shop-modal-actions">
+                            <button class="shop-modal-btn primary" onclick="window.location.href='features/booking-form/booking-form.html'">
+                                Book Now
+                            </button>
+                            <button class="shop-modal-btn secondary" id="closeModalBtn">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class="map-container">
                 <div class="map-controls">
@@ -103,7 +167,19 @@
                         <button class="hide-btn map-btn" onclick="toggleMap()">Hide Map</button>
                     </div>
                 </div>
-                <div id="map"></div>
+                
+                <div class="map-layout">
+                    <div id="map"></div>
+                    <div class="map-side-panel" id="mapSidePanel">
+                        <div class="side-panel-header">
+                            <h3 id="sidePanelTitle">Shop Information</h3>
+                            <button class="side-panel-close" id="closeSidePanel">×</button>
+                        </div>
+                        <div class="side-panel-content" id="sidePanelContent">
+                            <!-- Shop information will be populated here -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

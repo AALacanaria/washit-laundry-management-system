@@ -1,0 +1,262 @@
+/* Find Laundry Shops Section - Original Inline Styles Extracted */
+
+/* Map layout with side panel */
+.map-layout {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 20px;
+    height: 500px;
+    margin-top: 10px;
+    position: relative;
+    width: 100%;
+}
+
+/* Side panel styling - appears on LEFT side */
+.map-side-panel {
+    order: 1; /* Panel comes first in flex order */
+    width: 0 !important;
+    flex-shrink: 0 !important; /* Prevents panel from shrinking */
+    overflow: hidden;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+    transition: width 0.3s ease;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.map-side-panel.active {
+    width: 350px !important;
+}
+
+/* Map container styling - appears on RIGHT side */
+#map {
+    order: 2; /* Map comes second in flex order */
+    flex: 1 !important;
+    min-width: 0; /* Prevents flex item from overflowing */
+    height: 100% !important;
+    border-radius: 8px;
+    transition: flex 0.3s ease;
+}
+
+.side-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.side-panel-header h3 {
+    margin: 0;
+    color: #1e40af;
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.side-panel-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.side-panel-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.side-panel-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Services grid styling for better responsive layout */
+.services-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Responsive services grid */
+@media (max-width: 350px) {
+    .services-grid-3col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Custom popup styling for left-positioned popups (keeping as fallback) */
+.shop-popup-left .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+}
+
+.shop-popup-left .leaflet-popup-content {
+    margin: 12px;
+    line-height: 1.4;
+}
+
+.shop-popup-left .leaflet-popup-tip {
+    background: white;
+    border: 1px solid #e5e7eb;
+}
+
+/* Map controls styling */
+.map-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filter-control label {
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
+}
+
+.filter-control select {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    color: #374151;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.filter-control select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.map-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.map-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nearby-shops-btn {
+    background: #3b82f6;
+    color: white;
+}
+
+.nearby-shops-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+.hide-btn {
+    background: #6b7280;
+    color: white;
+}
+
+.hide-btn:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .map-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .map-buttons {
+        justify-content: center;
+        flex-direction: column;
+    }
+    
+    .filter-control {
+        justify-content: center;
+    }
+    
+    .map-layout {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    #map {
+        height: 380px;
+    }
+    
+    .map-side-panel.active {
+        width: 100%;
+        height: 400px;
+        margin-top: 10px;
+    }
+    
+    .map-btn {
+        width: 100%;
+    }
+    
+    .side-panel-header {
+        padding: 12px 16px;
+    }
+    
+    .side-panel-content {
+        padding: 16px;
+    }
+}
+
+/* Medium screens - keep side layout but adjust sizing */
+@media (max-width: 768px) and (min-width: 481px) {
+    .map-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .map-buttons {
+        justify-content: center;
+    }
+    
+    .filter-control {
+        justify-content: center;
+    }
+    
+    .map-layout {
+        gap: 15px;
+    }
+    
+    .map-side-panel.active {
+        width: 300px; /* Slightly smaller on tablets */
+    }
+}
