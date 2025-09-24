@@ -1,9 +1,4 @@
-// Find Laundry Shops - Original Inline Scripts Extracted
-
-// Import shop data from shop-cards.js to maintain consistency
 function getMapShopData() {
-    // This function provides shop data for the map
-    // Should match the data structure from shop-cards.js
     return [
         {
             id: 1,
@@ -92,58 +87,38 @@ function getMapShopData() {
     ];
 }
 
-// Global variables
 var map;
 var shopMarkers = [];
 var markersVisible = true;
-
-// Initialize map when DOM is loaded
+var currentBoundaryLayer = null;
+var barangayGeoJSON = null;
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize map centered to show all partner shops in Trancoville, Baguio City
     map = L.map('map').setView([16.424693, 120.600004], 16);
-
-    // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
-
-    // Create custom WashIt icon for markers
     var washitIcon = L.icon({
         iconUrl: './assets/images/washit-map-pin.png',
-        iconSize: [40, 40], // Size of the icon
-        iconAnchor: [20, 40], // Point of the icon which will correspond to marker's location
-        popupAnchor: [0, -40], // Point from which the popup should open relative to the iconAnchor
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40],
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
         shadowSize: [41, 41],
         shadowAnchor: [12, 41]
     });
 
-    // Test if image loads
-    var testImg = new Image();
-    testImg.onload = function() {
-        // Logo loaded successfully
-    };
-    testImg.onerror = function() {
-        // Failed to load logo
-    };
-    testImg.src = './assets/images/washit-map-pin.png';
 
-    // Add laundry shop markers - Partner shops in Trancoville, Baguio City
     var shops = getMapShopData();
 
     shops.forEach(function(shop) {
         var marker = L.marker([shop.lat, shop.lng], {icon: washitIcon}).addTo(map);
         
-        // Add click event to show side panel instead of popup
         marker.on('click', function() {
             showMapSidebar(shop);
         });
         
-        // Store marker in global array
         shopMarkers.push(marker);
     });
-
-    // Find nearby shops button functionality
     document.querySelector('.nearby-shops-btn').addEventListener('click', function() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function(position) {
@@ -160,9 +135,22 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Geolocation is not supported by this browser.');
         }
     });
+
+    const barangayFilter = document.getElementById('barangay-filter');
+    if (barangayFilter) {
+        barangayFilter.addEventListener('change', function() {
+            const selectedBarangay = this.value;
+            if (selectedBarangay) {
+                zoomToBarangay(selectedBarangay);
+            } else {
+                resetMapView();
+            }
+        });
+    }
+
+    loadBarangayBoundaries();
 });
 
-// Function to show shop details in sidebar
 function showMapSidebar(shop) {
     const sidebar = document.getElementById('mapSidePanel');
     const sidebarTitle = document.getElementById('sidePanelTitle');
@@ -170,7 +158,6 @@ function showMapSidebar(shop) {
     
     if (!sidebar || !sidebarTitle || !sidebarContent) return;
     
-    // Update sidebar content
     sidebarTitle.textContent = shop.name;
     
     sidebarContent.innerHTML = `
@@ -240,44 +227,36 @@ function showMapSidebar(shop) {
         </button>
     `;
     
-    // Show sidebar
     sidebar.classList.add('active');
     
-    // Invalidate map size to ensure proper rendering when sidebar opens
     setTimeout(() => {
         if (map) {
             map.invalidateSize();
         }
-    }, 300); // Wait for animation to complete
+    }, 300);
 }
 
-// Function to hide sidebar
 function hideMapSidebar() {
     const sidebar = document.getElementById('mapSidePanel');
     if (sidebar) {
         sidebar.classList.remove('active');
         
-        // Invalidate map size to ensure proper rendering when sidebar closes
         setTimeout(() => {
             if (map) {
                 map.invalidateSize();
             }
-        }, 300); // Wait for animation to complete
+        }, 300);
     }
 }
 
-// Add event listeners for sidebar controls
 document.addEventListener('DOMContentLoaded', function() {
-    // Close sidebar button
     const closeSidebarBtn = document.getElementById('closeSidePanel');
     if (closeSidebarBtn) {
         closeSidebarBtn.addEventListener('click', hideMapSidebar);
     }
     
-    // Hide sidebar when clicking on map
     if (map) {
         map.on('click', function(e) {
-            // Only hide if clicking on empty map area (not on markers)
             if (e.originalEvent.target === map.getContainer().querySelector('.leaflet-container')) {
                 hideMapSidebar();
             }
@@ -285,19 +264,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Toggle Map function - called from HTML onclick
 function toggleMap() {
     var hideBtn = document.querySelector('.hide-btn');
     
     if (markersVisible) {
-        // Hide all shop markers
         shopMarkers.forEach(function(marker) {
             map.removeLayer(marker);
         });
         markersVisible = false;
         hideBtn.textContent = 'Show Map';
     } else {
-        // Show all shop markers
         shopMarkers.forEach(function(marker) {
             marker.addTo(map);
         });
@@ -306,7 +282,6 @@ function toggleMap() {
     }
 }
 
-// Find nearby shops function - called from HTML onclick
 function findNearbyShops() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -322,4 +297,84 @@ function findNearbyShops() {
     } else {
         alert('Geolocation is not supported by this browser.');
     }
+}
+
+async function loadBarangayBoundaries() {
+    try {
+        const response = await fetch('../../../../../assets/data/baguio_barangays.geojson');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        barangayGeoJSON = await response.json();
+        console.log('Barangay boundaries loaded successfully:', barangayGeoJSON.features.length, 'barangays');
+    } catch (error) {
+        console.error('Failed to load barangay boundaries:', error);
+        console.warn('CORS Error: You need to serve this page through a web server (not file://) to load GeoJSON data.');
+        console.log('Solutions:');
+        console.log('1. Use Live Server extension in VS Code');
+        console.log('2. Run: python -m http.server 8000 (from project root)');
+        console.log('3. Use any local web server to serve the files');
+        
+        // Provide fallback functionality
+        console.log('Using fallback mode without boundary display');
+    }
+}
+
+function zoomToBarangay(barangayValue) {
+    if (currentBoundaryLayer) {
+        map.removeLayer(currentBoundaryLayer);
+        currentBoundaryLayer = null;
+    }
+    
+    if (!barangayGeoJSON) {
+        // Fallback behavior when GeoJSON cannot be loaded (CORS issue)
+        console.log('GeoJSON data not available due to CORS restrictions');
+        
+        // Show a basic message and reset view
+        alert(`Selected: ${barangayValue}\n\nNote: To see barangay boundaries, please serve this page through a web server (see console for instructions).`);
+        
+        // Just reset to default view for now
+        resetMapView();
+        return;
+    }
+
+    const barangayFeature = barangayGeoJSON.features.find(feature => 
+        feature.properties.ADM4_EN === barangayValue
+    );
+
+    if (barangayFeature) {
+        const barangayLayer = L.geoJSON(barangayFeature, {
+            style: {
+                color: '#10b981',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.2,
+                fillColor: '#10b981'
+            }
+        });
+
+        currentBoundaryLayer = barangayLayer;
+        barangayLayer.addTo(map);
+        map.fitBounds(barangayLayer.getBounds());
+    } else {
+        console.error('Barangay not found:', barangayValue);
+        console.log('Available barangays:', barangayGeoJSON.features.map(f => f.properties.ADM4_EN));
+        alert(`Boundary for "${barangayValue}" not found in the data.`);
+    }
+}
+
+function resetMapView() {
+    if (currentBoundaryLayer) {
+        map.removeLayer(currentBoundaryLayer);
+        currentBoundaryLayer = null;
+    }
+    
+    map.setView([16.424693, 120.600004], 16);
+    
+    shopMarkers.forEach(function(marker) {
+        if (!map.hasLayer(marker) && markersVisible) {
+            marker.addTo(map);
+        }
+        marker.setOpacity(1);
+    });
 }

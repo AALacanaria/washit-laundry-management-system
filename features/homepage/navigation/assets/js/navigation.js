@@ -58,7 +58,7 @@ function setupJoinButton() {
     const joinBtn = document.getElementById('joinBtn');
     if (joinBtn) {
         joinBtn.addEventListener('mouseenter', function() {
-            this.textContent = 'SIGNUP/LOGIN';
+            this.textContent = 'SIGNUP';
         });
         
         joinBtn.addEventListener('mouseleave', function() {

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="features/homepage/assets/css/main.css">
     
     <!-- Component Styles -->
-    <link rel="stylesheet" href="features/homepage/assets/css/components/navigation.css">
+    <link rel="stylesheet" href="features/homepage/navigation/assets/css/navigation.css">
     <link rel="stylesheet" href="features/homepage/assets/css/components/footer.css">
     
     <!-- Section Styles -->
@@ -47,7 +47,6 @@
                 <li><a href="#services">SERVICES</a></li>
                 <li><a href="#partners">PARTNERS</a></li>
                 <li><a href="#contactus">CONTACT US</a></li>
-                <li><a href="https://washit.42web.io/admin/appointments/tracking-page.php" target="_blank" class="track-booking-btn">TRACK BOOKING</a></li>
                 <li><a href="" class="join-btn" id="joinBtn">JOIN US!</a></li>
             </ul>
         </div>
@@ -64,7 +63,10 @@
                     <div class="feature-item receipt">Digital Receipt Generator Feature.</div>
                     <div class="feature-item report">Sales Report Feature.</div>
                 </div>
-                <a href="#find-shops" class="cta-button">START BOOKING NOW!</a>
+                <div class="cta-buttons">
+                    <a href="#find-shops" class="cta-button">START BOOKING NOW!</a>
+                    <a href="https://washit.42web.io/admin/appointments/tracking-page.php" target="_blank" class="cta-button secondary">TRACK BOOKING</a>
+                </div>
             </div>
             <div class="main-banner-image">
                 <div class="washit-logo">
@@ -78,7 +80,7 @@
     <section id="find-shops" class="find-shops">
         <div class="container">
             <h2>Find Laundry Shops Near You</h2>
-            <p>Browse available laundry shops in your area. Hover over any pin to see services offered and book directly.</p>
+            <p>Browse available laundry shops in your area. Click any pin to see services offered and book directly.</p>
             
             <!-- Shop Cards Section -->
             <div class="shop-cards-container">
@@ -155,15 +157,140 @@
                     <div class="filter-control">
                         <label for="barangay-filter">Filter by Barangay:</label>
                         <select id="barangay-filter">
-                            <option value="">All Areas</option>
-                            <option value="trancoville">Trancoville</option>
-                            <option value="session-road">Session Road</option>
-                            <option value="burnham-park">Burnham Park</option>
-                            <option value="sm-baguio">SM Baguio</option>
+                            <option value="">All Barangays</option>
+                            <option value="A. Bonifacio-Caguioa-Rimando (ABCR)">A. Bonifacio-Caguioa-Rimando (ABCR)</option>
+                            <option value="Abanao-Zandueta-Kayong-Chugum-Otek (AZKCO)">Abanao-Zandueta-Kayong-Chugum-Otek (AZKCO)</option>
+                            <option value="Alfonso Tabora">Alfonso Tabora</option>
+                            <option value="Ambiong">Ambiong</option>
+                            <option value="Andres Bonifacio (Lower Bokawkan)">Andres Bonifacio (Lower Bokawkan)</option>
+                            <option value="Apugan-Loakan">Apugan-Loakan</option>
+                            <option value="Asin Road">Asin Road</option>
+                            <option value="Atok Trail">Atok Trail</option>
+                            <option value="Aurora Hill Proper (Malvar-Sgt. Floresca)">Aurora Hill Proper (Malvar-Sgt. Floresca)</option>
+                            <option value="Aurora Hill, North Central">Aurora Hill, North Central</option>
+                            <option value="Aurora Hill, South Central">Aurora Hill, South Central</option>
+                            <option value="Bagong Lipunan (Market Area)">Bagong Lipunan (Market Area)</option>
+                            <option value="Bakakeng Central">Bakakeng Central</option>
+                            <option value="Bakakeng North">Bakakeng North</option>
+                            <option value="Bal-Marcoville (Marcoville)">Bal-Marcoville (Marcoville)</option>
+                            <option value="Balsigan">Balsigan</option>
+                            <option value="Bayan Park East">Bayan Park East</option>
+                            <option value="Bayan Park Village">Bayan Park Village</option>
+                            <option value="Bayan Park West (Bayan Park)">Bayan Park West (Bayan Park)</option>
+                            <option value="BGH Compound">BGH Compound</option>
+                            <option value="Brookside">Brookside</option>
+                            <option value="Brookspoint">Brookspoint</option>
+                            <option value="Cabinet Hill-Teacher's Camp">Cabinet Hill-Teacher's Camp</option>
+                            <option value="Camdas Subdivision">Camdas Subdivision</option>
+                            <option value="Camp 7">Camp 7</option>
+                            <option value="Camp 8">Camp 8</option>
+                            <option value="Camp Allen">Camp Allen</option>
+                            <option value="Campo Filipino">Campo Filipino</option>
+                            <option value="City Camp Central">City Camp Central</option>
+                            <option value="City Camp Proper">City Camp Proper</option>
+                            <option value="Country Club Village">Country Club Village</option>
+                            <option value="Cresencia Village">Cresencia Village</option>
+                            <option value="Dagsian, Lower">Dagsian, Lower</option>
+                            <option value="Dagsian, Upper">Dagsian, Upper</option>
+                            <option value="Dizon Subdivision">Dizon Subdivision</option>
+                            <option value="Dominican Hill-Mirador">Dominican Hill-Mirador</option>
+                            <option value="Dontogan">Dontogan</option>
+                            <option value="DPS Area">DPS Area</option>
+                            <option value="Engineers' Hill">Engineers' Hill</option>
+                            <option value="Fairview Village">Fairview Village</option>
+                            <option value="Ferdinand (Happy Homes-Campo Sioco)">Ferdinand (Happy Homes-Campo Sioco)</option>
+                            <option value="Fort del Pilar">Fort del Pilar</option>
+                            <option value="Gabriela Silang">Gabriela Silang</option>
+                            <option value="General Emilio F. Aguinaldo (Quirino-Magsaysay, Lower)">General Emilio F. Aguinaldo (Quirino-Magsaysay, Lower)</option>
+                            <option value="General Luna, Lower">General Luna, Lower</option>
+                            <option value="General Luna, Upper">General Luna, Upper</option>
+                            <option value="Gibraltar">Gibraltar</option>
+                            <option value="Greenwater Village">Greenwater Village</option>
+                            <option value="Guisad Central">Guisad Central</option>
+                            <option value="Guisad Sorong">Guisad Sorong</option>
+                            <option value="Happy Hollow">Happy Hollow</option>
+                            <option value="Happy Homes (Happy Homes-Lucban)">Happy Homes (Happy Homes-Lucban)</option>
+                            <option value="Harrison-Claudio Carantes">Harrison-Claudio Carantes</option>
+                            <option value="Hillside">Hillside</option>
+                            <option value="Holy Ghost Extension">Holy Ghost Extension</option>
+                            <option value="Holy Ghost Proper">Holy Ghost Proper</option>
+                            <option value="Honeymoon (Honeymoon-Holy Ghost)">Honeymoon (Honeymoon-Holy Ghost)</option>
+                            <option value="Imelda R. Marcos (La Salle)">Imelda R. Marcos (La Salle)</option>
+                            <option value="Imelda Village">Imelda Village</option>
+                            <option value="Irisan">Irisan</option>
+                            <option value="Kabayanihan">Kabayanihan</option>
+                            <option value="Kagitingan">Kagitingan</option>
+                            <option value="Kayang Extension">Kayang Extension</option>
+                            <option value="Kayang-Hilltop">Kayang-Hilltop</option>
+                            <option value="Kias">Kias</option>
+                            <option value="Legarda-Burnham-Kisad">Legarda-Burnham-Kisad</option>
+                            <option value="Liwanag-Loakan">Liwanag-Loakan</option>
+                            <option value="Loakan Proper">Loakan Proper</option>
+                            <option value="Lopez Jaena">Lopez Jaena</option>
+                            <option value="Lourdes Subdivision Extension">Lourdes Subdivision Extension</option>
+                            <option value="Lourdes Subdivision, Lower">Lourdes Subdivision, Lower</option>
+                            <option value="Lourdes Subdivision, Proper">Lourdes Subdivision, Proper</option>
+                            <option value="Lualhati">Lualhati</option>
+                            <option value="Lucnab">Lucnab</option>
+                            <option value="Magsaysay Private Road">Magsaysay Private Road</option>
+                            <option value="Magsaysay, Lower">Magsaysay, Lower</option>
+                            <option value="Magsaysay, Upper">Magsaysay, Upper</option>
+                            <option value="Malcolm Square-Perfecto (Jose Abad Santos)">Malcolm Square-Perfecto (Jose Abad Santos)</option>
+                            <option value="Manuel A. Roxas">Manuel A. Roxas</option>
+                            <option value="Market Subdivision, Upper">Market Subdivision, Upper</option>
+                            <option value="Middle Quezon Hill Subdivision(Quezon Hill Middle)">Middle Quezon Hill Subdivision(Quezon Hill Middle)</option>
+                            <option value="Military Cut-off">Military Cut-off</option>
+                            <option value="Mines View Park">Mines View Park</option>
+                            <option value="Modern Site, East">Modern Site, East</option>
+                            <option value="Modern Site, West">Modern Site, West</option>
+                            <option value="MRR-Queen of Peace">MRR-Queen of Peace</option>
+                            <option value="New Lucban">New Lucban</option>
+                            <option value="Outlook Drive">Outlook Drive</option>
+                            <option value="Pacdal">Pacdal</option>
+                            <option value="Padre Burgos">Padre Burgos</option>
+                            <option value="Padre Zamora">Padre Zamora</option>
+                            <option value="Palma-Urbano (CariÃ±o-Palma)">Palma-Urbano (CariÃ±o-Palma)</option>
+                            <option value="Phil-Am">Phil-Am</option>
+                            <option value="Pinget">Pinget</option>
+                            <option value="Pinsao Pilot Project">Pinsao Pilot Project</option>
+                            <option value="Pinsao Proper">Pinsao Proper</option>
+                            <option value="Poliwes">Poliwes</option>
+                            <option value="Pucsusan">Pucsusan</option>
+                            <option value="Quezon Hill Proper">Quezon Hill Proper</option>
+                            <option value="Quezon Hill, Upper">Quezon Hill, Upper</option>
+                            <option value="Quirino Hill, East">Quirino Hill, East</option>
+                            <option value="Quirino Hill, Lower">Quirino Hill, Lower</option>
+                            <option value="Quirino Hill, Middle">Quirino Hill, Middle</option>
+                            <option value="Quirino Hill, West">Quirino Hill, West</option>
+                            <option value="Quirino-Magsaysay, Upper (Upper QM)">Quirino-Magsaysay, Upper (Upper QM)</option>
+                            <option value="Rizal Monument Area">Rizal Monument Area</option>
+                            <option value="Rock Quarry, Lower">Rock Quarry, Lower</option>
+                            <option value="Rock Quarry, Middle">Rock Quarry, Middle</option>
+                            <option value="Rock Quarry, Upper">Rock Quarry, Upper</option>
+                            <option value="Saint Joseph Village">Saint Joseph Village</option>
+                            <option value="Salud Mitra">Salud Mitra</option>
+                            <option value="San Antonio Village">San Antonio Village</option>
+                            <option value="San Luis Village">San Luis Village</option>
+                            <option value="San Roque Village">San Roque Village</option>
+                            <option value="San Vicente">San Vicente</option>
+                            <option value="Sanitary Camp, North">Sanitary Camp, North</option>
+                            <option value="Sanitary Camp, South">Sanitary Camp, South</option>
+                            <option value="Santa Escolastica">Santa Escolastica</option>
+                            <option value="Santo Rosario">Santo Rosario</option>
+                            <option value="Santo Tomas Proper">Santo Tomas Proper</option>
+                            <option value="Santo Tomas School Area">Santo Tomas School Area</option>
+                            <option value="Scout Barrio">Scout Barrio</option>
+                            <option value="Session Road Area">Session Road Area</option>
+                            <option value="Slaughter House Area (Santo NiÃ±o Slaughter)">Slaughter House Area (Santo NiÃ±o Slaughter)</option>
+                            <option value="SLU-SVP Housing Village">SLU-SVP Housing Village</option>
+                            <option value="South Drive">South Drive</option>
+                            <option value="Teodora Alonzo">Teodora Alonzo</option>
+                            <option value="Trancoville">Trancoville</option>
+                            <option value="Victoria Village">Victoria Village</option>
                         </select>
                     </div>
                     <div class="map-buttons">
-                        <button class="nearby-shops-btn map-btn" onclick="findNearbyShops()">Find Nearby Shops</button>
+                        <button class="nearby-shops-btn map-btn" onclick="findNearbyShops()">My Location</button>
                         <button class="hide-btn map-btn" onclick="toggleMap()">Hide Map</button>
                     </div>
                 </div>
