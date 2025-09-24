@@ -301,7 +301,13 @@ function findNearbyShops() {
 
 async function loadBarangayBoundaries() {
     try {
-        const response = await fetch('/washit-laundry-management-system/assets/data/baguio_barangays.geojson');
+        // Determine the correct path based on the environment
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        const geoJsonPath = isGitHubPages 
+            ? '/washit-laundry-management-system/assets/data/baguio_barangays.geojson'
+            : '../../../../../assets/data/baguio_barangays.geojson';
+            
+        const response = await fetch(geoJsonPath);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
