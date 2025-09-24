@@ -301,7 +301,7 @@ function findNearbyShops() {
 
 async function loadBarangayBoundaries() {
     try {
-        const response = await fetch('../../../../../assets/data/baguio_barangays.geojson');
+        const response = await fetch('/washit-laundry-management-system/assets/data/baguio_barangays.geojson');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
