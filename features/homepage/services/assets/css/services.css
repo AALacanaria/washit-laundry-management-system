@@ -1,6 +1,6 @@
 /* Services Section Styles */
 .services {
-    padding: 50px 0;
+    padding: 80px 0;
 }
 
 .services h2 {
@@ -8,9 +8,21 @@
     text-align: center;
     font-size: 42px;
     font-weight: 700;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     color: #1e40af;
     letter-spacing: -0.02em;
+}
+
+.services .services-intro {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #000000;
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
 }
 
 .service-item {
@@ -19,14 +31,6 @@
     gap: 40px;
     margin-bottom: 40px;
     align-items: center;
-}
-
-.service-item:nth-child(even) {
-    direction: rtl;
-}
-
-.service-item:nth-child(even) > * {
-    direction: ltr;
 }
 
 .service-content h3 {
@@ -44,7 +48,7 @@
     font-size: 17px;
     font-weight: 400;
     line-height: 1.7;
-    color: #64748b;
+    color: #000000;
     letter-spacing: -0.01em;
 }
 
@@ -76,9 +80,5 @@
 @media (max-width: 768px) {
     .service-item {
         grid-template-columns: 1fr;
-    }
-    
-    .service-item:nth-child(even) {
-        direction: ltr;
     }
 }

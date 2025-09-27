@@ -228,7 +228,7 @@ body {
     text-align: center;
     font-size: 18px;
     margin-bottom: 40px;
-    color: #64748b;
+    color: #000000;
 }
 
 .map-container {
@@ -288,13 +288,7 @@ body {
     align-items: center;
 }
 
-.service-item:nth-child(even) {
-    direction: rtl;
-}
 
-.service-item:nth-child(even) > * {
-    direction: ltr;
-}
 
 .service-content h3 {
     font-size: 24px;
@@ -305,7 +299,7 @@ body {
 .service-content p {
     font-size: 16px;
     line-height: 1.8;
-    color: #64748b;
+    color: #000000;
 }
 
 .service-image img {
@@ -362,85 +356,10 @@ body {
 }
 
 .partner-item p {
-    color: #64748b;
+    color: #000000;
 }
 
 /* Contact Section */
-.contact {
-    padding: 80px 0;
-}
-
-.contact h2 {
-    text-align: center;
-    font-size: 36px;
-    margin-bottom: 20px;
-    color: #1e40af;
-}
-
-.contact > p {
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 60px;
-    color: #64748b;
-}
-
-.contact-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-}
-
-.contact-info {
-    background: #f8fafc;
-    padding: 40px;
-    border-radius: 10px;
-}
-
-.contact-item {
-    margin-bottom: 20px;
-    font-size: 16px;
-}
-
-.contact-item strong {
-    color: #1e40af;
-}
-
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.contact-form input,
-.contact-form textarea {
-    padding: 15px;
-    border: 2px solid #e9ecef;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-}
-
-.contact-form input:focus,
-.contact-form textarea:focus {
-    outline: none;
-    border-color: #3b82f6;
-}
-
-.contact-form button {
-    background: #3b82f6;
-    color: white;
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s ease;
-}
-
-.contact-form button:hover {
-    background: #1d4ed8;
-}
 
 /* Footer */
 .footer {
@@ -526,9 +445,7 @@ body {
         grid-template-columns: 1fr;
     }
     
-    .service-item:nth-child(even) {
-        direction: ltr;
-    }
+
     
     .contact-content {
         grid-template-columns: 1fr;

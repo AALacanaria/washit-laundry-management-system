@@ -13,13 +13,14 @@
     letter-spacing: -0.02em;
 }
 
-.contact > p {
+.contact > p,
+.contact-intro {
     font-family: 'Inter', sans-serif;
     text-align: center;
     font-size: 19px;
     font-weight: 400;
-    margin-bottom: 40px;
-    color: #64748b;
+    margin-bottom: 50px;
+    color: #000000;
     letter-spacing: -0.01em;
     line-height: 1.6;
 }
@@ -43,6 +44,7 @@
     font-weight: 400;
     letter-spacing: -0.01em;
     line-height: 1.5;
+    color: #000000;
 }
 
 .contact-item strong {
