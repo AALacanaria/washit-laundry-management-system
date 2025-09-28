@@ -18,7 +18,6 @@ class PaymentMethodManager {
 
     setupEventListeners() {
         // Add any shared event listeners here
-        console.log('Payment method manager initialized');
     }
 
     // Main payment method selection handler

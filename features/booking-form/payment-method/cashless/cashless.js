@@ -13,7 +13,6 @@ class CashlessPayment {
 
     init() {
         // Initialize cashless payment functionality
-        console.log('Cashless Payment handler initialized');
     }
 
     handleSelection(cardElement) {

@@ -43,22 +43,18 @@ class BookSchedule {
 
     renderCalendar() {
         // Calendar rendering logic
-        console.log('Rendering calendar...');
     }
 
     renderTimeSlots() {
         // Time slots rendering logic
-        console.log('Rendering time slots...');
     }
 
     previousMonth() {
         // Previous month navigation
-        console.log('Previous month');
     }
 
     nextMonth() {
         // Next month navigation
-        console.log('Next month');
     }
 
     selectDate(date) {
@@ -72,7 +68,6 @@ class BookSchedule {
 
     updateTimeSlots(date) {
         // Update available time slots based on selected date
-        console.log('Updating time slots for date:', date);
     }
 
     getSelectedSchedule() {
@@ -105,10 +100,8 @@ function nextMonth() {
 
 function previousMonthSelfClaim() {
     // Self-claim calendar navigation
-    console.log('Previous month self-claim');
 }
 
 function nextMonthSelfClaim() {
     // Self-claim calendar navigation
-    console.log('Next month self-claim');
 }

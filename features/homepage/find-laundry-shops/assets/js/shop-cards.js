@@ -59,6 +59,26 @@ function expandCard(card) {
 }
 
 function openShopModal(shop) {
+    // Store shop data for booking - with retry mechanism for race conditions
+    const storeShopData = () => {
+        if (typeof setCurrentShop === 'function') {
+            setCurrentShop(shop);
+        } else if (typeof window.setCurrentShop === 'function') {
+            window.setCurrentShop(shop);
+        } else {
+            // Retry after a short delay if function not yet available
+            setTimeout(() => {
+                if (typeof setCurrentShop === 'function') {
+                    setCurrentShop(shop);
+                } else if (typeof window.setCurrentShop === 'function') {
+                    window.setCurrentShop(shop);
+                }
+            }, 100);
+        }
+    };
+    
+    storeShopData();
+    
     setTimeout(() => {
         const modal = document.getElementById('shopModal');
         
@@ -231,6 +251,9 @@ function getShopDataById(id) {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.9",
+            lat: 16.425454290609377,
+            lng: 120.5989512577405,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",
@@ -260,6 +283,9 @@ function getShopDataById(id) {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.8",
+            lat: 16.425359279483803,
+            lng: 120.6010600327948,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",
@@ -289,6 +315,9 @@ function getShopDataById(id) {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.7",
+            lat: 16.42327170651393,
+            lng: 120.59909688655648,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",
@@ -337,6 +366,9 @@ function populateShopCards() {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.9",
+            lat: 16.425454290609377,
+            lng: 120.5989512577405,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",
@@ -367,6 +399,9 @@ function populateShopCards() {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.8",
+            lat: 16.425359279483803,
+            lng: 120.6010600327948,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",
@@ -397,6 +432,9 @@ function populateShopCards() {
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
             hours: "Open 6 AM – 5 PM",
             rating: "4.7",
+            lat: 16.42327170651393,
+            lng: 120.59909688655648,
+            barangay: "Trancoville",
             services: [
                 "Pickup and Delivery",
                 "Drop-off and Delivery",

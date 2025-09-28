@@ -10,7 +10,7 @@ class BusinessReceiptGenerator {
     }
 
     // Generate complete print receipt HTML
-    generatePrintReceipt(bookingData, serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
+    generatePrintReceipt(bookingData, serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions, selectedShop = null) {
         this.bookingRef = this.generateBookingReference();
 
         const timestamps = this.getFormattedTimestamps(bookingData);
@@ -45,6 +45,23 @@ class BusinessReceiptGenerator {
             `;
         }
 
+        const shopSection = selectedShop ? `
+                <div class="receipt-section">
+                    <h4 class="section-title">LAUNDRY SHOP</h4>
+                    <div class="receipt-line">
+                        <span class="label">Shop Name:</span>
+                        <span class="value">${this.escapeHtml(selectedShop.name)}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Address:</span>
+                        <span class="value">${this.escapeHtml(selectedShop.address)}</span>
+                    </div>
+                    <div class="receipt-line">
+                        <span class="label">Contact:</span>
+                        <span class="value">${this.escapeHtml(selectedShop.phone)}</span>
+                    </div>
+                </div>` : '';
+
         return `
             <div class="booking-receipt">
                 <div class="receipt-header">
@@ -66,6 +83,7 @@ class BusinessReceiptGenerator {
                     </div>
                 </div>
 
+                ${shopSection}
                 <div class="receipt-section">
                     <h4 class="section-title">SERVICE DETAILS</h4>
                     <div class="receipt-line">
@@ -315,7 +333,7 @@ class BusinessReceiptGenerator {
                     return parsedItems;
                 }
             } catch (e) {
-                console.warn('Failed to parse laundry items from hidden input:', e);
+                // Ignore parsing issues and fall back to collected form data
             }
         }
 
@@ -544,6 +562,14 @@ class BusinessReceiptGenerator {
 
         printWindow.document.write(printContent);
         printWindow.document.close();
+    }
+
+    // Escape HTML special characters to prevent XSS
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 

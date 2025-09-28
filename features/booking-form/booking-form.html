@@ -18,6 +18,7 @@
     <!-- CSS Files - Modular Sections -->
     <link rel="stylesheet" href="booking-preference/booking-preference-styles.css">
     <link rel="stylesheet" href="booking-preference/normal-rush/normal-rush-styles.css">
+    <link rel="stylesheet" href="booking-preference/booked-laundry-shop.css">
     <link rel="stylesheet" href="service-details/service-details-styles.css">
     <link rel="stylesheet" href="laundry-items/laundry-items-styles.css">
     <link rel="stylesheet" href="book-schedule/book-schedule-styles.css">
@@ -37,35 +38,39 @@
 
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    
-    <script>
-        // Test function to manually trigger validation
-        function testValidation() {
-            const result = validateAll();
-            return result;
-        }
-
-        // Test function to manually trigger form submission
-        function testFormSubmit() {
-            const form = document.getElementById('bookingForm');
-            if (form) {
-                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                form.dispatchEvent(submitEvent);
-            }
-        }
-
-        // Make test functions available globally
-        window.testValidation = testValidation;
-        window.testFormSubmit = testFormSubmit;
-    </script>
 </head>
 <body>
 
 <div class="booking-container">
     <h2>Book Your Laundry Service</h2>
 
+    <!-- Booked Laundry Shop Indicator (hidden by default) -->
+    <div id="bookedLaundryShopIndicator" class="booked-laundry-shop-indicator hidden">
+        <div class="shop-indicator-content">
+            <div class="shop-indicator-logo">
+                <img id="bookedLaundryShopLogo" src="" alt="Shop Logo" style="display: none;">
+                <span id="bookedLaundryShopLogoFallback" class="shop-logo-fallback">🏪</span>
+            </div>
+            <div class="shop-indicator-info">
+                <h3 id="bookedLaundryShopName">Shop Name</h3>
+                <p id="bookedLaundryShopAddress">Shop Address</p>
+                <p id="bookedLaundryShopPhone">Shop Phone</p>
+            </div>
+            <div class="shop-indicator-actions">
+                <button type="button" id="changeBookedLaundryShopBtn" class="btn-link">Change Shop</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Step 1: Booking Type -->
     <div id="step1" class="centered-section">
+        <div class="booked-laundry-shop-badge" id="bookedLaundryShopBadge">
+            <span class="badge-icon">🏪</span>
+            <div class="badge-content">
+                <strong id="bookedLaundryShopBadgeName">Select a laundry shop to continue</strong>
+                <span id="bookedLaundryShopBadgeAddress">The shop you choose will appear here.</span>
+            </div>
+        </div>
         <h4 class="pickup-header" id="booking-preference-label">🔄 Choose your booking preference: <span style="color:red">*</span></h4>
         <div class="toggle-container" role="radiogroup" aria-labelledby="booking-preference-label">
             <div class="toggle-option" 
@@ -395,6 +400,7 @@
 <script src="confirm-booking/confirm-booking.js"></script>
 
 <!-- JavaScript Files - Core Features -->
+<script src="booking-preference/booked-laundry-shop.js"></script>
 <script src="assets/js/features/email-suggestions.js"></script>
 <script src="assets/js/features/autofill-init.js"></script>
 <script src="assets/receipts/customer/customer-receipt.js"></script>
@@ -414,6 +420,9 @@
 
 <!-- JavaScript Files - Legacy Support -->
 <script src="assets/js/main.js"></script>
+
+<!-- JavaScript Files - Development/Testing Utilities -->
+<script src="assets/js/test-utilities.js"></script>
 
 </body>
 </html>

@@ -10,7 +10,7 @@ class CustomerReceiptGenerator {
     }
 
     // Generate complete receipt HTML for modal display
-    generateModalReceipt(bookingData, serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
+    generateModalReceipt(bookingData, serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions, selectedShop = null) {
         this.bookingRef = this.generateBookingReference();
 
         const timestamps = this.getFormattedTimestamps(bookingData);
@@ -21,11 +21,11 @@ class CustomerReceiptGenerator {
             firstName, lastName, contactNumber, email, barangay, address, specialInstructions, serviceOption
         });
 
-        return this.buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData, paymentMethod, laundryItems);
+        return this.buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData, paymentMethod, laundryItems, selectedShop);
     }
 
     // Build receipt HTML with proper spacing
-    buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData, paymentMethod, laundryItems) {
+    buildReceiptHTML(bookingData, timestamps, selectedTimeStr, sanitizedData, paymentMethod, laundryItems, selectedShop = null) {
         const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
         const isPickupAndSelfClaim = bookingData.serviceType === 'pickup_selfclaim';
 
@@ -49,6 +49,23 @@ class CustomerReceiptGenerator {
             `;
         }
 
+        const shopSection = selectedShop ? `
+                <div class="receipt-content-section">
+                    <h5>🏪 Laundry Shop</h5>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Shop Name:</span>
+                        <span class="receipt-value">${this.escapeHtml(selectedShop.name)}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Address:</span>
+                        <span class="receipt-value">${this.escapeHtml(selectedShop.address)}</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-label">Contact:</span>
+                        <span class="receipt-value">${this.escapeHtml(selectedShop.phone)}</span>
+                    </div>
+                </div>` : '';
+
         return `
             <div class="receipt-container">
                 <div class="receipt-header-section">
@@ -64,6 +81,7 @@ class CustomerReceiptGenerator {
                     </div>
                 </div>
 
+                ${shopSection}
                 <div class="receipt-content-section">
                     <h5>📋 Service Details</h5>
                     <div class="receipt-row">
@@ -75,15 +93,15 @@ class CustomerReceiptGenerator {
                         <span class="receipt-value">${formattedServiceOption}</span>
                     </div>
                     <div class="receipt-row">
-                        <span class="receipt-label">📅 Pickup Date:</span>
+                        <span class="receipt-label">Pickup Date:</span>
                         <span class="receipt-value">${timestamps.selectedDateStr}</span>
                     </div>
                     <div class="receipt-row">
-                        <span class="receipt-label">🕐 Pickup Time:</span>
+                        <span class="receipt-label">Pickup Time:</span>
                         <span class="receipt-value">${selectedTimeStr}</span>
                     </div>
                     <div class="receipt-row">
-                        <span class="receipt-label">💳 Payment Method:</span>
+                        <span class="receipt-label">Payment Method:</span>
                         <span class="receipt-value">${this.formatPaymentMethod(paymentMethod)}</span>
                     </div>
                     ${selfClaimSchedule}
@@ -331,7 +349,7 @@ class CustomerReceiptGenerator {
                     return parsedItems;
                 }
             } catch (e) {
-                console.warn('Failed to parse laundry items from hidden input:', e);
+                // Ignore parsing issues and fall back to collected form data
             }
         }
 
@@ -374,6 +392,14 @@ class CustomerReceiptGenerator {
         `;
 
         return itemsHTML;
+    }
+
+    // Escape HTML special characters to prevent XSS
+    escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 

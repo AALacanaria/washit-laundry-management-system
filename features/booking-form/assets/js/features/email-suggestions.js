@@ -15,7 +15,6 @@ class EmailSuggestionManager {
         
         this.inputElement = document.getElementById('email');
         if (!this.inputElement) {
-            console.warn('EmailSuggestionManager: Email input element not found');
             return;
         }
 
@@ -236,7 +235,6 @@ class EmailSuggestionManager {
         return this.isVisible;
     }
 
-    // Get current suggestions (for debugging)
     getCurrentSuggestions() {
         return this.currentSuggestions;
     }
@@ -255,7 +253,3 @@ function initializeEmailSuggestions() {
     emailSuggestionManager.initialize();
 }
 
-// Debug function
-window.debugEmailSuggestions = function() {
-    // debug helper for email suggestions
-};

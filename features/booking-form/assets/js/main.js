@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             );
         });
         
-        // Debug: Add click listener to submit button
+    // Ensure the submit button triggers the custom submission handler
         const submitBtn = document.querySelector('.submit-btn');
         if (submitBtn) {
             submitBtn.addEventListener('click', function(e) {

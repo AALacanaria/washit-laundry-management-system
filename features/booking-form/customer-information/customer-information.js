@@ -5,6 +5,7 @@ class AutoFillManager {
         this.enabled = CONFIG.AUTO_FILL.ENABLED;
         this.fields = CONFIG.AUTO_FILL.FIELDS;
         this.bannerShown = false;
+        this.storageFailureNotified = false;
     }
 
     // Initialize auto-fill system
@@ -29,7 +30,7 @@ class AutoFillManager {
             const data = localStorage.getItem(this.storageKey);
             return data ? JSON.parse(data) : {};
         } catch (error) {
-            console.error('AutoFillManager: Error loading user data:', error);
+            this.notifyStorageFailure();
             return {};
         }
     }
@@ -46,7 +47,7 @@ class AutoFillManager {
                 // data.serviceOption = serviceOption.value;
             }
         } catch (error) {
-            console.error('AutoFillManager: Error saving user data:', error);
+            this.notifyStorageFailure();
         }
     }
 
@@ -171,11 +172,20 @@ class AutoFillManager {
         try {
             localStorage.removeItem(this.storageKey);
         } catch (error) {
-            console.error('AutoFillManager: Error clearing saved data:', error);
+            this.notifyStorageFailure();
         }
     }
 
-    // Get saved data (for debugging)
+    notifyStorageFailure() {
+        if (this.storageFailureNotified) {
+            return;
+        }
+
+        this.storageFailureNotified = true;
+        alert('We could not save your contact details for auto-fill. Your browser may be blocking storage or in private mode.');
+    }
+
+    // Provide access to saved data when needed elsewhere
     getSavedData() {
         return this.loadUserData();
     }
@@ -202,8 +212,3 @@ function loadUserData() {
 function saveUserData(data) {
     autoFillManager.saveUserData(data);
 }
-
-// Debug function
-window.debugAutoFill = function() {
-    console.log('AutoFill debug data:', autoFillManager.getSavedData());
-};

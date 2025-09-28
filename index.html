@@ -141,7 +141,7 @@
                         </div>
                         
                         <div class="shop-modal-actions">
-                            <button class="shop-modal-btn primary" onclick="window.location.href='features/booking-form/booking-form.html'">
+                            <button class="shop-modal-btn primary" id="bookNowBtn">
                                 Book Now
                             </button>
                             <button class="shop-modal-btn secondary" id="closeModalBtn">
@@ -290,8 +290,8 @@
                         </select>
                     </div>
                     <div class="map-buttons">
-                        <button class="nearby-shops-btn map-btn" onclick="findNearbyShops()">My Location</button>
-                        <button class="hide-btn map-btn" onclick="toggleMap()">Hide Map</button>
+                        <button class="nearby-shops-btn map-btn">My Location</button>
+                        <button class="hide-btn map-btn">Hide Map</button>
                     </div>
                 </div>
                 
@@ -465,5 +465,8 @@
     
     <!-- Join Button Text Change -->
     <script src="features/homepage/navigation/assets/js/join-button.js"></script>
+    
+    <!-- Shop Booking Integration -->
+    <script src="features/homepage/assets/js/shop-booking-integration.js"></script>
 </body>
 </html>

@@ -292,3 +292,31 @@ body {
     margin: 10px 12px;
     font-family: var(--font-family);
 }
+
+/* Selected Shop Indicator Styles */
+/* (moved to booking-preference/booked-laundry-shop.css) */
+
+/* Responsive design for shop indicator */
+@media (max-width: 768px) {
+    .shop-indicator-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+    
+    .shop-indicator-info h3,
+    .shop-indicator-info p {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: initial;
+    }
+    
+    .shop-indicator-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .shop-logo-fallback {
+        font-size: 20px;
+    }
+}

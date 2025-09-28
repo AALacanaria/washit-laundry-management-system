@@ -13,7 +13,6 @@ class CODPayment {
 
     init() {
         // Initialize COD-specific functionality
-        console.log('COD Payment handler initialized');
     }
 
     handleSelection(cardElement) {

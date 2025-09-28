@@ -5,8 +5,10 @@ function getMapShopData() {
             name: "Kylie Rose Laundry Hub",
             businessType: "",
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
+            logo: "./features/homepage/find-laundry-shops/assets/images/kylierose-laundryhub-logo.png",
             lat: 16.425454290609377,
             lng: 120.5989512577405,
+            barangay: "Trancoville",
             address: "Trancoville, Baguio City, Benguet 2600",
             phone: "+63 917 234 5678",
             hours: "Open 6 AM – 5 PM",
@@ -33,8 +35,10 @@ function getMapShopData() {
             name: "M. De Guzman Laundry Shop",
             businessType: "",
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
+            logo: "./features/homepage/find-laundry-shops/assets/images/mdeguzman-laundryshop-logo.png",
             lat: 16.425359279483803,
             lng: 120.6010600327948,
+            barangay: "Trancoville",
             address: "Trancoville, Baguio City, Benguet 2600",
             phone: "+63 928 765 4321",
             hours: "Open 6 AM – 5 PM",
@@ -61,8 +65,10 @@ function getMapShopData() {
             name: "Sam, Paull, Adrianne Laundry Hub",
             businessType: "",
             tagline: "Wash & Fold, Pickup, Self-Claim, Drop-off, & Delivery",
+            logo: "./features/homepage/find-laundry-shops/assets/images/sampauladrianne-laundryhub-logo.png",
             lat: 16.42327170651393,
             lng: 120.59909688655648,
+            barangay: "Trancoville",
             address: "Trancoville, Baguio City, Benguet 2600", 
             phone: "+63 936 123 9876",
             hours: "Open 6 AM – 5 PM",
@@ -92,6 +98,103 @@ var shopMarkers = [];
 var markersVisible = true;
 var currentBoundaryLayer = null;
 var barangayGeoJSON = null;
+
+function resolveShopLogoUrl(logo) {
+    if (!logo || typeof logo !== 'string') {
+        return null;
+    }
+
+    const trimmed = logo.trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    if (/^https?:\/\//i.test(trimmed) || /^data:image\//i.test(trimmed)) {
+        return trimmed;
+    }
+
+    const cleaned = trimmed.replace(/^\.\/+/, '').replace(/^\/+/, '');
+    if (!cleaned) {
+        return null;
+    }
+
+    try {
+        return new URL(cleaned, `${window.location.origin}/`).href;
+    } catch (err) {
+        return cleaned;
+    }
+}
+
+function renderSidebarTitle(sidebarTitle, shop) {
+    if (!sidebarTitle) {
+        return;
+    }
+
+    const logoUrl = resolveShopLogoUrl(shop.logo);
+    const fallbackInitial = (shop.name || '?').charAt(0).toUpperCase();
+
+    sidebarTitle.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="
+                width: 44px;
+                height: 44px;
+                border-radius: 14px;
+                overflow: hidden;
+                background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+                box-shadow: inset 0 0 0 1px rgba(29, 78, 216, 0.15);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            ">
+                ${logoUrl ? `<img src="${logoUrl}" alt="${shop.name || 'Laundry Shop'} Logo" class="map-shop-title-logo-img" style="width: 100%; height: 100%; object-fit: cover; display: block;" />` : ''}
+                <div class="map-shop-title-logo-fallback" style="
+                    width: 100%;
+                    height: 100%;
+                    display: ${logoUrl ? 'none' : 'flex'};
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #1d4ed8;
+                ">${fallbackInitial}</div>
+            </div>
+            <span style="font-size: 18px; font-weight: 700; color: #1e3a8a;">${shop.name}</span>
+        </div>
+    `;
+
+    const logoImg = sidebarTitle.querySelector('.map-shop-title-logo-img');
+    const fallbackEl = sidebarTitle.querySelector('.map-shop-title-logo-fallback');
+
+    if (logoImg && fallbackEl) {
+        const showFallback = () => {
+            logoImg.style.display = 'none';
+            fallbackEl.style.display = 'flex';
+        };
+
+        const hideFallback = () => {
+            logoImg.style.display = 'block';
+            fallbackEl.style.display = 'none';
+        };
+
+        logoImg.addEventListener('load', () => {
+            if (logoImg.naturalWidth === 0 || logoImg.naturalHeight === 0) {
+                showFallback();
+            } else {
+                hideFallback();
+            }
+        });
+
+        logoImg.addEventListener('error', showFallback);
+
+        if (logoImg.complete) {
+            if (logoImg.naturalWidth === 0 || logoImg.naturalHeight === 0) {
+                showFallback();
+            } else {
+                hideFallback();
+            }
+        }
+    }
+}
 document.addEventListener('DOMContentLoaded', function() {
     map = L.map('map').setView([16.424693, 120.600004], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -152,13 +255,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function showMapSidebar(shop) {
+    if (shop && typeof setCurrentShop === 'function') {
+        setCurrentShop(shop);
+    } else if (shop && typeof window.setCurrentShop === 'function') {
+        window.setCurrentShop(shop);
+    }
+
     const sidebar = document.getElementById('mapSidePanel');
     const sidebarTitle = document.getElementById('sidePanelTitle');
     const sidebarContent = document.getElementById('sidePanelContent');
     
     if (!sidebar || !sidebarTitle || !sidebarContent) return;
     
-    sidebarTitle.textContent = shop.name;
+    renderSidebarTitle(sidebarTitle, shop);
     
     sidebarContent.innerHTML = `
         <div style="margin-bottom: 16px;">
@@ -219,7 +328,7 @@ function showMapSidebar(shop) {
             </div>
         </div>
         
-        <button onclick="window.location.href='features/booking-form/booking-form.html'" 
+        <button class="map-book-now-btn"
                 style="background: #10b981; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 16px; font-family: 'Inter', sans-serif; width: 100%; transition: background-color 0.2s ease;"
                 onmouseover="this.style.background='#059669'" 
                 onmouseout="this.style.background='#10b981'">
@@ -228,6 +337,28 @@ function showMapSidebar(shop) {
     `;
     
     sidebar.classList.add('active');
+
+    const mapBookNowBtn = sidebarContent.querySelector('.map-book-now-btn');
+    if (mapBookNowBtn) {
+        mapBookNowBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (shop && typeof setCurrentShop === 'function') {
+                setCurrentShop(shop);
+            } else if (shop && typeof window.setCurrentShop === 'function') {
+                window.setCurrentShop(shop);
+            }
+
+            if (typeof bookWithShop === 'function') {
+                bookWithShop(event);
+            } else if (typeof window.bookWithShop === 'function') {
+                window.bookWithShop(event);
+            } else {
+                window.location.href = 'features/booking-form/booking-form.html';
+            }
+        });
+    }
     
     setTimeout(() => {
         if (map) {
@@ -253,6 +384,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeSidebarBtn = document.getElementById('closeSidePanel');
     if (closeSidebarBtn) {
         closeSidebarBtn.addEventListener('click', hideMapSidebar);
+    }
+    
+    // Add event listeners for map control buttons
+    const nearbyShopsBtn = document.querySelector('.nearby-shops-btn');
+    if (nearbyShopsBtn) {
+        nearbyShopsBtn.addEventListener('click', findNearbyShops);
+    }
+    
+    const hideMapBtn = document.querySelector('.hide-btn');
+    if (hideMapBtn) {
+        hideMapBtn.addEventListener('click', toggleMap);
     }
     
     if (map) {
@@ -312,17 +454,8 @@ async function loadBarangayBoundaries() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         barangayGeoJSON = await response.json();
-        console.log('Barangay boundaries loaded successfully:', barangayGeoJSON.features.length, 'barangays');
     } catch (error) {
-        console.error('Failed to load barangay boundaries:', error);
-        console.warn('CORS Error: You need to serve this page through a web server (not file://) to load GeoJSON data.');
-        console.log('Solutions:');
-        console.log('1. Use Live Server extension in VS Code');
-        console.log('2. Run: python -m http.server 8000 (from project root)');
-        console.log('3. Use any local web server to serve the files');
-        
-        // Provide fallback functionality
-        console.log('Using fallback mode without boundary display');
+        alert('We could not load the barangay boundaries. Please open this page through a local web server (for example, VS Code Live Server or "python -m http.server 8000") to view the outlines. The map will continue without them.');
     }
 }
 
@@ -334,11 +467,8 @@ function zoomToBarangay(barangayValue) {
     
     if (!barangayGeoJSON) {
         // Fallback behavior when GeoJSON cannot be loaded (CORS issue)
-        console.log('GeoJSON data not available due to CORS restrictions');
-        
-        // Show a basic message and reset view
-        alert(`Selected: ${barangayValue}\n\nNote: To see barangay boundaries, please serve this page through a web server (see console for instructions).`);
-        
+        alert(`Selected: ${barangayValue}\n\nNote: To see barangay boundaries, please open this page through a local web server.`);
+
         // Just reset to default view for now
         resetMapView();
         return;
@@ -363,8 +493,6 @@ function zoomToBarangay(barangayValue) {
         barangayLayer.addTo(map);
         map.fitBounds(barangayLayer.getBounds());
     } else {
-        console.error('Barangay not found:', barangayValue);
-        console.log('Available barangays:', barangayGeoJSON.features.map(f => f.properties.ADM4_EN));
         alert(`Boundary for "${barangayValue}" not found in the data.`);
     }
 }

@@ -163,6 +163,32 @@
     font-family: var(--font-family);
 }
 
+.receipt-shop-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eff6ff, #e0f2fe);
+    border: 1px solid #c7d2fe;
+    color: #1d4ed8;
+    font-weight: 600;
+    margin: 0 auto 18px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.12);
+}
+
+.receipt-shop-badge .badge-label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.receipt-shop-badge .badge-name {
+    font-weight: 700;
+    color: #1e40af;
+}
+
 /* Tab-aligned layout */
 .receipt-row {
     display: flex;

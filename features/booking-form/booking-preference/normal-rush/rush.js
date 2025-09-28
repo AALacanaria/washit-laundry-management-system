@@ -4,6 +4,7 @@ class SelfClaimCalendarRush {
         this.currentDate = new Date();
         this.minClaimDate = null;
         this.allowedClaimDates = [];
+        this.notificationShown = false;
     }
 
     initializeSelfClaimCalendar(pickupDate) {
@@ -35,7 +36,7 @@ class SelfClaimCalendarRush {
             this.renderSelfClaimCalendar();
             
         } catch (error) {
-            console.error('Error initializing rush self-claim calendar:', error);
+            this.notifyCalendarIssue('We couldn’t prepare the rush self-claim calendar. Please refresh the page and try again.');
         }
     }
 
@@ -44,7 +45,7 @@ class SelfClaimCalendarRush {
         const calendarGrid = document.getElementById('selfClaimCalendarGrid');
         
         if (!currentMonthElement || !calendarGrid) {
-            console.error('Self-claim calendar elements not found!');
+            this.notifyCalendarIssue('We couldn’t display the self-claim calendar because required elements are missing.');
             return;
         }
         
@@ -81,6 +82,15 @@ class SelfClaimCalendarRush {
             
             calendarGrid.appendChild(dayElement);
         }
+    }
+
+    notifyCalendarIssue(message) {
+        if (this.notificationShown) {
+            return;
+        }
+
+        this.notificationShown = true;
+        alert(message);
     }
 
     applySelfClaimDayStyles(dayElement, currentCalendarDate) {

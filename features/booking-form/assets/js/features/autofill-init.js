@@ -4,6 +4,7 @@ class AutoFillInitializer {
         this.initialized = false;
         this.initAttempts = 0;
         this.maxAttempts = 5;
+        this.notifiedIssue = false;
     }
 
     // Initialize the auto-fill system
@@ -29,11 +30,10 @@ class AutoFillInitializer {
         // Check if required elements exist
         if (!this.checkRequiredElements()) {
             if (this.initAttempts < this.maxAttempts) {
-                // required elements not found, retrying
                 setTimeout(() => this.performInit(), 500);
                 return;
             } else {
-                console.warn('AutoFillInitializer: Max initialization attempts reached, some features may not work');
+                this.notify('We couldn’t load the customer information section completely. Some auto-fill features may not work this session.');
             }
         }
 
@@ -43,7 +43,7 @@ class AutoFillInitializer {
                 autoFillManager.initializeAutoFill();
                 // auto-fill manager initialized
             } catch (error) {
-                console.error('AutoFillInitializer: Error initializing auto-fill manager:', error);
+                this.notify('We couldn’t start the auto-fill helper. You can still fill in your details manually.');
             }
         }
 
@@ -53,7 +53,7 @@ class AutoFillInitializer {
                 emailSuggestionManager.initialize();
                 // email suggestions initialized
             } catch (error) {
-                console.error('AutoFillInitializer: Error initializing email suggestions:', error);
+                this.notify('Email suggestions are unavailable right now. Continue entering your email as usual.');
             }
         }
 
@@ -136,6 +136,15 @@ class AutoFillInitializer {
         this.initAttempts = 0;
     // system reset
     }
+
+    notify(message) {
+        if (this.notifiedIssue) {
+            return;
+        }
+
+        this.notifiedIssue = true;
+        alert(message);
+    }
 }
 
 // Create global instance
@@ -153,7 +162,3 @@ function triggerAutoFill() {
     autoFillInitializer.triggerAutoFill();
 }
 
-// Debug function
-window.debugAutoFillInit = function() {
-    // debug helper
-};

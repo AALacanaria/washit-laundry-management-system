@@ -8,7 +8,6 @@ class BookingConfirmation {
     get customerReceiptGenerator() {
         if (!this._customerReceiptGenerator) {
             if (!window.customerReceiptGenerator) {
-                console.error('Customer receipt generator not found! Make sure customer-receipt.js is loaded.');
                 return null;
             }
             this._customerReceiptGenerator = window.customerReceiptGenerator;
@@ -20,7 +19,6 @@ class BookingConfirmation {
     get businessReceiptGenerator() {
         if (!this._businessReceiptGenerator) {
             if (!window.businessReceiptGenerator) {
-                console.error('Business receipt generator not found! Make sure business-receipt.js is loaded.');
                 return null;
             }
             this._businessReceiptGenerator = window.businessReceiptGenerator;
@@ -30,14 +28,11 @@ class BookingConfirmation {
 
     // Main confirmation display function
     showConfirmation(serviceOption, firstName, lastName, contactNumber, email, barangay, address, specialInstructions) {
-    // showConfirmation called
-        
         // Get confirmation modal elements
         const modal = document.getElementById("booking-modal");
         const reviewDetails = document.getElementById("reviewDetails");
         
         if (!modal || !reviewDetails) {
-            console.error('Modal elements not found!');
             return;
         }
         
@@ -50,14 +45,16 @@ class BookingConfirmation {
         // Generate and display receipt using customer receipt generator (for modal display)
         const customerGenerator = this.customerReceiptGenerator;
         if (!customerGenerator) {
-            console.error('Customer receipt generator not available');
             alert('Error: Receipt system not loaded properly. Please refresh the page.');
             return;
         }
 
+        // Get selected shop data
+        const selectedShop = window.bookedLaundryShopData || window.selectedShopData || null;
+        
         const receiptHTML = customerGenerator.generateModalReceipt(
             bookingData, serviceOption, firstName, lastName, 
-            contactNumber, email, barangay, address, specialInstructions
+            contactNumber, email, barangay, address, specialInstructions, selectedShop
         );
         
         // Store booking reference from customer receipt generator
@@ -140,8 +137,6 @@ class BookingConfirmation {
     // Validate booking data
     validateBookingData(bookingData) {
         if (!bookingData.selectedDate || !bookingData.selectedTime) {
-            console.error('Missing selectedDate or selectedTime');
-            console.error('bookingData:', bookingData);
             alert('Error: Missing booking date or time. Please complete the form properly.');
             return false;
         }
@@ -153,14 +148,16 @@ class BookingConfirmation {
         // Use the business receipt generator for printing (includes pricing)
         const businessGenerator = this.businessReceiptGenerator;
         if (!businessGenerator) {
-            console.error('Business receipt generator not available');
             alert('Error: Print receipt system not loaded properly. Please refresh the page.');
             return '<div>Error: Print receipt system not available</div>';
         }
 
+        // Get selected shop data
+        const selectedShop = window.bookedLaundryShopData || window.selectedShopData || null;
+        
         return businessGenerator.generatePrintReceipt(
             bookingData, serviceOption, firstName, lastName,
-            contactNumber, email, barangay, address, specialInstructions
+            contactNumber, email, barangay, address, specialInstructions, selectedShop
         );
     }
 
@@ -193,171 +190,6 @@ function showConfirmation(serviceOption, firstName, lastName, contactNumber, ema
 function formatService(service) {
     return bookingConfirmation.formatService(service);
 }
-
-// Test function for confirmation
-window.testConfirmation = function() {
-    // Set test data in both local and window variables
-    selectedDate = new Date();
-    selectedTime = "09:00";
-    bookingType = "normal";
-
-    window.selectedDate = selectedDate;
-    window.selectedTime = selectedTime;
-    window.bookingType = bookingType;
-
-    // test confirmation invoked
-
-    showConfirmation(
-        "pickup_delivery",
-        "John",
-        "Doe",
-        "09123456789",
-        "john@gmail.com",
-        "Test Barangay",
-        "123 Test Street",
-        "Test instructions"
-    );
-};
-
-// Test function to verify new receipt structure
-window.testNewReceiptStructure = function() {
-    console.log("🧪 Testing New Receipt Structure...");
-
-    // Check if new receipt generators are available
-    if (window.customerReceiptGenerator) {
-        console.log("✅ Customer Receipt Generator: Available");
-        console.log("   Type:", typeof window.customerReceiptGenerator);
-        console.log("   Has generateModalReceipt:", typeof window.customerReceiptGenerator.generateModalReceipt === 'function');
-    } else {
-        console.log("❌ Customer Receipt Generator: NOT FOUND");
-    }
-
-    if (window.businessReceiptGenerator) {
-        console.log("✅ Business Receipt Generator: Available");
-        console.log("   Type:", typeof window.businessReceiptGenerator);
-        console.log("   Has generatePrintReceipt:", typeof window.businessReceiptGenerator.generatePrintReceipt === 'function');
-        console.log("   Has generatePrintWindow:", typeof window.businessReceiptGenerator.generatePrintWindow === 'function');
-    } else {
-        console.log("❌ Business Receipt Generator: NOT FOUND");
-    }
-
-    // Check if old generators are still accessible (should be undefined)
-    if (window.bookingReceiptGenerator) {
-        console.log("⚠️  Old Booking Receipt Generator still exists");
-    } else {
-        console.log("✅ Old Booking Receipt Generator properly removed");
-    }
-
-    if (window.printReceiptGenerator) {
-        console.log("⚠️  Old Print Receipt Generator still exists");
-    } else {
-        console.log("✅ Old Print Receipt Generator properly removed");
-    }
-
-    // Test BookingConfirmation lazy loading
-    const testBookingConfirmation = new BookingConfirmation();
-    if (testBookingConfirmation.customerReceiptGenerator) {
-        console.log("✅ BookingConfirmation lazy loading: Customer generator accessible");
-    } else {
-        console.log("❌ BookingConfirmation lazy loading: Customer generator not accessible");
-    }
-
-    if (testBookingConfirmation.businessReceiptGenerator) {
-        console.log("✅ BookingConfirmation lazy loading: Business generator accessible");
-    } else {
-        console.log("❌ BookingConfirmation lazy loading: Business generator not accessible");
-    }
-
-    // Test laundry items integration
-    if (window.laundryItems) {
-        console.log("✅ Laundry Items: Available");
-        console.log("   Has getItems:", typeof window.laundryItems.getItems === 'function');
-        console.log("   Has hasItems:", typeof window.laundryItems.hasItems === 'function');
-    } else {
-        console.log("❌ Laundry Items: NOT FOUND");
-    }
-
-    // Test CONFIG availability
-    if (typeof CONFIG !== 'undefined') {
-        console.log("✅ CONFIG: Available");
-        console.log("   Has BOOKING_TYPES:", typeof CONFIG.BOOKING_TYPES === 'object');
-    } else {
-        console.log("❌ CONFIG: NOT FOUND");
-    }
-
-    console.log("🎉 Receipt Structure Test Complete!");
-};
-
-// Test receipt generation with sample data
-window.testReceiptGeneration = function() {
-    console.log("🧪 Testing Receipt Generation...");
-
-    const testBookingData = {
-        selectedDate: new Date(),
-        selectedTime: "09:00",
-        bookingType: "normal",
-        serviceType: "pickup_delivery"
-    };
-
-    const testCustomerData = {
-        serviceOption: "pickup_delivery",
-        firstName: "John",
-        lastName: "Doe",
-        contactNumber: "09123456789",
-        email: "john@example.com",
-        barangay: "Test Barangay",
-        address: "123 Test Street",
-        specialInstructions: "Test instructions"
-    };
-
-    try {
-        // Test customer receipt generation
-        if (window.customerReceiptGenerator) {
-            console.log("📄 Testing Customer Receipt Generation...");
-            const customerReceipt = window.customerReceiptGenerator.generateModalReceipt(
-                testBookingData,
-                testCustomerData.serviceOption,
-                testCustomerData.firstName,
-                testCustomerData.lastName,
-                testCustomerData.contactNumber,
-                testCustomerData.email,
-                testCustomerData.barangay,
-                testCustomerData.address,
-                testCustomerData.specialInstructions
-            );
-            console.log("✅ Customer Receipt Generated Successfully");
-            console.log("   Length:", customerReceipt.length, "characters");
-        } else {
-            console.log("❌ Customer Receipt Generator not available");
-        }
-
-        // Test business receipt generation
-        if (window.businessReceiptGenerator) {
-            console.log("🖨️  Testing Business Receipt Generation...");
-            const businessReceipt = window.businessReceiptGenerator.generatePrintReceipt(
-                testBookingData,
-                testCustomerData.serviceOption,
-                testCustomerData.firstName,
-                testCustomerData.lastName,
-                testCustomerData.contactNumber,
-                testCustomerData.email,
-                testCustomerData.barangay,
-                testCustomerData.address,
-                testCustomerData.specialInstructions
-            );
-            console.log("✅ Business Receipt Generated Successfully");
-            console.log("   Length:", businessReceipt.length, "characters");
-        } else {
-            console.log("❌ Business Receipt Generator not available");
-        }
-
-    } catch (error) {
-        console.error("❌ Error during receipt generation:", error);
-        console.error("   Error stack:", error.stack);
-    }
-
-    console.log("🎉 Receipt Generation Test Complete!");
-};
 
 // Modal Control Functions
 function closeBookingModal() {
@@ -415,7 +247,6 @@ function printReceipt() {
     // Use the business receipt generator to create the print window
     const businessGenerator = bookingConfirmation.businessReceiptGenerator;
     if (!businessGenerator) {
-        console.error('Business receipt generator not available for printing');
         alert('Error: Print system not loaded properly. Please refresh the page.');
         return;
     }
