@@ -194,6 +194,12 @@
     display: flex;
 }
 
+body.shop-modal-open .leaflet-control-container {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
 .shop-modal {
     background: white;
     border-radius: 6px;

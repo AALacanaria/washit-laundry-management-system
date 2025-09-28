@@ -4,6 +4,19 @@
 const BOOKED_LAUNDRY_SHOP_KEY = 'washit:bookedLaundryShop';
 let currentBookedLaundryShop = null;
 
+function getSiteBasePath() {
+    const { pathname } = window.location;
+    const segments = pathname.split('/').filter(Boolean);
+    const repoIndex = segments.indexOf('washit-laundry-management-system');
+
+    if (repoIndex !== -1) {
+        const baseSegments = segments.slice(0, repoIndex + 1);
+        return `/${baseSegments.join('/')}/`;
+    }
+
+    return '/';
+}
+
 function sanitizeLogoPath(logo) {
     if (!logo || typeof logo !== 'string') {
         return '';
@@ -25,9 +38,12 @@ function sanitizeLogoPath(logo) {
     }
 
     try {
-        return new URL(cleaned, `${window.location.origin}/`).href;
+        const basePath = getSiteBasePath();
+        const baseUrl = `${window.location.origin}${basePath}`;
+        return new URL(cleaned, baseUrl).href;
     } catch (err) {
-        return cleaned;
+        const fallbackBase = getSiteBasePath();
+        return `${fallbackBase}${cleaned}`.replace(/\/+/g, '/');
     }
 }
 

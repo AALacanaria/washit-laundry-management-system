@@ -38,6 +38,19 @@ function normalizeShopData(shop) {
     };
 }
 
+function getSiteBasePath() {
+    const { pathname } = window.location;
+    const segments = pathname.split('/').filter(Boolean);
+    const repoIndex = segments.indexOf('washit-laundry-management-system');
+
+    if (repoIndex !== -1) {
+        const baseSegments = segments.slice(0, repoIndex + 1);
+        return `/${baseSegments.join('/')}/`;
+    }
+
+    return '/';
+}
+
 function resolveShopLogoUrl(rawLogo) {
     if (!rawLogo || typeof rawLogo !== 'string') {
         return null;
@@ -54,11 +67,15 @@ function resolveShopLogoUrl(rawLogo) {
     }
 
     try {
-        const absoluteUrl = new URL(trimmed, `${window.location.origin}/`);
+        const cleaned = trimmed.replace(/^\.\/+/, '').replace(/^\/+/, '');
+        const basePath = getSiteBasePath();
+        const baseUrl = `${window.location.origin}${basePath}`;
+        const absoluteUrl = new URL(cleaned || '', baseUrl);
         return absoluteUrl.href;
     } catch (err) {
-        // Fallback to relative path if URL construction fails
-        return trimmed;
+        const fallbackBase = getSiteBasePath();
+        const cleanedPath = trimmed.replace(/^\.\/+/, '').replace(/^\/+/, '');
+        return `${fallbackBase}${cleanedPath}`.replace(/\/+/g, '/');
     }
 }
 

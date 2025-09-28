@@ -206,6 +206,7 @@ function openShopModal(shop) {
         // Show the modal
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        document.body.classList.add('shop-modal-open');
     }, 100);
 }
 
@@ -213,6 +214,7 @@ function closeShopModal() {
     const modal = document.getElementById('shopModal');
     modal.classList.remove('active');
     document.body.style.overflow = 'auto';
+    document.body.classList.remove('shop-modal-open');
 }
 
 // Add modal event listeners

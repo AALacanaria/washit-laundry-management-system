@@ -2,6 +2,12 @@
 
 Modern, multi-channel laundry platform bridging shop discovery, smart bookings, and digital receipts for Wash.IT partner shops.
 
+## What's new (v2.7.0)
+
+- **Auto location confidence** – Homepage map now auto-centers on the customer whenever geolocation permission is already granted, keeping routes ready without extra clicks.
+- **Route clarity on shop switch** – Switching between laundry shops instantly recalculates the customer-to-shop route so the map preview stays accurate.
+- **Refined map filtering** – “Show All Wash.IT Shops” toggle now flips between all-shop view and the currently selected barangay, with markers updating accordingly.
+
 ## What's new (v2.6.0)
 
 - **Smart pickup address merge** – Receipts now combine the user’s details with reverse-geocoded map data, fill in missing streets automatically, and keep the address concise up to Baguio City.
@@ -162,7 +168,12 @@ This project is developed as a capstone project for academic purposes.
 
 ## 🔄 Version History
 
-### v2.6.0 (Current)
+### v2.7.0 (Current)
+- Homepage map auto-fetches user location when permission is granted, keeping the “You are here” marker in sync.
+- Routing refreshes as you switch shops, mirroring the booking form’s behavior.
+- Barangay filter toggle now switches between filtered and all-shop views with clear labeling.
+
+### v2.6.0
 - Merged user-provided and map-resolved pickup addresses on both receipts, ensuring barangay presence without duplicate house numbers.
 - Removed coordinates and external navigation links from receipt outputs while keeping a clean Baguio City-capped format.
 

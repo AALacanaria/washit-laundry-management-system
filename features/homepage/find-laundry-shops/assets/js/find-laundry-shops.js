@@ -95,7 +95,7 @@ function getMapShopData() {
 
 var map;
 var shopMarkers = [];
-var markersVisible = true;
+var showFilteredOnly = false;
 var currentBoundaryLayer = null;
 var barangayGeoJSON = null;
 var userLocationMarker = null;
@@ -104,6 +104,7 @@ var currentRouteLayer = null;
 var routeFetchController = null;
 var activeShop = null;
 var locationPermissionAlertShown = false;
+var routeInfoMarker = null;
 
 function resolveDataAssetUrl(filename) {
     if (!filename) {
@@ -130,6 +131,19 @@ function resolveDataAssetUrl(filename) {
     }
 }
 
+function getSiteBasePath() {
+    const { pathname } = window.location;
+    const segments = pathname.split('/').filter(Boolean);
+    const repoIndex = segments.indexOf('washit-laundry-management-system');
+
+    if (repoIndex !== -1) {
+        const baseSegments = segments.slice(0, repoIndex + 1);
+        return `/${baseSegments.join('/')}/`;
+    }
+
+    return '/';
+}
+
 function resolveShopLogoUrl(logo) {
     if (!logo || typeof logo !== 'string') {
         return null;
@@ -150,9 +164,12 @@ function resolveShopLogoUrl(logo) {
     }
 
     try {
-        return new URL(cleaned, `${window.location.origin}/`).href;
+        const basePath = getSiteBasePath();
+        const baseUrl = `${window.location.origin}${basePath}`;
+        return new URL(cleaned, baseUrl).href;
     } catch (err) {
-        return cleaned;
+        const fallbackBase = getSiteBasePath();
+        return `${fallbackBase}${cleaned}`.replace(/\/+/g, '/');
     }
 }
 
@@ -227,7 +244,7 @@ function renderSidebarTitle(sidebarTitle, shop) {
     }
 }
 document.addEventListener('DOMContentLoaded', function() {
-    map = L.map('map').setView([16.424693, 120.600004], 16);
+    map = L.map('map', { zoomControl: false }).setView([16.424693, 120.600004], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
@@ -246,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     shops.forEach(function(shop) {
         var marker = L.marker([shop.lat, shop.lng], {icon: washitIcon}).addTo(map);
+        marker.shopData = shop;
         
         marker.on('click', function() {
             showMapSidebar(shop);
@@ -253,6 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         shopMarkers.push(marker);
     });
+    applyShopVisibility();
     const barangayFilter = document.getElementById('barangay-filter');
     if (barangayFilter) {
         barangayFilter.addEventListener('change', function() {
@@ -260,12 +279,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (selectedBarangay) {
                 zoomToBarangay(selectedBarangay);
             } else {
+                showFilteredOnly = false;
                 resetMapView();
             }
+
+            applyShopVisibility();
         });
     }
 
     loadBarangayBoundaries();
+    autoAcquireLocationIfPermitted();
 });
 
 function showMapSidebar(shop) {
@@ -300,14 +323,14 @@ function showMapSidebar(shop) {
         </div>
         
         <div style="margin: 16px 0; padding: 12px; background: #f8f9fa; border-radius: 8px;">
-            <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px; font-weight: 600;">🧺 Services Offered</h4>
+            <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px; font-weight: 600;">Services Offered</h4>
             <div class="shop-modal-services">
                 ${shop.services.map(service => `<div class="shop-modal-service">${service}</div>`).join('')}
             </div>
         </div>
         
         <div style="margin: 16px 0; padding: 12px; background: #e0f2fe; border-radius: 8px;">
-            <h4 style="margin: 0 0 8px 0; color: #0369a1; font-size: 14px; font-weight: 600;">📅 Operating Hours</h4>
+            <h4 style="margin: 0 0 8px 0; color: #0369a1; font-size: 14px; font-weight: 600;">Operating Hours</h4>
             ${shop.fullHours.map(hours => 
                 `<div style="font-size: 12px; color: #0369a1; margin: 4px 0;">${hours.day}: ${hours.hours}</div>`
             ).join('')}
@@ -318,7 +341,7 @@ function showMapSidebar(shop) {
         </div>
         
         <div style="margin: 16px 0;">
-            <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px; font-weight: 600;">💳 Payment Methods</h4>
+            <h4 style="margin: 0 0 8px 0; color: #333; font-size: 14px; font-weight: 600;">Payment Methods</h4>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                 ${shop.payments.map(payment => {
                     let bgColor = '#f8f9fa';
@@ -435,35 +458,19 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toggleMap() {
-    var hideBtn = document.querySelector('.hide-btn');
-    
-    if (markersVisible) {
-        shopMarkers.forEach(function(marker) {
-            map.removeLayer(marker);
-        });
-        markersVisible = false;
-    hideBtn.textContent = 'Show Shops';
+    const selectedBarangay = getSelectedBarangayValue();
 
-        if (userLocationMarker && map.hasLayer(userLocationMarker)) {
-            map.removeLayer(userLocationMarker);
-        }
+    if (!selectedBarangay) {
+        showFilteredOnly = false;
+        applyShopVisibility();
+        return;
+    }
 
-        abortRouteFetch();
-        clearRouteLayer();
-    } else {
-        shopMarkers.forEach(function(marker) {
-            marker.addTo(map);
-        });
-        markersVisible = true;
-    hideBtn.textContent = 'Hide Shops';
+    showFilteredOnly = !showFilteredOnly;
+    applyShopVisibility();
 
-        if (userLocationMarker && !map.hasLayer(userLocationMarker)) {
-            userLocationMarker.addTo(map);
-        }
-
-        if (activeShop && userLocationLatLng) {
-            drawRouteToShop(activeShop, { autoRequest: false });
-        }
+    if (showFilteredOnly) {
+        zoomToBarangay(selectedBarangay);
     }
 }
 
@@ -483,6 +490,71 @@ async function loadBarangayBoundaries() {
     } catch (error) {
         alert('We could not load the barangay boundaries. Please open this page through a local web server (for example, VS Code Live Server or "python -m http.server 8000") to view the outlines. The map will continue without them.');
     }
+}
+
+function getSelectedBarangayValue() {
+    const filter = document.getElementById('barangay-filter');
+    if (!filter) {
+        return '';
+    }
+    return filter.value || '';
+}
+
+function updateShopToggleButton() {
+    const toggleBtn = document.querySelector('.hide-btn');
+    if (!toggleBtn) {
+        return;
+    }
+
+    const filter = document.getElementById('barangay-filter');
+    const selectedBarangay = filter ? (filter.value || '') : '';
+    const selectedBarangayLabel = filter && filter.selectedIndex >= 0
+        ? filter.options[filter.selectedIndex].text.trim()
+        : '';
+
+    if (!selectedBarangay) {
+        toggleBtn.textContent = 'Show All Wash.IT Shops';
+        toggleBtn.disabled = true;
+        toggleBtn.setAttribute('aria-disabled', 'true');
+        return;
+    }
+
+    toggleBtn.disabled = false;
+    toggleBtn.removeAttribute('aria-disabled');
+    toggleBtn.textContent = showFilteredOnly
+        ? 'Show All Wash.IT Shops'
+        : `Show Only ${selectedBarangayLabel || selectedBarangay} Shops`;
+}
+
+function applyShopVisibility() {
+    if (!map) {
+        return;
+    }
+
+    const selectedBarangay = getSelectedBarangayValue();
+    const filterActive = showFilteredOnly && selectedBarangay;
+
+    shopMarkers.forEach(function(marker) {
+        const markerBarangay = marker.shopData && marker.shopData.barangay;
+        const shouldDisplay = !filterActive || markerBarangay === selectedBarangay;
+
+        if (shouldDisplay) {
+            if (!map.hasLayer(marker)) {
+                marker.addTo(map);
+            }
+            marker.setOpacity(1);
+        } else if (map.hasLayer(marker)) {
+            map.removeLayer(marker);
+        }
+    });
+
+    if (filterActive && activeShop && activeShop.barangay !== selectedBarangay) {
+        activeShop = null;
+        hideMapSidebar();
+        clearRouteLayer();
+    }
+
+    updateShopToggleButton();
 }
 
 function zoomToBarangay(barangayValue) {
@@ -539,11 +611,10 @@ function resetMapView() {
     }
     
     shopMarkers.forEach(function(marker) {
-        if (!map.hasLayer(marker) && markersVisible) {
-            marker.addTo(map);
-        }
         marker.setOpacity(1);
     });
+
+    applyShopVisibility();
 }
 
 function setUserLocation(lat, lng, options) {
@@ -633,6 +704,8 @@ function clearRouteLayer() {
         map.removeLayer(currentRouteLayer);
         currentRouteLayer = null;
     }
+
+    clearRouteInfoMarker();
 }
 
 function setRouteDetails(distanceMeters, durationSeconds, status) {
@@ -642,36 +715,147 @@ function setRouteDetails(distanceMeters, durationSeconds, status) {
     }
 
     if (status === 'loading') {
-        routeDetailsEl.innerHTML = '<span style="color:#1e3a8a; font-weight:500;">Calculating route…</span>';
-        return;
-    }
-
-    if (status === 'need-location') {
-        routeDetailsEl.innerHTML = '<span style="color:#6b7280;">Enable your location or tap "My Location" to preview the travel path.</span>';
-        return;
-    }
-
-    if (status === 'error') {
-        routeDetailsEl.innerHTML = '<span style="color:#b91c1c;">We could not generate the route right now. Please try again.</span>';
-        return;
-    }
-
-    if (typeof distanceMeters === 'number' && typeof durationSeconds === 'number') {
-        const distanceKm = distanceMeters / 1000;
-        const minutes = Math.round(durationSeconds / 60);
-        const formattedDistance = distanceKm >= 1 ? distanceKm.toFixed(2) + ' km' : Math.round(distanceMeters) + ' m';
-        const formattedDuration = minutes < 1 ? 'under a minute' : `${minutes} min`;
-
         routeDetailsEl.innerHTML = `
-            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                <span style="color:#1e3a8a; font-weight:600;">${formattedDistance}</span>
-                <span style="color:#1e3a8a; font-weight:500;">⏱️ approx. ${formattedDuration}</span>
-            </div>
+            <span style="color:#4b5563; display:flex; align-items:center; gap:8px;">
+                Calculating distance...
+            </span>
         `;
         return;
     }
 
-    routeDetailsEl.innerHTML = '<span style="color:#6b7280;">Location enabled—select a shop to view your route.</span>';
+    if (status === 'need-location') {
+        routeDetailsEl.innerHTML = `
+            <span style="color:#6b7280;">Enable your location or tap "My Location" to preview the route.</span>
+        `;
+        return;
+    }
+
+    routeDetailsEl.innerHTML = '';
+}
+
+function clearRouteInfoMarker() {
+    if (map && routeInfoMarker) {
+        map.removeLayer(routeInfoMarker);
+    }
+
+    routeInfoMarker = null;
+}
+
+function displayRouteDistanceOnRoute(routeGeometry, distanceMeters) {
+    if (!map || !routeGeometry || typeof distanceMeters !== 'number') {
+        return;
+    }
+
+    let coordinates = null;
+
+    if (routeGeometry.type === 'LineString' && Array.isArray(routeGeometry.coordinates)) {
+        coordinates = routeGeometry.coordinates;
+    } else if (routeGeometry.type === 'MultiLineString' && Array.isArray(routeGeometry.coordinates)) {
+        coordinates = routeGeometry.coordinates.reduce((accumulator, segment) => {
+            if (Array.isArray(segment)) {
+                return accumulator.concat(segment);
+            }
+            return accumulator;
+        }, []);
+    }
+
+    if (!coordinates || coordinates.length === 0) {
+        return;
+    }
+
+    const midpoint = getCoordinateAtFraction(coordinates, 0.5);
+    if (!midpoint) {
+        return;
+    }
+
+    const distanceKm = distanceMeters / 1000;
+    const distanceText = distanceKm >= 1
+        ? `${distanceKm.toFixed(2)} km`
+        : `${Math.round(distanceMeters)} m`;
+
+    clearRouteInfoMarker();
+
+    const icon = L.divIcon({
+        className: 'route-info-marker',
+        html: `
+            <div style="transform: translate(-50%, -120%);">
+                <div style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: rgba(37, 99, 235, 0.94);
+                    color: #ffffff;
+                    border-radius: 999px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
+                    letter-spacing: 0.25px;
+                    white-space: nowrap;
+                ">
+                    <span>${distanceText}</span>
+                </div>
+            </div>
+        `,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0]
+    });
+
+    routeInfoMarker = L.marker(midpoint, {
+        icon,
+        interactive: false,
+        keyboard: false,
+        zIndexOffset: 1000
+    }).addTo(map);
+}
+
+function getCoordinateAtFraction(coordinates, fraction) {
+    if (!Array.isArray(coordinates) || coordinates.length === 0) {
+        return null;
+    }
+
+    if (coordinates.length === 1) {
+        const onlyCoord = coordinates[0];
+        return onlyCoord ? L.latLng(onlyCoord[1], onlyCoord[0]) : null;
+    }
+
+    const clampedFraction = Math.max(0, Math.min(1, fraction));
+    let totalDistance = 0;
+    const segmentDistances = [];
+
+    for (let i = 1; i < coordinates.length; i += 1) {
+        const start = L.latLng(coordinates[i - 1][1], coordinates[i - 1][0]);
+        const end = L.latLng(coordinates[i][1], coordinates[i][0]);
+        const segmentDistance = start.distanceTo(end);
+        segmentDistances.push(segmentDistance);
+        totalDistance += segmentDistance;
+    }
+
+    if (totalDistance === 0) {
+        const firstCoord = coordinates[0];
+        return firstCoord ? L.latLng(firstCoord[1], firstCoord[0]) : null;
+    }
+
+    const targetDistance = totalDistance * clampedFraction;
+    let accumulatedDistance = 0;
+
+    for (let i = 0; i < segmentDistances.length; i += 1) {
+        const segmentDistance = segmentDistances[i];
+        if (accumulatedDistance + segmentDistance >= targetDistance) {
+            const startCoord = coordinates[i];
+            const endCoord = coordinates[i + 1];
+            const segmentFraction = segmentDistance === 0
+                ? 0
+                : (targetDistance - accumulatedDistance) / segmentDistance;
+            const lat = startCoord[1] + (endCoord[1] - startCoord[1]) * segmentFraction;
+            const lng = startCoord[0] + (endCoord[0] - startCoord[0]) * segmentFraction;
+            return L.latLng(lat, lng);
+        }
+        accumulatedDistance += segmentDistance;
+    }
+
+    const lastCoord = coordinates[coordinates.length - 1];
+    return lastCoord ? L.latLng(lastCoord[1], lastCoord[0]) : null;
 }
 
 function drawRouteToShop(shop, options) {
@@ -682,7 +866,11 @@ function drawRouteToShop(shop, options) {
     options = options || {};
     const autoRequest = options.autoRequest !== false;
 
-    setRouteDetails(null, null, userLocationLatLng ? 'loading' : 'need-location');
+    if (userLocationLatLng) {
+        setRouteDetails(null, null, 'loading');
+    } else {
+        setRouteDetails(null, null, 'need-location');
+    }
 
     ensureUserLocation(autoRequest, { panTo: false, openPopup: false })
         .then(function(latLng) {
@@ -690,13 +878,11 @@ function drawRouteToShop(shop, options) {
                 throw new Error('LOCATION_UNAVAILABLE');
             }
 
-            setRouteDetails(null, null, 'loading');
-
             abortRouteFetch();
             clearRouteLayer();
 
             const destination = L.latLng(shop.lat, shop.lng);
-            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${latLng.lng},${latLng.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`; 
+            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${latLng.lng},${latLng.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`;
 
             routeFetchController = new AbortController();
 
@@ -734,29 +920,19 @@ function drawRouteToShop(shop, options) {
                         userLocationMarker.addTo(map);
                     }
 
-                    setRouteDetails(route.distance, route.duration);
+                    displayRouteDistanceOnRoute(route.geometry, route.distance);
+                    setRouteDetails(route.distance, null, 'shown-on-route');
                 });
         })
         .catch(function(error) {
-            if (!error) {
-                return;
-            }
-
-            if (error.name === 'AbortError') {
+            if (!error || error.name === 'AbortError') {
                 return;
             }
 
             routeFetchController = null;
             clearRouteLayer();
 
-            if (error.code === 1 || error.message === 'LOCATION_UNAVAILABLE') {
-                setRouteDetails(null, null, 'need-location');
-                if (!locationPermissionAlertShown) {
-                    alert('Allow location access or tap "My Location" to see your route to this shop.');
-                    locationPermissionAlertShown = true;
-                }
-            } else {
-                setRouteDetails(null, null, 'error');
+            if (error.code !== 1 && error.message !== 'LOCATION_UNAVAILABLE') {
                 console.warn('Route calculation failed:', error);
             }
         });
@@ -775,6 +951,52 @@ function requestAndCenterOnUser() {
             } else if (error && error.message && error.message !== 'LOCATION_UNAVAILABLE') {
                 console.warn('Unable to determine current location:', error.message);
             }
+        });
+}
+
+function autoAcquireLocationIfPermitted() {
+    if (userLocationLatLng) {
+        return;
+    }
+
+    if (!navigator || !navigator.permissions || typeof navigator.permissions.query !== 'function') {
+        return;
+    }
+
+    navigator.permissions.query({ name: 'geolocation' })
+        .then(function(status) {
+            var handleGranted = function() {
+                ensureUserLocation(true, { panTo: true, openPopup: false })
+                    .then(function() {
+                        if (activeShop) {
+                            drawRouteToShop(activeShop, { autoRequest: false });
+                        }
+                    })
+                    .catch(function() {
+                        // Ignore errors; user may have revoked access in between.
+                    });
+            };
+
+            if (status.state === 'granted') {
+                handleGranted();
+            }
+
+            if (typeof status.addEventListener === 'function') {
+                status.addEventListener('change', function() {
+                    if (status.state === 'granted') {
+                        handleGranted();
+                    }
+                });
+            } else {
+                status.onchange = function() {
+                    if (status.state === 'granted') {
+                        handleGranted();
+                    }
+                };
+            }
+        })
+        .catch(function() {
+            // Permissions API not accessible; do nothing to avoid triggering prompts.
         });
 }
 

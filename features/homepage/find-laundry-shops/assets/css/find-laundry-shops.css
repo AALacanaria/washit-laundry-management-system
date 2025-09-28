@@ -116,10 +116,11 @@
 }
 
 #map {
-    /* Removed width: 100% and height to allow flexbox control */
     border-radius: 8px;
     margin-top: 8px;
     border: 1px solid #e5e7eb;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Map Popup Styles */
