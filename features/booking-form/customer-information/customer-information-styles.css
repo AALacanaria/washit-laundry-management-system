@@ -153,6 +153,44 @@ input.input-invalid {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+.pickup-route-details {
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    color: #1e3a8a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.45;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.pickup-route-details .route-status-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.pickup-route-details.is-loading {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.pickup-route-details.is-success {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #047857;
+}
+
+.pickup-route-details.is-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
 /* Special Instructions Input */
 #specialInstructions {
     min-height: 60px;

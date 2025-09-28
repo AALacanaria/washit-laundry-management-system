@@ -664,7 +664,7 @@ function setRouteDetails(distanceMeters, durationSeconds, status) {
 
         routeDetailsEl.innerHTML = `
             <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                <span style="color:#1e3a8a; font-weight:600;">🚗 ${formattedDistance}</span>
+                <span style="color:#1e3a8a; font-weight:600;">${formattedDistance}</span>
                 <span style="color:#1e3a8a; font-weight:500;">⏱️ approx. ${formattedDuration}</span>
             </div>
         `;

@@ -22,6 +22,9 @@ class BusinessReceiptGenerator {
             firstName, lastName, contactNumber, email, barangay, address, specialInstructions, serviceOption
         });
 
+    const pickupLocation = this.getPickupLocationDetails();
+    const pickupAddressHtml = this.composePickupAddressHtml(sanitizedData.address, sanitizedData.barangay, pickupLocation);
+
         const isRush = bookingData.bookingType === CONFIG.BOOKING_TYPES.RUSH;
         const isPickupAndSelfClaim = bookingData.serviceType === 'pickup_selfclaim';
 
@@ -143,6 +146,11 @@ class BusinessReceiptGenerator {
                     <div class="receipt-line">
                         <span class="label">Address Details:</span>
                         <span class="value">${sanitizedData.address}</span>
+                    </div>` : ''}
+                    ${pickupAddressHtml ? `
+                    <div class="receipt-line">
+                        <span class="label">Pickup Address:</span>
+                        <span class="value">${pickupAddressHtml}</span>
                     </div>` : ''}
                     ${sanitizedData.specialInstructions ? `
                     <div class="receipt-line">
@@ -283,6 +291,269 @@ class BusinessReceiptGenerator {
         }
         sanitized.fullName = `${sanitized.firstName} ${sanitized.lastName}`.trim();
         return sanitized;
+    }
+
+    getPickupLocationDetails() {
+        if (typeof window.getPickupLocationDetails !== 'function') {
+            return null;
+        }
+
+        try {
+            const details = window.getPickupLocationDetails();
+            if (!details || typeof details.lat !== 'number' || typeof details.lng !== 'number') {
+                return null;
+            }
+            return details;
+        } catch (error) {
+            console.warn('Business receipt: pickup location unavailable.', error);
+            return null;
+        }
+    }
+
+    composePickupAddressHtml(userAddress, barangay, pickupLocation) {
+        const trimmedUserAddress = typeof userAddress === 'string' ? userAddress.trim() : '';
+        const trimmedBarangay = typeof barangay === 'string' ? barangay.trim() : '';
+        const mapAddress = pickupLocation && typeof pickupLocation.address === 'string'
+            ? pickupLocation.address.trim()
+            : '';
+
+        const mergedAddress = this.mergeAddressDetails(trimmedUserAddress, mapAddress, trimmedBarangay);
+        const segments = [];
+
+        if (mergedAddress) {
+            segments.push(this.escapeHtml(mergedAddress));
+        }
+
+        if (!mergedAddress && pickupLocation && pickupLocation.isResolving) {
+            segments.push('<span class="receipt-secondary-text">Resolving pickup address…</span>');
+        }
+
+        return segments.join('<br>');
+    }
+
+    mergeAddressDetails(userAddress, mapAddress, barangay) {
+        const userSegments = this.extractAddressSegments(userAddress);
+        const mapSegments = this.extractAddressSegments(mapAddress);
+        const normalizedBarangay = this.normalizeBarangayForComparison(barangay);
+        const userHasHouseNumber = this.containsHouseNumber(userAddress);
+
+        const cleanedUserSegments = this.cleanAddressSegments(userSegments, {
+            stripLeadingHouseNumber: false,
+            normalizedBarangay
+        });
+        const cleanedMapSegments = this.cleanAddressSegments(mapSegments, {
+            stripLeadingHouseNumber: userHasHouseNumber,
+            normalizedBarangay
+        });
+        const userDetailed = this.looksLikeDetailedAddress(userAddress);
+        const mapDetailed = this.looksLikeDetailedAddress(mapAddress);
+
+        let baseSegments = [];
+        let supplementalSegments = [];
+
+        if (userDetailed) {
+            baseSegments = cleanedUserSegments;
+            supplementalSegments = cleanedMapSegments;
+        } else if (mapDetailed) {
+            baseSegments = cleanedMapSegments;
+            supplementalSegments = cleanedUserSegments;
+        } else if (cleanedUserSegments.length > 0) {
+            baseSegments = cleanedUserSegments;
+            supplementalSegments = cleanedMapSegments;
+        } else {
+            baseSegments = cleanedMapSegments;
+            supplementalSegments = [];
+        }
+
+        const combined = [...baseSegments];
+        supplementalSegments.forEach((segment) => {
+            if (!combined.some((existing) => existing.toLowerCase() === segment.toLowerCase())) {
+                combined.push(segment);
+            }
+        });
+
+        if (combined.length >= 2) {
+            const first = combined[0];
+            const second = combined[1];
+            if (this.isStandaloneHouseNumberSegment(first) && this.segmentLooksLikeStreet(second)) {
+                combined.splice(0, 2, `${first} ${second}`.trim());
+            }
+        }
+
+        if (combined.length === 0) {
+            return '';
+        }
+
+        const withBarangay = this.ensureBarangayPresence(combined, barangay);
+        const truncated = this.truncateSegmentsAtBaguio(withBarangay);
+        return truncated.join(', ');
+    }
+
+    extractAddressSegments(address) {
+        if (!address) {
+            return [];
+        }
+
+        return address
+            .split(',')
+            .map((segment) => segment.trim())
+            .filter((segment, index, array) => segment && array.findIndex((candidate) => candidate.trim().toLowerCase() === segment.toLowerCase()) === index);
+    }
+
+    cleanAddressSegments(segments, options = {}) {
+        const {
+            stripLeadingHouseNumber = false,
+            normalizedBarangay = ''
+        } = options;
+
+        return segments
+            .map((segment) => {
+                let processed = segment.replace(/\s+/g, ' ').trim();
+                if (stripLeadingHouseNumber) {
+                    const withoutNumber = this.removeLeadingHouseNumber(processed);
+                    if (withoutNumber) {
+                        processed = withoutNumber;
+                    }
+                }
+                return processed;
+            })
+            .map((segment) => segment.replace(/\s+/g, ' ').trim())
+            .filter((segment) => segment)
+            .filter((segment) => !/\bdistrict\b/i.test(segment))
+            .filter((segment) => {
+                if (!normalizedBarangay) {
+                    return true;
+                }
+                return this.normalizeBarangayForComparison(segment) !== normalizedBarangay;
+            });
+    }
+
+    removeLeadingHouseNumber(segment) {
+        const match = segment.match(/^(\d+[a-zA-Z0-9\-\/]*)\s+(.*)$/);
+        if (match && match[2]) {
+            return match[2].trim();
+        }
+        return segment;
+    }
+
+    normalizeBarangayForComparison(value) {
+        return (value || '')
+            .replace(/barangay/gi, '')
+            .replace(/brgy\.?/gi, '')
+            .replace(/district/gi, '')
+            .replace(/[^a-zA-Z0-9\s-]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .toLowerCase();
+    }
+
+    containsHouseNumber(value) {
+        if (!value || typeof value !== 'string') {
+            return false;
+        }
+        return /\d/.test(value);
+    }
+
+    isStandaloneHouseNumberSegment(segment) {
+        if (!segment || typeof segment !== 'string') {
+            return false;
+        }
+        const normalized = segment.replace(/\s+/g, '').trim();
+        return /^\d+[a-zA-Z0-9\-\/]*$/.test(normalized);
+    }
+
+    segmentLooksLikeStreet(segment) {
+        if (!segment || typeof segment !== 'string') {
+            return false;
+        }
+        const lower = segment.toLowerCase();
+        const patterns = [
+            /\bstreet\b/,
+            /\bst\.?\b/,
+            /\broad\b/,
+            /\brd\.?\b/,
+            /\bavenue\b/,
+            /\bave\.?\b/,
+            /\bdrive\b/,
+            /\bdr\.?\b/,
+            /\blane\b/,
+            /\bln\.?\b/,
+            /\bboulevard\b/,
+            /\bblvd\.?\b/,
+            /\bhighway\b/,
+            /\bhwy\.?\b/,
+            /\bpurok\b/,
+            /\bblock\b/,
+            /\bblk\.?\b/,
+            /\bphase\b/,
+            /\bsitio\b/,
+            /\bcompound\b/
+        ];
+        return patterns.some((pattern) => pattern.test(lower));
+    }
+
+    ensureBarangayPresence(segments, barangay) {
+        if (!Array.isArray(segments) || segments.length === 0) {
+            return segments;
+        }
+
+        const cleanedBarangay = typeof barangay === 'string' ? barangay.replace(/\s+/g, ' ').trim() : '';
+        if (!cleanedBarangay) {
+            return segments;
+        }
+
+        const normalizedBarangay = this.normalizeBarangayForComparison(cleanedBarangay);
+        if (!normalizedBarangay) {
+            return segments;
+        }
+
+        const alreadyPresent = segments.some((segment) => this.normalizeBarangayForComparison(segment) === normalizedBarangay);
+        if (alreadyPresent) {
+            return segments;
+        }
+
+        const insertionSegments = [...segments];
+        const baguioIndex = insertionSegments.findIndex((segment) => /baguio/i.test(segment));
+
+        if (baguioIndex >= 0) {
+            insertionSegments.splice(Math.max(0, baguioIndex), 0, cleanedBarangay);
+        } else {
+            insertionSegments.push(cleanedBarangay);
+        }
+
+        return insertionSegments;
+    }
+
+    truncateSegmentsAtBaguio(segments) {
+        const result = [];
+        for (let i = 0; i < segments.length; i += 1) {
+            const segment = segments[i];
+            if (!segment) {
+                continue;
+            }
+            result.push(segment);
+            if (/baguio/i.test(segment)) {
+                break;
+            }
+        }
+
+        return result.length > 0 ? result : segments;
+    }
+
+    looksLikeDetailedAddress(address) {
+        if (typeof address !== 'string') {
+            return false;
+        }
+        const trimmed = address.trim();
+        if (!trimmed) {
+            return false;
+        }
+        if (/\d/.test(trimmed)) {
+            return true;
+        }
+        const lower = trimmed.toLowerCase();
+        const keywords = ['street', 'st.', ' st ', ' st,', ' st-', 'road', 'rd', 'rd.', 'avenue', 'ave', 'ave.', 'drive', 'dr', 'dr.', 'lane', 'ln', 'ln.', 'boulevard', 'blvd', 'highway', 'hwy', 'circle', 'cir', 'purok', 'blk', 'block', 'lot', 'phase', 'sitio', 'subdivision', 'compound', 'ext.', 'extension'];
+        return keywords.some((keyword) => lower.includes(keyword));
     }
 
     // Get laundry items data from the form

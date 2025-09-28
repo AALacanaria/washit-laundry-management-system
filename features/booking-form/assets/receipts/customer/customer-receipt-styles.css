@@ -199,6 +199,13 @@
     line-height: 1.4;
 }
 
+.receipt-secondary-text {
+    display: block;
+    color: #6b7280;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
 .receipt-label {
     width: 180px;
     font-weight: 600;

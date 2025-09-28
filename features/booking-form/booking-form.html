@@ -71,7 +71,7 @@
                 <span id="bookedLaundryShopBadgeAddress">The shop you choose will appear here.</span>
             </div>
         </div>
-        <h4 class="pickup-header" id="booking-preference-label">🔄 Choose your booking preference: <span style="color:red">*</span></h4>
+        <h4 class="pickup-header" id="booking-preference-label">Choose your booking preference: <span style="color:red">*</span></h4>
         <div class="toggle-container" role="radiogroup" aria-labelledby="booking-preference-label">
             <div class="toggle-option" 
                  onclick="selectBookingType('normal')" 
@@ -80,7 +80,7 @@
                  aria-checked="false"
                  tabindex="0"
                  aria-label="Normal booking - Standard 2-3 day processing">
-                <h3>📅 Normal</h3>
+                <h3>Normal Booking</h3>
                 <p>Standard</p>
             </div>
             <div class="toggle-option" 
@@ -90,7 +90,7 @@
                  aria-checked="false"
                  tabindex="-1"
                  aria-label="Rush booking - Express 1.5 day processing">
-                <h3>⚡ Rush</h3>
+                <h3>Rush Booking</h3>
                 <p>Express</p>
             </div>
         </div>
@@ -121,7 +121,7 @@
             <!-- Service Option Section -->
             <div class="form-section" data-section="serviceSection">
                 <h3>Service Details</h3>
-                <h4 class="pickup-header">🧾 Choose Service Option <span style="color:red">*</span></h4>
+                <h4 class="pickup-header">Choose Service Option <span style="color:red">*</span></h4>
                 <div class="service-options-grid">
                     <div class="service-card" data-value="pickup_delivery" onclick="selectService(this, 'pickup_delivery')">
                         <div class="service-icon">🚚</div>
@@ -155,7 +155,7 @@
                     <legend id="laundry-legend" class="sr-only">Laundry categories</legend>
 
                     <div class="laundry-table-wrap">
-                        <h4 class="pickup-header" id="items-desc">🧺 Select the number of items in each category <span style="color:red">*</span></h4>
+                        <h4 class="pickup-header" id="items-desc">Select the number of items in each category <span style="color:red">*</span></h4>
                         <table class="items-table" aria-describedby="items-desc">
                             <thead>
                                 <tr><th><strong>Item Category</strong></th><th><strong>Item Quantity</strong></th><th><strong>Service Price</strong></th></tr>
@@ -204,7 +204,7 @@
             <div class="form-section" data-section="scheduleSection">
                 <h3>Book a Schedule</h3>
                 <!-- Pickup/Drop-off Scheduling Header -->
-                <h4 class="pickup-header" id="calendarHeader">📅 Choose Pickup Schedule <span style="color:red">*</span></h4>
+                <h4 class="pickup-header" id="calendarHeader">Choose Pickup Schedule <span style="color:red">*</span></h4>
                 <p class="section-subtext" id="calendarSubtext">
                     Select your preferred pickup date and time:
                 </p>
@@ -232,7 +232,7 @@
                 
                 <!-- Self-Claim Scheduling (hidden by default) -->
                 <div id="selfClaimSection" class="hidden self-claim-section">
-                    <h4 class="selfclaim-header">🏪 Choose Self-claim Schedule <span style="color:red">*</span></h4>
+                    <h4 class="selfclaim-header">Choose Self-claim Schedule <span style="color:red">*</span></h4>
                     <p class="section-subtext">
                         Your items will be ready for pickup. Select when you'd like to collect them:
                     </p>
@@ -269,7 +269,7 @@
 
             <!-- Customer Information -->
             <div class="form-section" data-section="customerSection">
-                <h3>👤 Customer Information <span style="color:red">*</span></h3>
+                <h3>Customer Information <span style="color:red">*</span></h3>
                 
                 <!-- Auto-fill banner will be inserted here -->
                 <div id="autoFillBanner"></div>
@@ -313,6 +313,9 @@
                 <!-- Map Container for Pickup Address -->
                 <label for="pickupMap">Pickup Address Location (Click on map to set pin)</label>
                 <div id="pickupMap" style="height: 300px; width: 100%; margin-bottom: 10px;"></div>
+                <div id="pickupRouteDetails" class="pickup-route-details" aria-live="polite">
+                    <span>Enable your location or drop a pickup pin to preview the drive to your selected laundry shop.</span>
+                </div>
                 
                 <label for="specialInstructions">Special Instructions (Optional)</label>
                 <input type="text" id="specialInstructions" placeholder="Any special requests or instructions...">
@@ -320,12 +323,11 @@
 
             <!-- Payment Method Section -->
             <div class="form-section" data-section="paymentSection">
-                <h3>💳 Payment Method <span style="color:red">*</span></h3>
+                <h3>Payment Method <span style="color:red">*</span></h3>
                 <p class="section-description">Choose how you'd like to pay for your laundry service</p>
                 
                 <div class="payment-options">
                     <div class="payment-card" data-value="cash" onclick="selectPaymentMethod(this, 'cash')">
-                        <div class="payment-icon">💵</div>
                         <h4>Cash on Delivery (COD)</h4>
                         <p>Pay when you receive your laundry</p>
                         <div class="payment-details">
@@ -336,7 +338,6 @@
                     </div>
                     
                     <div class="payment-card" data-value="cashless" onclick="selectPaymentMethod(this, 'cashless')">
-                        <div class="payment-icon">📱</div>
                         <h4>Cashless Payment</h4>
                         <p>GCash, Maya, Online Banking</p>
                         <div class="payment-details">

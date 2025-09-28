@@ -2,6 +2,11 @@
 
 Modern, multi-channel laundry platform bridging shop discovery, smart bookings, and digital receipts for Wash.IT partner shops.
 
+## What's new (v2.6.0)
+
+- **Smart pickup address merge** – Receipts now combine the user’s details with reverse-geocoded map data, fill in missing streets automatically, and keep the address concise up to Baguio City.
+- **Cleaner receipt layout** – Removed redundant coordinates, external navigation links, and duplicate house numbers so both customer and business copies stay human-friendly.
+
 ## What's new (v2.5.0)
 
 - **Client-to-shop routing preview** – Homepage map now fetches live driving directions from the user's geolocated position to the selected laundry shop with distance and ETA summaries.
@@ -118,7 +123,7 @@ npx http-server . -p 8000
 - **Context-aware time slots** grouped by AM/PM, filtered by current Philippine time, and restricted in rush mode.
 - **Advanced validation** spanning text, phone, email, quantity inputs, booking type toggles, and payment selections.
 - **Pickup map enhancements** with multi-tier tile fallbacks, custom location button, barangay highlighting, and user pin placement.
-- **Receipt generation** templates for customer and business stakeholders with dedicated asset folders.
+- **Receipt generation** templates for customer and business stakeholders with dedicated asset folders and map-assisted pickup addresses.
 
 ## 📊 Data & Integrations
 
@@ -157,7 +162,11 @@ This project is developed as a capstone project for academic purposes.
 
 ## 🔄 Version History
 
-### v2.5.0 (Current)
+### v2.6.0 (Current)
+- Merged user-provided and map-resolved pickup addresses on both receipts, ensuring barangay presence without duplicate house numbers.
+- Removed coordinates and external navigation links from receipt outputs while keeping a clean Baguio City-capped format.
+
+### v2.5.0
 - Added live routing previews between customer geolocation and selected shops, including distance and ETA display.
 - Simplified homepage map controls by removing unused highway overlays and renaming the toggle to "Hide/Show Shops".
 

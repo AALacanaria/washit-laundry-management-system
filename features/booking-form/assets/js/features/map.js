@@ -18,9 +18,24 @@ let shopMarkerIcon = null;
 let pendingShopData = null;
 let lastFitSignature = null;
 
+let currentRouteLayer = null;
+let routeFetchController = null;
+let latestRouteSignature = null;
+let routeInfoMarker = null;
+let pickupPopupTimeout = null;
+let userLocationPopupTimeout = null;
+let routeInfoTimeout = null;
+let pickupReverseGeocodeController = null;
+let lastPickupGeocodeKey = null;
+
 function placePickupMarker(lat, lng, options = {}) {
     if (!map) {
         return;
+    }
+
+    if (pickupPopupTimeout) {
+        clearTimeout(pickupPopupTimeout);
+        pickupPopupTimeout = null;
     }
 
     const {
@@ -43,30 +58,42 @@ function placePickupMarker(lat, lng, options = {}) {
         })
     }).addTo(map);
 
-    const heading = label || (isUserLocation ? '📍 Pickup Location (Your Location)' : '📍 Pickup Location');
-    let popupContent = `<div style="text-align: center; font-family: inherit;">
-            <strong>${heading}</strong><br>
-            <small>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}</small>`;
-
-    if (isUserLocation && accuracy) {
-        popupContent += `<br><small>Based on your device location (±${Math.round(accuracy)}m)</small>`;
-    }
-
-    popupContent += '</div>';
+    const heading = label || (isUserLocation ? '📍 My Location' : '📍 Pickup Location');
+    const popupContent = `<div style="text-align: center; font-family: inherit;">
+            <strong>${heading}</strong>
+        </div>`;
 
     pickupMarker.bindPopup(popupContent);
     if (openPopup) {
         pickupMarker.openPopup();
+        if (pickupPopupTimeout) {
+            clearTimeout(pickupPopupTimeout);
+        }
+        pickupPopupTimeout = setTimeout(() => {
+            if (pickupMarker && typeof pickupMarker.closePopup === 'function') {
+                pickupMarker.closePopup();
+            }
+            pickupPopupTimeout = null;
+        }, 2000);
     }
 
     pickupAddress = {
         lat,
         lng,
         accuracy,
-        isUserLocation
+        isUserLocation,
+        label: label || null,
+        timestamp: Date.now(),
+        resolvedAddress: null,
+        resolvedAddressSource: null,
+        resolvedAddressUpdatedAt: null,
+        isResolving: false
     };
 
+    reverseGeocodePickupAddress(lat, lng);
+
     fitMapToRelevantLocations();
+    drawRouteBetweenPickupAndShop();
 }
 
 function toNumber(value) {
@@ -97,6 +124,214 @@ function getShopLatLng(shop) {
     }
 
     return { lat, lng };
+}
+
+function getPickupLatLng() {
+    if (pickupMarker && typeof pickupMarker.getLatLng === 'function') {
+        const markerLatLng = pickupMarker.getLatLng();
+        if (markerLatLng && Number.isFinite(markerLatLng.lat) && Number.isFinite(markerLatLng.lng)) {
+            return markerLatLng;
+        }
+    }
+
+    if (pickupAddress && Number.isFinite(pickupAddress.lat) && Number.isFinite(pickupAddress.lng)) {
+        return L.latLng(pickupAddress.lat, pickupAddress.lng);
+    }
+
+    return null;
+}
+
+function getPickupLocationDetails() {
+    const latLng = getPickupLatLng();
+    if (!latLng) {
+        return null;
+    }
+
+    const accuracy = pickupAddress && Number.isFinite(pickupAddress.accuracy)
+        ? Math.round(pickupAddress.accuracy)
+        : null;
+
+    return {
+        lat: latLng.lat,
+        lng: latLng.lng,
+        accuracy,
+        isUserLocation: !!(pickupAddress && pickupAddress.isUserLocation),
+        label: pickupAddress && pickupAddress.label ? pickupAddress.label : null,
+        timestamp: pickupAddress && pickupAddress.timestamp ? pickupAddress.timestamp : null,
+        address: pickupAddress && pickupAddress.resolvedAddress ? pickupAddress.resolvedAddress : null,
+        addressSource: pickupAddress && pickupAddress.resolvedAddressSource ? pickupAddress.resolvedAddressSource : null,
+        isResolving: !!(pickupAddress && pickupAddress.isResolving)
+    };
+}
+
+function reverseGeocodePickupAddress(lat, lng) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+        return;
+    }
+
+    const geocodeKey = `${lat.toFixed(6)},${lng.toFixed(6)}`;
+    if (pickupAddress && pickupAddress.resolvedAddress && lastPickupGeocodeKey === geocodeKey) {
+        pickupAddress.isResolving = false;
+        return;
+    }
+
+    if (pickupReverseGeocodeController) {
+        pickupReverseGeocodeController.abort();
+        pickupReverseGeocodeController = null;
+    }
+
+    pickupReverseGeocodeController = new AbortController();
+    lastPickupGeocodeKey = geocodeKey;
+
+    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&zoom=18&addressdetails=1&email=washitlms%40gmail.com`;
+
+    if (pickupAddress) {
+        pickupAddress.isResolving = true;
+        pickupAddress.resolvedAddressSource = null;
+    }
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        },
+        signal: pickupReverseGeocodeController.signal
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Reverse geocode failed (${response.status})`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            pickupReverseGeocodeController = null;
+
+            if (!pickupAddress || geocodeKey !== lastPickupGeocodeKey) {
+                return;
+            }
+
+            const formattedAddress = formatNominatimAddress(data);
+            if (formattedAddress) {
+                pickupAddress.resolvedAddress = formattedAddress;
+                pickupAddress.resolvedAddressSource = 'reverse-geocode';
+                pickupAddress.resolvedAddressUpdatedAt = Date.now();
+                window.dispatchEvent(new CustomEvent('washit:pickupAddressResolved', {
+                    detail: {
+                        address: formattedAddress,
+                        coordinates: { lat, lng }
+                    }
+                }));
+            } else {
+                pickupAddress.resolvedAddress = null;
+                pickupAddress.resolvedAddressSource = 'reverse-geocode-empty';
+            }
+            pickupAddress.isResolving = false;
+        })
+        .catch((error) => {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+            pickupReverseGeocodeController = null;
+            if (pickupAddress) {
+                pickupAddress.resolvedAddressSource = 'reverse-geocode-error';
+                pickupAddress.isResolving = false;
+            }
+            console.warn('Pickup reverse geocoding failed:', error);
+        });
+}
+
+function formatNominatimAddress(data) {
+    if (!data) {
+        return '';
+    }
+
+    const address = data.address || {};
+    const parts = [];
+    const seen = new Set();
+
+    const addPart = (value) => {
+        const trimmed = typeof value === 'string' ? value.trim() : '';
+        if (!trimmed) {
+            return;
+        }
+        const normalized = trimmed.toLowerCase();
+        if (seen.has(normalized)) {
+            return;
+        }
+        seen.add(normalized);
+        parts.push(trimmed);
+    };
+
+    const road = address.road || address.residential || address.street || address.highway || address.pedestrian || address.path || address.footway || address.cycleway || address.service;
+    const houseNumber = address.house_number || address.house_name || address.building || address.unit || address.level;
+    const neighbourhood = address.neighbourhood || address.suburb || address.village || address.hamlet || address.barangay || address.district || address.borough || address.quarter;
+    const city = address.city || address.town || address.municipality || address.county || address.state_district;
+    const province = address.state || address.province || address.region;
+    const postcode = address.postcode;
+    const country = address.country;
+
+    if (houseNumber && road) {
+        addPart(`${houseNumber} ${road}`);
+    } else if (road) {
+        addPart(road);
+    } else if (houseNumber) {
+        addPart(houseNumber);
+    }
+
+    addPart(neighbourhood);
+    addPart(city);
+    addPart(province);
+
+    if (postcode) {
+        addPart(postcode);
+    }
+
+    if (country) {
+        addPart(country);
+    }
+
+    if (parts.length === 0 && typeof data.display_name === 'string') {
+        return data.display_name.split(',').slice(0, 5).map((segment) => segment.trim()).filter(Boolean).join(', ');
+    }
+
+    const limitedParts = limitAddressSegments(parts);
+
+    return limitedParts.join(', ');
+}
+
+function limitAddressSegments(segments) {
+    if (!Array.isArray(segments) || segments.length === 0) {
+        return [];
+    }
+
+    const result = [];
+    let encounteredBaguio = false;
+
+    for (let i = 0; i < segments.length; i += 1) {
+        const segment = segments[i];
+        if (!segment) {
+            continue;
+        }
+
+        if (/baguio/i.test(segment)) {
+            if (!encounteredBaguio) {
+                result.push('Baguio City');
+            }
+            encounteredBaguio = true;
+            break;
+        }
+
+        result.push(segment);
+    }
+
+    if (!encounteredBaguio && !result.some((part) => /baguio/i.test(part))) {
+        const baguioSegment = segments.find((part) => /baguio/i.test(part));
+        if (baguioSegment) {
+            result.push('Baguio City');
+        }
+    }
+
+    return result;
 }
 
 function ensureShopMarkerIcon() {
@@ -167,6 +402,10 @@ function computeMarkerSignature() {
         parts.push(`pickup:${lat.toFixed(6)},${lng.toFixed(6)}`);
     }
 
+    if (currentRouteLayer && latestRouteSignature) {
+        parts.push(`route:${latestRouteSignature}`);
+    }
+
     parts.sort();
     return parts.join('|');
 }
@@ -185,33 +424,360 @@ function fitMapToRelevantLocations(force = false) {
     if (pickupMarker) {
         points.push(pickupMarker.getLatLng());
     }
+    const signature = computeMarkerSignature();
 
-    if (points.length === 0) {
+    if (!force && signature && signature === lastFitSignature) {
+        return;
+    }
+
+    const routeBounds = currentRouteLayer && typeof currentRouteLayer.getBounds === 'function'
+        ? currentRouteLayer.getBounds()
+        : null;
+    const hasRouteBounds = routeBounds && routeBounds.isValid();
+
+    if (points.length === 0 && !hasRouteBounds) {
         lastFitSignature = null;
         return;
     }
 
-    const signature = computeMarkerSignature();
+    let bounds = null;
 
-    if (!force && signature === lastFitSignature) {
+    if (points.length === 1) {
+        bounds = L.latLngBounds(points);
+    } else if (points.length > 1) {
+        bounds = L.latLngBounds(points);
+    }
+
+    if (hasRouteBounds) {
+        if (bounds) {
+            bounds.extend(routeBounds);
+        } else {
+            bounds = routeBounds;
+        }
+    }
+
+    if (!bounds || !bounds.isValid()) {
+        lastFitSignature = signature;
         return;
     }
 
-    if (points.length === 1) {
-        map.setView(points[0], Math.max(map.getZoom(), 15));
+    if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+        map.setView(bounds.getCenter(), Math.max(map.getZoom(), 15));
     } else {
-        const bounds = L.latLngBounds(points);
-        if (bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [56, 56], maxZoom: 17 });
-        }
+        map.fitBounds(bounds, { padding: [56, 56], maxZoom: 17 });
     }
 
     lastFitSignature = signature;
 }
 
+function setPickupRouteDetails(status, data) {
+    const container = document.getElementById('pickupRouteDetails');
+    if (!container) {
+        return;
+    }
+
+    if (status !== 'success') {
+        clearRouteInfoMarker();
+    }
+
+    container.classList.remove('is-loading', 'is-success', 'is-error');
+
+    let icon = '🧭';
+    let message = 'Enable your location or drop a pickup pin to preview the drive to your selected laundry shop.';
+
+    switch (status) {
+        case 'loading':
+            container.classList.add('is-loading');
+            icon = '⏳';
+            message = 'Calculating route…';
+            break;
+        case 'need-shop':
+            icon = '🏪';
+            message = 'Select a laundry shop to preview the drive from your pickup location.';
+            break;
+        case 'need-pickup':
+            icon = '📍';
+            message = 'Set your pickup pin or tap the location button to preview the drive to your selected shop.';
+            break;
+        case 'error':
+            container.classList.add('is-error');
+            icon = '⚠️';
+            message = 'We couldn’t calculate the route right now. Refresh your location or try again.';
+            break;
+        case 'success':
+            container.classList.add('is-success');
+            icon = '';
+            message = '';
+            break;
+        default:
+            break;
+    }
+
+    if (icon || message) {
+        container.innerHTML = `<span class="route-status-icon">${icon}</span><span>${message}</span>`;
+        container.style.display = '';
+    } else {
+        container.innerHTML = '';
+        container.style.display = 'none';
+    }
+}
+
+function clearRouteInfoMarker() {
+    if (routeInfoTimeout) {
+        clearTimeout(routeInfoTimeout);
+        routeInfoTimeout = null;
+    }
+    if (map && routeInfoMarker) {
+        map.removeLayer(routeInfoMarker);
+    }
+    routeInfoMarker = null;
+}
+
+function clearRouteLayer() {
+    if (map && currentRouteLayer) {
+        map.removeLayer(currentRouteLayer);
+    }
+    currentRouteLayer = null;
+    clearRouteInfoMarker();
+}
+
+function abortRouteFetch() {
+    if (routeFetchController) {
+        routeFetchController.abort();
+        routeFetchController = null;
+    }
+}
+
+function drawRouteBetweenPickupAndShop(options = {}) {
+    if (!map) {
+        return;
+    }
+
+    const shopData = window.bookedLaundryShopData || pendingShopData || null;
+    const shopCoords = getShopLatLng(shopData);
+
+    if (!shopCoords) {
+        clearRouteLayer();
+        latestRouteSignature = null;
+        setPickupRouteDetails('need-shop');
+        return;
+    }
+
+    const pickupLatLng = getPickupLatLng();
+
+    if (!pickupLatLng) {
+        clearRouteLayer();
+        latestRouteSignature = null;
+        setPickupRouteDetails('need-pickup');
+        return;
+    }
+
+    const origin = L.latLng(pickupLatLng.lat, pickupLatLng.lng);
+    const destination = L.latLng(shopCoords.lat, shopCoords.lng);
+
+    const signature = `${origin.lat.toFixed(6)},${origin.lng.toFixed(6)}|${destination.lat.toFixed(6)},${destination.lng.toFixed(6)}`;
+
+    if (!options.force && signature === latestRouteSignature && currentRouteLayer) {
+        return;
+    }
+
+    abortRouteFetch();
+    setPickupRouteDetails('loading');
+
+    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${origin.lng},${origin.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`;
+
+    routeFetchController = new AbortController();
+
+    fetch(osrmUrl, { signal: routeFetchController.signal })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Routing request failed (${response.status})`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            routeFetchController = null;
+
+            const route = data && data.routes && data.routes[0];
+            if (!route || !route.geometry) {
+                throw new Error('No route geometry returned.');
+            }
+
+            clearRouteLayer();
+
+            currentRouteLayer = L.geoJSON(route.geometry, {
+                style: {
+                    color: '#0ea5e9',
+                    weight: 5,
+                    opacity: 0.85
+                }
+            }).addTo(map);
+
+            latestRouteSignature = signature;
+
+            setPickupRouteDetails('success');
+            displayRouteInfoOnRoute(route.geometry, route.distance, route.duration);
+
+            if (pickupMarker && typeof pickupMarker.bringToFront === 'function') {
+                pickupMarker.bringToFront();
+            }
+            if (shopMarker && typeof shopMarker.bringToFront === 'function') {
+                shopMarker.bringToFront();
+            }
+
+            fitMapToRelevantLocations(true);
+        })
+        .catch((error) => {
+            if (error && error.name === 'AbortError') {
+                return;
+            }
+
+            routeFetchController = null;
+            latestRouteSignature = null;
+            clearRouteLayer();
+            setPickupRouteDetails('error');
+            console.warn('Pickup route calculation failed:', error);
+        });
+}
+
+function displayRouteInfoOnRoute(routeGeometry, distance, duration) {
+    if (!map || !routeGeometry) {
+        return;
+    }
+
+    let coordinates = null;
+
+    if (routeGeometry.type === 'LineString' && Array.isArray(routeGeometry.coordinates)) {
+        coordinates = routeGeometry.coordinates;
+    } else if (routeGeometry.type === 'MultiLineString' && Array.isArray(routeGeometry.coordinates)) {
+        coordinates = routeGeometry.coordinates.reduce((accumulator, segment) => {
+            if (Array.isArray(segment)) {
+                return accumulator.concat(segment);
+            }
+            return accumulator;
+        }, []);
+    }
+
+    if (!coordinates || coordinates.length === 0) {
+        return;
+    }
+
+    const midpoint = getCoordinateAtFraction(coordinates, 0.5);
+    if (!midpoint) {
+        return;
+    }
+
+    const distanceKm = distance / 1000;
+    const distanceText = distanceKm >= 1
+        ? `${distanceKm.toFixed(2)} km`
+        : `${Math.round(distance)} m`;
+    const minutes = Math.round(duration / 60);
+    const durationText = minutes < 1 ? 'under a minute' : `${minutes} min`;
+
+    clearRouteInfoMarker();
+
+    const icon = L.divIcon({
+        className: 'route-info-marker',
+        html: `
+            <div style="transform: translate(-50%, -120%);">
+                <div style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    padding: 6px 12px;
+                    background: rgba(14, 165, 233, 0.95);
+                    color: #ffffff;
+                    border-radius: 999px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    box-shadow: 0 10px 25px rgba(14, 165, 233, 0.35);
+                    letter-spacing: 0.3px;
+                    white-space: nowrap;
+                ">
+                    <span>🛵</span>
+                    <span>${distanceText} • approx. ${durationText}</span>
+                </div>
+            </div>
+        `,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0]
+    });
+
+    routeInfoMarker = L.marker(midpoint, {
+        icon,
+        interactive: false,
+        keyboard: false,
+        zIndexOffset: 1000
+    }).addTo(map);
+
+    if (routeInfoTimeout) {
+        clearTimeout(routeInfoTimeout);
+    }
+
+    routeInfoTimeout = setTimeout(() => {
+        clearRouteInfoMarker();
+    }, 2000);
+}
+
+function getCoordinateAtFraction(coordinates, fraction) {
+    if (!Array.isArray(coordinates) || coordinates.length === 0) {
+        return null;
+    }
+
+    if (coordinates.length === 1) {
+        const onlyCoord = coordinates[0];
+        return onlyCoord ? L.latLng(onlyCoord[1], onlyCoord[0]) : null;
+    }
+
+    const clampedFraction = Math.max(0, Math.min(1, fraction));
+    let totalDistance = 0;
+    const segmentDistances = [];
+
+    for (let i = 1; i < coordinates.length; i += 1) {
+        const start = L.latLng(coordinates[i - 1][1], coordinates[i - 1][0]);
+        const end = L.latLng(coordinates[i][1], coordinates[i][0]);
+        const segmentDistance = start.distanceTo(end);
+        segmentDistances.push(segmentDistance);
+        totalDistance += segmentDistance;
+    }
+
+    if (totalDistance === 0) {
+        const firstCoord = coordinates[0];
+        return firstCoord ? L.latLng(firstCoord[1], firstCoord[0]) : null;
+    }
+
+    const targetDistance = totalDistance * clampedFraction;
+    let accumulatedDistance = 0;
+
+    for (let i = 0; i < segmentDistances.length; i += 1) {
+        const segmentDistance = segmentDistances[i];
+        if (accumulatedDistance + segmentDistance >= targetDistance) {
+            const startCoord = coordinates[i];
+            const endCoord = coordinates[i + 1];
+            const segmentFraction = segmentDistance === 0
+                ? 0
+                : (targetDistance - accumulatedDistance) / segmentDistance;
+            const lat = startCoord[1] + (endCoord[1] - startCoord[1]) * segmentFraction;
+            const lng = startCoord[0] + (endCoord[0] - startCoord[0]) * segmentFraction;
+            return L.latLng(lat, lng);
+        }
+        accumulatedDistance += segmentDistance;
+    }
+
+    const lastCoord = coordinates[coordinates.length - 1];
+    return lastCoord ? L.latLng(lastCoord[1], lastCoord[0]) : null;
+}
+
 function placeShopMarker(shop) {
     if (!map) {
         pendingShopData = shop || null;
+        if (shop) {
+            setPickupRouteDetails(getPickupLatLng() ? 'loading' : 'need-pickup');
+        } else {
+            clearRouteLayer();
+            latestRouteSignature = null;
+            setPickupRouteDetails('need-shop');
+        }
         return;
     }
 
@@ -224,6 +790,9 @@ function placeShopMarker(shop) {
 
     if (!coords) {
         pendingShopData = null;
+        clearRouteLayer();
+        latestRouteSignature = null;
+        setPickupRouteDetails('need-shop');
         fitMapToRelevantLocations();
         return;
     }
@@ -254,6 +823,7 @@ function placeShopMarker(shop) {
     pendingShopData = null;
 
     fitMapToRelevantLocations();
+    drawRouteBetweenPickupAndShop({ force: true });
 }
 
 function normalizeBarangayName(name) {
@@ -539,13 +1109,23 @@ function addUserLocationMarker(lat, lng, accuracy) {
     }
 
     // Add popup with location info
+    if (userLocationPopupTimeout) {
+        clearTimeout(userLocationPopupTimeout);
+        userLocationPopupTimeout = null;
+    }
+
     userLocationMarker.bindPopup(`
         <div style="text-align: center; font-family: inherit;">
-            <strong>📍 Your Location</strong><br>
-            <small>Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}</small>
-            ${accuracy ? `<br><small>Accuracy: ±${Math.round(accuracy)}m</small>` : ''}
+            <strong>📍 My Location</strong>
         </div>
     `).openPopup();
+
+    userLocationPopupTimeout = setTimeout(() => {
+        if (userLocationMarker && typeof userLocationMarker.closePopup === 'function') {
+            userLocationMarker.closePopup();
+        }
+        userLocationPopupTimeout = null;
+    }, 2000);
 }
 
 // Custom Leaflet Control for Location Button
@@ -726,6 +1306,11 @@ function initializeMap() {
             })
             .catch(() => {
                 // Location not available, continue with default view
+                if (window.bookedLaundryShopData) {
+                    setPickupRouteDetails('need-pickup');
+                } else {
+                    setPickupRouteDetails('need-shop');
+                }
             });
 
         // Handle map click to place pickup pin
@@ -802,6 +1387,12 @@ function initializeMapWhenVisible() {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    if (window.bookedLaundryShopData) {
+        setPickupRouteDetails('need-pickup');
+    } else {
+        setPickupRouteDetails('need-shop');
+    }
+
     if (typeof L !== 'undefined') {
         initializeMapWhenVisible();
     }
@@ -870,6 +1461,14 @@ function refreshUserLocation() {
                 locationButton.style.opacity = '1';
                 locationButton.title = 'Use My Location';
             }
+
+            if (!pickupMarker) {
+                if (window.bookedLaundryShopData) {
+                    setPickupRouteDetails('need-pickup');
+                } else {
+                    setPickupRouteDetails('need-shop');
+                }
+            }
         });
 }
 
@@ -881,3 +1480,4 @@ window.initializeMapIfNeeded = () => {
         initializeMap();
     }
 };
+window.getPickupLocationDetails = getPickupLocationDetails;

@@ -60,11 +60,6 @@
 }
 
 /* Common payment card elements */
-.payment-icon {
-    font-size: 2rem;
-    margin-bottom: 8px;
-    display: block;
-}
 
 .payment-card h4 {
     font-size: 1.1rem;
@@ -198,10 +193,6 @@
     
     .payment-card {
         padding: 14px;
-    }
-    
-    .payment-icon {
-        font-size: 1.8rem;
     }
     
     .payment-card h4 {
