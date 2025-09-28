@@ -98,6 +98,37 @@ var shopMarkers = [];
 var markersVisible = true;
 var currentBoundaryLayer = null;
 var barangayGeoJSON = null;
+var userLocationMarker = null;
+var userLocationLatLng = null;
+var currentRouteLayer = null;
+var routeFetchController = null;
+var activeShop = null;
+var locationPermissionAlertShown = false;
+
+function resolveDataAssetUrl(filename) {
+    if (!filename) {
+        return '';
+    }
+
+    if (/^https?:\/\//i.test(filename)) {
+        return filename;
+    }
+
+    const normalizedName = filename.replace(/^\/+/, '');
+    const pathWithinSite = normalizedName.startsWith('assets/')
+        ? normalizedName
+        : `assets/data/${normalizedName}`;
+
+    if (window.location.protocol === 'file:') {
+        return pathWithinSite;
+    }
+
+    try {
+        return new URL(pathWithinSite, window.location.href).href;
+    } catch (error) {
+        return pathWithinSite;
+    }
+}
 
 function resolveShopLogoUrl(logo) {
     if (!logo || typeof logo !== 'string') {
@@ -222,23 +253,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         shopMarkers.push(marker);
     });
-    document.querySelector('.nearby-shops-btn').addEventListener('click', function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                var lat = position.coords.latitude;
-                var lng = position.coords.longitude;
-                
-                map.setView([lat, lng], 15);
-                
-                L.marker([lat, lng]).addTo(map)
-                    .bindPopup('Your Location')
-                    .openPopup();
-            });
-        } else {
-            alert('Geolocation is not supported by this browser.');
-        }
-    });
-
     const barangayFilter = document.getElementById('barangay-filter');
     if (barangayFilter) {
         barangayFilter.addEventListener('change', function() {
@@ -260,6 +274,8 @@ function showMapSidebar(shop) {
     } else if (shop && typeof window.setCurrentShop === 'function') {
         window.setCurrentShop(shop);
     }
+
+    activeShop = shop;
 
     const sidebar = document.getElementById('mapSidePanel');
     const sidebarTitle = document.getElementById('sidePanelTitle');
@@ -295,6 +311,10 @@ function showMapSidebar(shop) {
             ${shop.fullHours.map(hours => 
                 `<div style="font-size: 12px; color: #0369a1; margin: 4px 0;">${hours.day}: ${hours.hours}</div>`
             ).join('')}
+        </div>
+
+        <div id="mapRouteDetails" style="margin: 16px 0; padding: 12px; background: #eef2ff; border-radius: 8px; font-size: 12px; color: #1e3a8a;">
+            <span style="color: #6b7280;">Enable your location or tap "My Location" to preview the route.</span>
         </div>
         
         <div style="margin: 16px 0;">
@@ -359,6 +379,14 @@ function showMapSidebar(shop) {
             }
         });
     }
+
+    if (userLocationLatLng) {
+        setRouteDetails(null, null, 'loading');
+    } else {
+        setRouteDetails(null, null, 'need-location');
+    }
+
+    drawRouteToShop(shop, { autoRequest: true });
     
     setTimeout(() => {
         if (map) {
@@ -389,7 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for map control buttons
     const nearbyShopsBtn = document.querySelector('.nearby-shops-btn');
     if (nearbyShopsBtn) {
-        nearbyShopsBtn.addEventListener('click', findNearbyShops);
+        nearbyShopsBtn.addEventListener('click', requestAndCenterOnUser);
     }
     
     const hideMapBtn = document.querySelector('.hide-btn');
@@ -414,41 +442,39 @@ function toggleMap() {
             map.removeLayer(marker);
         });
         markersVisible = false;
-        hideBtn.textContent = 'Show Map';
+    hideBtn.textContent = 'Show Shops';
+
+        if (userLocationMarker && map.hasLayer(userLocationMarker)) {
+            map.removeLayer(userLocationMarker);
+        }
+
+        abortRouteFetch();
+        clearRouteLayer();
     } else {
         shopMarkers.forEach(function(marker) {
             marker.addTo(map);
         });
         markersVisible = true;
-        hideBtn.textContent = 'Hide Map';
+    hideBtn.textContent = 'Hide Shops';
+
+        if (userLocationMarker && !map.hasLayer(userLocationMarker)) {
+            userLocationMarker.addTo(map);
+        }
+
+        if (activeShop && userLocationLatLng) {
+            drawRouteToShop(activeShop, { autoRequest: false });
+        }
     }
 }
 
 function findNearbyShops() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
-            var lat = position.coords.latitude;
-            var lng = position.coords.longitude;
-            
-            map.setView([lat, lng], 15);
-            
-            L.marker([lat, lng]).addTo(map)
-                .bindPopup('Your Location')
-                .openPopup();
-        });
-    } else {
-        alert('Geolocation is not supported by this browser.');
-    }
+    requestAndCenterOnUser();
 }
 
 async function loadBarangayBoundaries() {
     try {
-        // Determine the correct path based on the environment
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        const geoJsonPath = isGitHubPages 
-            ? '/washit-laundry-management-system/assets/data/baguio_barangays.geojson'
-            : '../../../../../assets/data/baguio_barangays.geojson';
-            
+        const geoJsonPath = resolveDataAssetUrl('baguio_barangays.geojson');
+
         const response = await fetch(geoJsonPath);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -503,7 +529,14 @@ function resetMapView() {
         currentBoundaryLayer = null;
     }
     
-    map.setView([16.424693, 120.600004], 16);
+    if (currentRouteLayer && map.hasLayer(currentRouteLayer)) {
+        const bounds = currentRouteLayer.getBounds();
+        if (bounds && bounds.isValid()) {
+            map.fitBounds(bounds.pad(0.2));
+        }
+    } else {
+        map.setView([16.424693, 120.600004], 16);
+    }
     
     shopMarkers.forEach(function(marker) {
         if (!map.hasLayer(marker) && markersVisible) {
@@ -512,3 +545,236 @@ function resetMapView() {
         marker.setOpacity(1);
     });
 }
+
+function setUserLocation(lat, lng, options) {
+    options = options || {};
+
+    if (!map) {
+        return null;
+    }
+
+    const latLng = L.latLng(lat, lng);
+    userLocationLatLng = latLng;
+
+    if (userLocationMarker) {
+        userLocationMarker.setLatLng(latLng);
+        if (!map.hasLayer(userLocationMarker)) {
+            userLocationMarker.addTo(map);
+        }
+    } else {
+        userLocationMarker = L.circleMarker(latLng, {
+            radius: 7,
+            color: '#2563eb',
+            weight: 2,
+            fillColor: '#2563eb',
+            fillOpacity: 0.85
+        }).addTo(map);
+
+        userLocationMarker.bindPopup('You are here');
+    }
+
+    if (typeof userLocationMarker.bringToFront === 'function') {
+        userLocationMarker.bringToFront();
+    }
+
+    if (options.panTo) {
+        const targetZoom = options.zoom || Math.max(map.getZoom(), 15);
+        map.setView(latLng, targetZoom);
+    }
+
+    if (options.openPopup && userLocationMarker) {
+        userLocationMarker.openPopup();
+    }
+
+    return latLng;
+}
+
+function ensureUserLocation(autoRequest, options) {
+    if (userLocationLatLng) {
+        if (options) {
+            setUserLocation(userLocationLatLng.lat, userLocationLatLng.lng, options);
+        } else if (userLocationMarker && !map.hasLayer(userLocationMarker)) {
+            userLocationMarker.addTo(map);
+        }
+        return Promise.resolve(userLocationLatLng);
+    }
+
+    if (!autoRequest) {
+        return Promise.reject(new Error('LOCATION_UNAVAILABLE'));
+    }
+
+    if (!navigator.geolocation) {
+        return Promise.reject(new Error('Geolocation is not supported by this browser.'));
+    }
+
+    return new Promise(function(resolve, reject) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const latLng = setUserLocation(position.coords.latitude, position.coords.longitude, options);
+            resolve(latLng);
+        }, function(error) {
+            reject(error);
+        }, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 10000
+        });
+    });
+}
+
+function abortRouteFetch() {
+    if (routeFetchController) {
+        routeFetchController.abort();
+        routeFetchController = null;
+    }
+}
+
+function clearRouteLayer() {
+    if (currentRouteLayer) {
+        map.removeLayer(currentRouteLayer);
+        currentRouteLayer = null;
+    }
+}
+
+function setRouteDetails(distanceMeters, durationSeconds, status) {
+    const routeDetailsEl = document.getElementById('mapRouteDetails');
+    if (!routeDetailsEl) {
+        return;
+    }
+
+    if (status === 'loading') {
+        routeDetailsEl.innerHTML = '<span style="color:#1e3a8a; font-weight:500;">Calculating route…</span>';
+        return;
+    }
+
+    if (status === 'need-location') {
+        routeDetailsEl.innerHTML = '<span style="color:#6b7280;">Enable your location or tap "My Location" to preview the travel path.</span>';
+        return;
+    }
+
+    if (status === 'error') {
+        routeDetailsEl.innerHTML = '<span style="color:#b91c1c;">We could not generate the route right now. Please try again.</span>';
+        return;
+    }
+
+    if (typeof distanceMeters === 'number' && typeof durationSeconds === 'number') {
+        const distanceKm = distanceMeters / 1000;
+        const minutes = Math.round(durationSeconds / 60);
+        const formattedDistance = distanceKm >= 1 ? distanceKm.toFixed(2) + ' km' : Math.round(distanceMeters) + ' m';
+        const formattedDuration = minutes < 1 ? 'under a minute' : `${minutes} min`;
+
+        routeDetailsEl.innerHTML = `
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                <span style="color:#1e3a8a; font-weight:600;">🚗 ${formattedDistance}</span>
+                <span style="color:#1e3a8a; font-weight:500;">⏱️ approx. ${formattedDuration}</span>
+            </div>
+        `;
+        return;
+    }
+
+    routeDetailsEl.innerHTML = '<span style="color:#6b7280;">Location enabled—select a shop to view your route.</span>';
+}
+
+function drawRouteToShop(shop, options) {
+    if (!shop || !map) {
+        return;
+    }
+
+    options = options || {};
+    const autoRequest = options.autoRequest !== false;
+
+    setRouteDetails(null, null, userLocationLatLng ? 'loading' : 'need-location');
+
+    ensureUserLocation(autoRequest, { panTo: false, openPopup: false })
+        .then(function(latLng) {
+            if (!latLng) {
+                throw new Error('LOCATION_UNAVAILABLE');
+            }
+
+            setRouteDetails(null, null, 'loading');
+
+            abortRouteFetch();
+            clearRouteLayer();
+
+            const destination = L.latLng(shop.lat, shop.lng);
+            const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${latLng.lng},${latLng.lat};${destination.lng},${destination.lat}?overview=full&geometries=geojson`; 
+
+            routeFetchController = new AbortController();
+
+            return fetch(osrmUrl, { signal: routeFetchController.signal })
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error(`Routing request failed (${response.status})`);
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    routeFetchController = null;
+
+                    const route = data && data.routes && data.routes[0];
+                    if (!route || !route.geometry) {
+                        throw new Error('No route geometry returned.');
+                    }
+
+                    currentRouteLayer = L.geoJSON(route.geometry, {
+                        style: {
+                            color: '#0ea5e9',
+                            weight: 6,
+                            opacity: 0.85
+                        }
+                    }).addTo(map);
+
+                    const bounds = currentRouteLayer.getBounds();
+                    if (bounds && bounds.isValid()) {
+                        bounds.extend(latLng);
+                        bounds.extend(destination);
+                        map.fitBounds(bounds.pad(0.2));
+                    }
+
+                    if (userLocationMarker && !map.hasLayer(userLocationMarker)) {
+                        userLocationMarker.addTo(map);
+                    }
+
+                    setRouteDetails(route.distance, route.duration);
+                });
+        })
+        .catch(function(error) {
+            if (!error) {
+                return;
+            }
+
+            if (error.name === 'AbortError') {
+                return;
+            }
+
+            routeFetchController = null;
+            clearRouteLayer();
+
+            if (error.code === 1 || error.message === 'LOCATION_UNAVAILABLE') {
+                setRouteDetails(null, null, 'need-location');
+                if (!locationPermissionAlertShown) {
+                    alert('Allow location access or tap "My Location" to see your route to this shop.');
+                    locationPermissionAlertShown = true;
+                }
+            } else {
+                setRouteDetails(null, null, 'error');
+                console.warn('Route calculation failed:', error);
+            }
+        });
+}
+
+function requestAndCenterOnUser() {
+    ensureUserLocation(true, { panTo: true, openPopup: true })
+        .then(function() {
+            if (activeShop) {
+                drawRouteToShop(activeShop, { autoRequest: false });
+            }
+        })
+        .catch(function(error) {
+            if (error && error.code === 1) {
+                alert('We need permission to access your location. Please allow it in your browser settings.');
+            } else if (error && error.message && error.message !== 'LOCATION_UNAVAILABLE') {
+                console.warn('Unable to determine current location:', error.message);
+            }
+        });
+}
+

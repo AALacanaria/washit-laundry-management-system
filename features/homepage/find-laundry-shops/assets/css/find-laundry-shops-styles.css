@@ -163,6 +163,27 @@
     gap: 12px;
 }
 
+.map-layer-toggles {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.map-layer-toggles label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.map-layer-toggles input[type="checkbox"] {
+    accent-color: #2563eb;
+    width: 16px;
+    height: 16px;
+}
+
 .map-btn {
     padding: 10px 20px;
     border: none;
@@ -207,6 +228,11 @@
     
     .filter-control {
         justify-content: center;
+    }
+
+    .map-layer-toggles {
+        justify-content: center;
+        flex-wrap: wrap;
     }
     
     .map-layout {

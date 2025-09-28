@@ -2,6 +2,11 @@
 
 Modern, multi-channel laundry platform bridging shop discovery, smart bookings, and digital receipts for Wash.IT partner shops.
 
+## What's new (v2.5.0)
+
+- **Client-to-shop routing preview** – Homepage map now fetches live driving directions from the user's geolocated position to the selected laundry shop with distance and ETA summaries.
+- **Streamlined map controls** – Removed legacy highway overlays and simplified the toggle to "Hide/Show Shops" so the focus stays on customer-to-shop routes.
+
 ## What's new (v2.4.0)
 
 - **Dashboard Foundation** – Initial architecture for the partner dashboard, including secure routing, component placeholders, and data models for future features like analytics, booking management, and service configuration.
@@ -99,7 +104,7 @@ npx http-server . -p 8000
 
 ### Homepage experience
 
-- **Shop discovery map** with barangay filter, session-persistent selection, and modal detail views.
+- **Shop discovery map** with barangay filter, session-persistent selection, real-time routing preview, and modal detail views.
 - **Leaflet integration** showcasing partner locations with custom pins and optional barangay overlays.
 - **Seamless booking hand-off** by storing the chosen shop in session storage and query parameters so the booking form auto-populates badges, titles, and map markers.
 - **Responsive cards & modals** built with reusable CSS section bundles.
@@ -119,6 +124,7 @@ npx http-server . -p 8000
 
 - **Leaflet.js** powers mapping across homepage and booking form.
 - **Barangay GeoJSON** (`assets/data/baguio_barangays.geojson`) delivers boundary overlays—served via fetch, so a local server is required in development.
+- **OSRM routing service** provides live driving paths between the customer's location and the selected shop.
 - **Local/session storage** persists customer details and shop choices between pages.
 - **Geolocation API** drives “Use My Location” flows for accurate pickup pins.
 
@@ -151,7 +157,14 @@ This project is developed as a capstone project for academic purposes.
 
 ## 🔄 Version History
 
-### v2.3.0 (Current)
+### v2.5.0 (Current)
+- Added live routing previews between customer geolocation and selected shops, including distance and ETA display.
+- Simplified homepage map controls by removing unused highway overlays and renaming the toggle to "Hide/Show Shops".
+
+### v2.4.0
+- Built the initial dashboard foundation with secure routing, placeholder modules, and data models for upcoming analytics features.
+
+### v2.3.0
 - Added shop-to-booking hand-off with session storage and query parameter support.
 - Introduced barangay overlays, filters, and highlight tooling across homepage and booking maps.
 - Implemented silent auto-fill, field-level persistence, and email domain suggestions.
