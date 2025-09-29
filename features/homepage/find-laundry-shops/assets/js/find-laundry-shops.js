@@ -244,22 +244,49 @@ function renderSidebarTitle(sidebarTitle, shop) {
     }
 }
 document.addEventListener('DOMContentLoaded', function() {
-    map = L.map('map', { zoomControl: false }).setView([16.424693, 120.600004], 16);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-    var washitIcon = L.icon({
-        iconUrl: './assets/images/washit-map-pin.png',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-        popupAnchor: [0, -40],
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-        shadowSize: [41, 41],
-        shadowAnchor: [12, 41]
-    });
+    // Small delay to ensure layout is calculated
+    setTimeout(function() {
+        try {
+            // Check if Leaflet is loaded
+            if (typeof L === 'undefined') {
+                console.error('Leaflet library not loaded');
+                document.getElementById('map').innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Map failed to load. Please refresh the page.</div>';
+                return;
+            }
+            
+            // Check if map element exists
+            const mapElement = document.getElementById('map');
+            if (!mapElement) {
+                console.error('Map element not found');
+                return;
+            }
+            
+            console.log('Initializing map...');
+            map = L.map('map', { zoomControl: false }).setView([16.424693, 120.600004], 16);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Force map to calculate its size after initialization
+            setTimeout(function() {
+                if (map) {
+                    map.invalidateSize();
+                    console.log('Map size invalidated');
+                }
+            }, 100);
+            
+            var washitIcon = L.icon({
+                iconUrl: './assets/images/washit-map-pin.png',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40],
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                shadowSize: [41, 41],
+                shadowAnchor: [12, 41]
+            });
 
-
-    var shops = getMapShopData();
+            var shops = getMapShopData();
 
     shops.forEach(function(shop) {
         var marker = L.marker([shop.lat, shop.lng], {icon: washitIcon}).addTo(map);
@@ -289,6 +316,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadBarangayBoundaries();
     autoAcquireLocationIfPermitted();
+        } catch (error) {
+            console.error('Map initialization failed:', error);
+            const mapElement = document.getElementById('map');
+            if (mapElement) {
+                mapElement.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Map failed to load. Please refresh the page.</div>';
+            }
+        }
+    }, 100);
 });
 
 function showMapSidebar(shop) {
@@ -447,6 +482,24 @@ document.addEventListener('DOMContentLoaded', function() {
     if (hideMapBtn) {
         hideMapBtn.addEventListener('click', toggleMap);
     }
+    
+    // Add window resize handler to fix map sizing issues
+    window.addEventListener('resize', function() {
+        setTimeout(function() {
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 100);
+    });
+    
+    // Add orientation change handler for mobile devices
+    window.addEventListener('orientationchange', function() {
+        setTimeout(function() {
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 300);
+    });
     
     if (map) {
         map.on('click', function(e) {

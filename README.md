@@ -2,6 +2,32 @@
 
 Modern, multi-channel laundry platform bridging shop discovery, smart bookings, and digital receipts for Wash.IT partner shops.
 
+## What's new v2.8.0## 🔄 Version History
+
+### v2.8.0 (Current)
+- Implemented comprehensive mobile-first optimizations with device-specific content for all service sections.
+- Redesigned partners section with horizontal card layout for better mobile space utilization.
+- Standardized mobile typography across all sections for consistent user experience.
+- Optimized Contact section spacing and form elements for improved mobile usability.
+- Refactored CSS architecture to eliminate `!important` declarations and use proper specificity.
+
+### v2.7.0
+- Homepage map auto-fetches user location when permission is granted, keeping the "You are here" marker in sync.
+- Routing refreshes as you switch shops, mirroring the booking form's behavior.
+- Barangay filter toggle now switches between filtered and all-shop views with clear labeling. **Mobile-first content optimization** – All service sections now display concise, mobile-optimized descriptions while maintaining detailed content for desktop users through responsive CSS.
+- **Enhanced partners layout** – Partner shop cards redesigned for horizontal display on mobile with logos positioned left and shop information on the right for better space utilization.
+- **Consistent mobile typography** – Standardized heading font sizes across all sections (Services, Partners, Contact) for a unified mobile experience.
+- **Compact mobile spacing** – Optimized Contact section with reduced padding, margins, and form element sizing for better mobile readability and reduced scrolling.
+- **CSS best practices implementation** – Eliminated `!important` declarations in favor of proper CSS specificity and cascade management for maintainable code.
+
+## What's new (v2.7.0)
+
+- **Auto location confidence** – Homepage map now auto-centers on the customer whenever geolocation permission is already granted, keeping routes ready without extra clicks.
+- **Route clarity on shop switch** – Switching between laundry shops instantly recalculates the customer-to-shop route so the map preview stays accurate.
+- **Refined map filtering** – "Show All Wash.IT Shops" toggle now flips between all-shop view and the currently selected barangay, with markers updating accordingly. - Laundry Management System
+
+Modern, multi-channel laundry platform bridging shop discovery, smart bookings, and digital receipts for Wash.IT partner shops.
+
 ## What's new (v2.7.0)
 
 - **Auto location confidence** – Homepage map now auto-centers on the customer whenever geolocation permission is already granted, keeping routes ready without extra clicks.
@@ -38,9 +64,10 @@ Wash.IT supplies laundry operators and customers with:
 
 - **Interactive homepage** featuring partner spotlight cards, map-based shop discovery, and seamless booking hand-offs.
 - **Advanced booking workflow** covering service selection, schedule orchestration, customer profiling, payment choice, and receipt generation.
-- **Responsive, modular design** optimized for desktop, tablet, and mobile with feature-scoped CSS/JS bundles.
+- **Mobile-optimized responsive design** with device-specific content, horizontal partner layouts, and consistent typography for superior mobile user experience.
 - **Location-aware experiences** leveraging Leaflet maps, barangay datasets, geolocation, and pickup/self-claim routing.
 - **Productivity helpers** such as auto-fill, email suggestions, validation cues, and persistent form progress.
+- **Clean CSS architecture** following best practices with proper specificity management and maintainable code structure.
 
 ## 🗂️ Project Structure
 
@@ -119,6 +146,14 @@ npx http-server . -p 8000
 - **Leaflet integration** showcasing partner locations with custom pins and optional barangay overlays.
 - **Seamless booking hand-off** by storing the chosen shop in session storage and query parameters so the booking form auto-populates badges, titles, and map markers.
 - **Responsive cards & modals** built with reusable CSS section bundles.
+
+### Mobile-first responsive design
+
+- **Device-specific content** with separate mobile and desktop service descriptions for optimal readability on each platform.
+- **Horizontal partner layout** displaying all three partner shops side-by-side on mobile with logo-left, content-right arrangement.
+- **Consistent mobile typography** with standardized 32px headings across Services, Partners, and Contact sections.
+- **Optimized spacing and sizing** with compact layouts, reduced padding, and mobile-appropriate form elements.
+- **CSS best practices** using proper specificity instead of `!important` declarations for maintainable responsive code.
 
 ### Booking system
 

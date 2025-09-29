@@ -122,7 +122,49 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .contact {
+        padding: 20px 0;
+    }
+    
+    .contact h2 {
+        font-size: 32px;
+        margin-bottom: 16px;
+    }
+    
+    .contact > p,
+    .contact-intro {
+        font-size: 16px;
+        margin-bottom: 24px;
+        padding: 0 15px;
+    }
+    
     .contact-content {
         grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .contact-info {
+        padding: 20px;
+        margin-bottom: 0;
+    }
+    
+    .contact-item {
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+    
+    .contact-form {
+        gap: 16px;
+    }
+    
+    .contact-form input,
+    .contact-form textarea {
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .contact-form button {
+        padding: 12px;
+        font-size: 15px;
     }
 }

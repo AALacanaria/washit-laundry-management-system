@@ -63,7 +63,7 @@
 /* Tablet/iPad Responsive */
 @media (max-width: 1024px) and (min-width: 769px) {
     .service-content h3 {
-        font-size: 22px;
+        font-size: 32px;
     }
     
     .service-content p {
@@ -76,9 +76,96 @@
     }
 }
 
+/* Desktop - hide mobile version */
+.services .service-content .security-mobile {
+    display: none;
+}
+
+.services .service-content .security-desktop {
+    display: block;
+}
+
+.services .service-content .geolocation-mobile {
+    display: none;
+}
+
+.services .service-content .geolocation-desktop {
+    display: block;
+}
+
+.services .service-content .service-mobile {
+    display: none;
+}
+
+.services .service-content .service-desktop {
+    display: block;
+}
+
+.services .service-content .payment-mobile {
+    display: none;
+}
+
+.services .service-content .payment-desktop {
+    display: block;
+}
+
+.services .service-content .management-mobile {
+    display: none;
+}
+
+.services .service-content .management-desktop {
+    display: block;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .services h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+    
     .service-item {
         grid-template-columns: 1fr;
+    }
+    
+    /* Show mobile version and hide desktop version */
+    .services .service-content .security-desktop {
+        display: none;
+    }
+    
+    .services .service-content .security-mobile {
+        display: block;
+    }
+    
+    .services .service-content .geolocation-desktop {
+        display: none;
+    }
+    
+    .services .service-content .geolocation-mobile {
+        display: block;
+    }
+    
+    .services .service-content .service-desktop {
+        display: none;
+    }
+    
+    .services .service-content .service-mobile {
+        display: block;
+    }
+    
+    .services .service-content .payment-desktop {
+        display: none;
+    }
+    
+    .services .service-content .payment-mobile {
+        display: block;
+    }
+    
+    .services .service-content .management-desktop {
+        display: none;
+    }
+    
+    .services .service-content .management-mobile {
+        display: block;
     }
 }

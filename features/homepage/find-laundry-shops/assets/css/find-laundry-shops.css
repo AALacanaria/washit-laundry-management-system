@@ -39,6 +39,8 @@
     border-radius: 8px;
     padding: 8px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .map-controls {
@@ -121,6 +123,18 @@
     border: 1px solid #e5e7eb;
     position: relative;
     overflow: hidden;
+    height: 500px;
+    min-height: 350px;
+    z-index: 1;
+    background: #f8fafc;
+    width: 100%;
+    display: block;
+}
+
+/* Ensure Leaflet container is visible */
+#map .leaflet-container {
+    height: 100% !important;
+    width: 100% !important;
 }
 
 /* Map Popup Styles */
@@ -177,24 +191,30 @@
 /* Responsive Design */
 @media (max-width: 768px) {
     .find-shops {
-        padding: 60px 0;
+        padding: 20px 0;
+        margin: 0 20px;
     }
     
     .find-shops h2 {
-        font-size: 2rem;
+        font-size: 3rem;
     }
     
     .map-controls {
-        flex-direction: column;
-        align-items: stretch;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
     }
     
     .map-buttons {
         justify-content: center;
+        gap: 8px;
     }
     
     .filter-control {
-        justify-content: center;
+        justify-content: flex-start;
+        flex-shrink: 0;
     }
     
     #map {
@@ -208,15 +228,47 @@
 
 @media (max-width: 480px) {
     .find-shops h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+    }
+    
+    .map-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .filter-control {
+        justify-content: center;
+        order: 1;
+    }
+    
+    .filter-control select {
+        font-size: 11px;
+        padding: 5px 6px;
+        max-width: 180px;
+        min-width: 140px;
+    }
+    
+    .filter-control label {
+        font-size: 11px;
+        white-space: nowrap;
     }
     
     .map-buttons {
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 8px;
+        order: 2;
     }
     
     .nearby-shops-btn,
     .hide-btn {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
+        font-size: 11px;
+        padding: 6px 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
