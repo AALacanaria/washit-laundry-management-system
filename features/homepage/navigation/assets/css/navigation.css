@@ -1,6 +1,6 @@
 /* Navigation Component Styles */
-.navbar {
-    background: rgba(30, 64, 175, 0.95) !important;
+nav.navbar {
+    background: rgba(30, 64, 175, 0.95);
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: fixed;
@@ -10,11 +10,11 @@
 }
 
 /* Ensure navbar stays consistent on all states */
-.navbar:hover,
-.navbar:focus,
-.navbar:active,
-.navbar:target {
-    background: rgba(30, 64, 175, 0.95) !important;
+nav.navbar:hover,
+nav.navbar:focus,
+nav.navbar:active,
+nav.navbar:target {
+    background: rgba(30, 64, 175, 0.95);
 }
 
 .nav-container {
@@ -24,6 +24,7 @@
     justify-content: space-between;
     align-items: center;
     height: 60px;
+    background: transparent;
 }
 
 .nav-logo {
@@ -41,7 +42,7 @@
     font-family: 'Poppins', sans-serif;
     font-size: 24px;
     font-weight: 700;
-    color: white !important;
+    color: white;
     letter-spacing: -0.01em;
 }
 
@@ -49,7 +50,7 @@
 .nav-logo span:hover,
 .nav-logo span:focus,
 .nav-logo span:active {
-    color: white !important;
+    color: white;
 }
 
 .nav-menu {
@@ -57,56 +58,43 @@
     list-style: none;
     gap: 20px;
     align-items: center;
+    background: transparent;
+}
+
+.nav-menu li {
+    background: transparent;
 }
 
 .nav-menu a {
     font-family: 'Inter', sans-serif;
     text-decoration: none;
-    color: white !important;
+    color: white;
     font-weight: 500;
     transition: all 0.3s ease;
     padding: 8px 16px;
     border-radius: 6px;
     font-size: 15px;
     letter-spacing: -0.01em;
+    background: transparent;
 }
 
 /* Ensure menu links stay white in all states */
 .nav-menu a:visited,
 .nav-menu a:focus,
 .nav-menu a:active {
-    color: white !important;
+    color: white;
 }
 
 .nav-menu a:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
-    color: white !important;
-}
-
-.track-booking-btn {
-    font-family: 'Inter', sans-serif;
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
-    padding: 8px 16px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: 15px;
-    letter-spacing: -0.01em;
-}
-
-.track-booking-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    color: white !important;
+    color: white;
 }
 
 .join-btn {
     font-family: 'Inter', sans-serif;
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
     padding: 8px 24px;
     border-radius: 6px;
     transition: all 0.3s ease;
@@ -114,20 +102,14 @@
     font-size: 15px;
     letter-spacing: -0.01em;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width: 180px !important;
+    width: 180px;
     text-align: center;
     display: inline-block;
 }
 
 .join-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: white !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.book-now-btn:hover {
-    background: #f1f5f9 !important;
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -154,9 +136,9 @@
     }
     
     .join-btn {
-        width: 150px !important;
-        padding: 7px 20px !important;
-        font-size: 14px !important;
+        width: 150px;
+        padding: 7px 20px;
+        font-size: 14px;
     }
 }
 
@@ -167,18 +149,32 @@
     }
     
     .nav-logo span {
-        font-size: 18px;
+        display: none;
     }
     
     .nav-menu {
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        gap: 4px; /* Further reduce gap */
+        flex-wrap: nowrap;
+        align-items: center;
+    }
+    
+    .nav-menu a {
+        white-space: nowrap;
+        font-size: 11px; /* Further reduce font size */
+        padding: 5px 6px; /* Further reduce padding */
+    }
+
+    .join-btn {
+        font-size: 11px;
+        padding: 5px 8px; /* Further reduce padding */
+        width: auto;
     }
     
     .nav-container {
-        flex-direction: column;
+        flex-direction: row;
         height: auto;
-        padding: 12px 20px;
+        padding: 12px 15px; /* Reduce horizontal padding */
     }
     
     .main-banner {
@@ -186,117 +182,7 @@
     }
 }
 
-/* Additional CSS to prevent navbar color changes */
-.navbar,
-.navbar *,
-.nav-container,
-.nav-container * {
-    background: inherit !important;
-}
-
-/* Ensure navbar background stays consistent */
-.navbar {
-    background: rgba(30, 64, 175, 0.95) !important;
-}
-
-/* Override any :target pseudo-class effects */
-:target .navbar,
-body:target .navbar,
-html:target .navbar {
-    background: rgba(30, 64, 175, 0.95) !important;
-}
-
 /* Reset any potential anchor-related styling */
 a:target {
-    background: none !important;
-}
-
-/* Ensure no conflicts from other stylesheets */
-nav.navbar {
-    background: rgba(30, 64, 175, 0.95) !important;
-}
-
-nav.navbar .nav-container {
-    background: transparent !important;
-}
-
-nav.navbar .nav-menu {
-    background: transparent !important;
-}
-
-nav.navbar .nav-menu li {
-    background: transparent !important;
-}
-
-nav.navbar .nav-menu a {
-    color: white !important;
-    background: transparent !important;
-}
-
-nav.navbar .nav-menu a:hover {
-    background: rgba(255, 255, 255, 0.2) !important;
-    color: white !important;
-}
-
-/* Specific styling for track booking button */
-nav.navbar .track-booking-btn {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
-}
-
-nav.navbar .track-booking-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: white !important;
-}
-
-/* Specific styling for join button with higher specificity */
-nav.navbar .join-btn {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
-    font-family: 'Inter', sans-serif;
-    padding: 12px 32px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    font-size: 16px;
-    letter-spacing: -0.01em;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width: 180px !important;
-    text-align: center;
-    display: inline-block;
-}
-
-nav.navbar .join-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: white !important;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-/* Force join button styles with maximum specificity */
-.navbar .nav-menu li a.join-btn,
-.navbar .nav-menu li a.join-btn:link,
-.navbar .nav-menu li a.join-btn:visited,
-.navbar .nav-menu li a.join-btn:active {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: white !important;
-    font-family: 'Inter', sans-serif !important;
-    padding: 12px 32px !important;
-    border-radius: 8px !important;
-    transition: all 0.3s ease !important;
-    font-weight: 600 !important;
-    font-size: 16px !important;
-    letter-spacing: -0.01em !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-    width: 180px !important;
-    text-align: center !important;
-    display: inline-block !important;
-    text-decoration: none !important;
-}
-
-.navbar .nav-menu li a.join-btn:hover {
-    background: rgba(255, 255, 255, 0.25) !important;
-    color: white !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    background: none;
 }

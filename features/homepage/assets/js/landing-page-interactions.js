@@ -49,19 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Add scroll effect to navbar
-    window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.navbar');
-        
-        if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-            navbar.style.backdropFilter = 'blur(10px)';
-        } else {
-            navbar.style.background = '#fff';
-            navbar.style.backdropFilter = 'none';
-        }
-    });
-
     // Add animation on scroll for service items
     const observerOptions = {
         threshold: 0.1,

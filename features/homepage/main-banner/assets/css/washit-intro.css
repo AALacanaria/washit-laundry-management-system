@@ -2,10 +2,9 @@
 .main-banner {
     background: #ffffff;
     color: #1a1a1a;
-    padding: 30px 0 0;
     min-height: 80vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
     width: 100%;
 }
@@ -31,7 +30,7 @@
     font-family: 'Poppins', sans-serif;
     font-size: 48px;
     font-weight: 800;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     line-height: 1.2;
     color: #1a1a1a;
     letter-spacing: -0.02em;
@@ -41,24 +40,15 @@
     color: #3b82f6;
 }
 
-.main-banner-content h2 {
-    font-family: 'Poppins', sans-serif;
-    font-size: 56px;
-    margin-bottom: 32px;
-    color: #3b82f6;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-}
-
 .features-list {
-    margin-bottom: 48px;
+    margin-bottom: 32px;
 }
 
 .feature-item {
     font-family: 'Inter', sans-serif;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 500;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
     padding-left: 40px;
     position: relative;
     display: flex;
@@ -82,26 +72,30 @@
     color: white;
 }
 
-.feature-item.pickup::before {
-    content: "🚚";
+.feature-item.security::before {
+    content: "🔐";
 }
 
-.feature-item.booking::before {
-    content: "📋";
+.feature-item.geolocation::before {
+    content: "📍";
 }
 
-.feature-item.receipt::before {
-    content: "🧾";
+.feature-item.service-management::before {
+    content: "⚙";
 }
 
-.feature-item.report::before {
+.feature-item.payment-options::before {
+    content: "💳";
+}
+
+.feature-item.business-analytics::before {
     content: "📊";
 }
 
 .cta-buttons {
     display: flex;
     gap: 20px;
-    margin-top: 10px;
+    margin-top: 0;
     align-items: center;
 }
 
@@ -156,6 +150,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transform: translateX(-50px);
 }
 
 .washit-logo img {
@@ -215,42 +210,46 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
     .main-banner-container {
-        grid-template-columns: 1fr;
-        text-align: center;
+        grid-template-columns: 1fr 1fr; /* Two equal columns */
+        text-align: left; /* Align text to the left */
         padding: 40px 20px;
-        gap: 40px;
+        gap: 20px; /* Reduce gap */
+        align-items: flex-start;
     }
     
     .main-banner-content {
         padding-right: 0;
         padding-left: 0;
-        order: 2;
+        order: 1; /* Content on the left */
     }
     
     .main-banner-image {
-        order: 1;
+        order: 2; /* Image on the right */
+        transform: translateY(-10px);
     }
     
     .main-banner-content h1 {
-        font-size: 28px;
+        font-size: 20px; /* Further reduced font size */
         line-height: 1.3;
+        margin-top: 0; /* Remove top margin for alignment */
     }
     
     .feature-item {
-        font-size: 18px;
-        padding-left: 35px;
-        margin-bottom: 15px;
+        font-size: 14px; /* Further reduced font size */
+        padding-left: 30px;
+        margin-bottom: 12px;
     }
     
     .feature-item::before {
-        width: 20px;
-        height: 20px;
-        font-size: 10px;
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
     }
     
     .washit-logo {
         width: 100%;
-        height: 300px;
+        height: auto; /* Auto height */
+        transform: none;
     }
     
     .washit-logo img {
@@ -259,13 +258,13 @@
     }
     
     .cta-button {
-        font-size: 18px;
-        padding: 16px 32px;
+        font-size: 14px;
+        padding: 12px 20px;
     }
     
     .cta-buttons {
         flex-direction: column;
         gap: 15px;
-        align-items: center;
+        align-items: flex-start; /* Align buttons to the left */
     }
 }
