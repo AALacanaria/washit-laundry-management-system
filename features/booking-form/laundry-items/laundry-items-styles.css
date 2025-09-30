@@ -137,48 +137,59 @@
 }
 
 @media(max-width:768px){
+    .laundry-fieldset h4.pickup-header {
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+    
+    .items-table {
+        font-size: 0.85rem;
+    }
+    
     .items-table th,
     .items-table td{
-        padding: 12px 8px;
+        padding: 8px 4px;
     }
 
-    .items-table td{
-        display: block;
-        width: 100%;
-        border-bottom: 1px solid #e9ecef;
-        text-align: left;
+    .items-table thead th{
+        font-size: 0.8rem;
+        padding: 8px 4px;
     }
 
-    .items-table td:before{
-        content: attr(data-label) ": ";
+    .category-name{
+        font-size: 0.75rem;
+        margin-bottom: 2px;
         font-weight: 600;
-        display: block;
-        margin-bottom: 8px;
-        color: #495057;
     }
-
-    .items-table tr{
-        margin-bottom: 1rem;
-        border: 1px solid #e9ecef;
-        border-radius: 8px;
-        padding: 15px;
-        background: #ffffff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    .items-table thead{
-        display: none;
+    
+    .items-table td small{
+        font-size: 0.7rem;
+        margin-top: 2px;
+        line-height: 1.2;
     }
 
     .qty-input{
         width: 100%;
-        max-width: 120px;
-        margin: 8px auto 0;
-        display: block;
+        max-width: 80px;
+        padding: 4px 6px;
+        font-size: 0.8rem;
         text-align: center;
     }
-
-    .category-name{
-        font-size: 1rem;
+    
+    .price-cell strong {
+        font-size: 0.7rem;
+    }
+    
+    /* Make first column wider to accommodate content */
+    .items-table td:first-child {
+        width: 45%;
+    }
+    
+    .items-table td:nth-child(2) {
+        width: 30%;
+    }
+    
+    .items-table td:nth-child(3) {
+        width: 25%;
     }
 }

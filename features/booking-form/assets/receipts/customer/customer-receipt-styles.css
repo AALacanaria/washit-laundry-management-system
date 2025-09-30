@@ -242,40 +242,41 @@
     font-size: 0.9rem;
 }
 
-/* Force full width for container sections only */
-.receipt-content-section, .receipt-header-section {
-    width: 100% !important;
-    max-width: none !important;
+/* Full width for container sections with proper specificity */
+.modal-overlay .receipt-container .receipt-content-section,
+.modal-overlay .receipt-container .receipt-header-section {
+    width: 100%;
+    max-width: none;
 }
 
-.receipt-container {
-    width: 100% !important;
-    max-width: none !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important;
+.modal-overlay .receipt-container {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 /* Ensure receipt rows span full width but preserve flex layout */
-.receipt-row {
-    width: 100% !important;
-    box-sizing: border-box !important;
+.modal-overlay .receipt-container .receipt-row {
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* Preserve proper flex layout for receipt row items */
-.modal-overlay .receipt-container .receipt-row .receipt-label {
-    width: 180px !important;
-    min-width: 180px !important;
-    max-width: 180px !important;
-    flex-shrink: 0 !important;
-    flex-grow: 0 !important;
+/* Preserve proper flex layout for receipt row items with high specificity */
+.modal-overlay .modal-container .receipt-container .receipt-row .receipt-label {
+    width: 180px;
+    min-width: 180px;
+    max-width: 180px;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
-.modal-overlay .receipt-container .receipt-row .receipt-value {
-    width: auto !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-    max-width: none !important;
+.modal-overlay .modal-container .receipt-container .receipt-row .receipt-value {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    max-width: none;
 }
 
 /* Mobile responsive adjustments */
@@ -288,22 +289,38 @@
     
     .modal-header,
     .modal-actions {
-        padding: 15px 20px;
+        padding: 10px 15px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.1rem;
     }
     
     .receipt-header-section,
     .receipt-content-section {
-        padding: 20px 20px;
+        padding: 12px 15px;
+    }
+    
+    .receipt-header-section h4 {
+        font-size: 1.1rem;
+        margin: 0 0 8px 0;
+    }
+    
+    .receipt-content-section h5 {
+        font-size: 0.95rem;
+        margin: 0 0 12px 0;
+        padding-bottom: 6px;
     }
     
     .receipt-header-grid {
         flex-direction: column;
         text-align: center;
+        gap: 8px;
     }
     
     .receipt-header-content {
         flex-direction: column;
-        gap: 15px;
+        gap: 8px;
     }
     
     .company-logo {
@@ -311,8 +328,8 @@
         left: auto;
         top: auto;
         transform: none;
-        max-width: 70px;
-        max-height: 50px;
+        max-width: 60px;
+        max-height: 45px;
         margin-top: 0;
     }
     
@@ -320,20 +337,62 @@
         display: none;
     }
     
-    .receipt-label {
-        width: 140px;
+    .booking-reference {
+        font-size: 0.9rem;
+        margin: 3px 0;
+    }
+    
+    .booking-time {
+        font-size: 0.8rem;
+        margin: 1px 0 0 0;
+    }
+    
+    .receipt-shop-badge {
+        padding: 8px 15px;
+        margin: 0 auto 12px;
         font-size: 0.85rem;
+        gap: 8px;
+    }
+    
+    .receipt-row {
+        margin: 8px 0;
+        min-height: 20px;
+    }
+    
+    .receipt-label {
+        width: 130px;
+        font-size: 0.8rem;
     }
     
     .receipt-value {
+        font-size: 0.8rem;
+        padding-bottom: 3px;
+    }
+    
+    .receipt-secondary-text {
+        font-size: 0.75rem;
+        margin-top: 2px;
+    }
+    
+    .receipt-total-row {
+        margin-top: 12px;
+        padding-top: 8px;
+    }
+    
+    .receipt-footer-section {
+        padding: 12px 15px;
+    }
+    
+    .footer-content p {
+        margin: 2px 0;
         font-size: 0.85rem;
     }
     
     /* Ensure labels stay fixed width on mobile */
-    .modal-overlay .receipt-container .receipt-row .receipt-label {
-        width: 140px !important;
-        min-width: 140px !important;
-        max-width: 140px !important;
+    .modal-overlay .modal-container .receipt-container .receipt-row .receipt-label {
+        width: 130px;
+        min-width: 130px;
+        max-width: 130px;
     }
 }
 
@@ -346,19 +405,40 @@
         border-radius: 8px;
     }
     
+    .modal-header,
+    .modal-actions {
+        padding: 8px 12px;
+    }
+    
+    .modal-header h3 {
+        font-size: 1rem;
+    }
+    
     .receipt-header-section,
     .receipt-content-section {
-        padding: 15px 15px;
+        padding: 10px 12px;
+    }
+    
+    .receipt-header-section h4 {
+        font-size: 1rem;
+        margin: 0 0 6px 0;
+    }
+    
+    .receipt-content-section h5 {
+        font-size: 0.9rem;
+        margin: 0 0 10px 0;
+        padding-bottom: 4px;
     }
     
     .receipt-header-grid {
         flex-direction: column;
         text-align: center;
+        gap: 6px;
     }
     
     .receipt-header-content {
         flex-direction: column;
-        gap: 10px;
+        gap: 6px;
     }
     
     .company-logo {
@@ -366,8 +446,8 @@
         left: auto;
         top: auto;
         transform: none;
-        max-width: 60px;
-        max-height: 40px;
+        max-width: 50px;
+        max-height: 35px;
         margin-top: 0;
     }
     
@@ -375,19 +455,61 @@
         display: none;
     }
     
-    .receipt-label {
-        width: 120px;
+    .booking-reference {
+        font-size: 0.85rem;
+        margin: 2px 0;
+    }
+    
+    .booking-time {
+        font-size: 0.75rem;
+        margin: 1px 0 0 0;
+    }
+    
+    .receipt-shop-badge {
+        padding: 6px 12px;
+        margin: 0 auto 8px;
         font-size: 0.8rem;
+        gap: 6px;
+    }
+    
+    .receipt-row {
+        margin: 6px 0;
+        min-height: 18px;
+    }
+    
+    .receipt-label {
+        width: 110px;
+        font-size: 0.75rem;
     }
     
     .receipt-value {
+        font-size: 0.75rem;
+        padding-bottom: 2px;
+    }
+    
+    .receipt-secondary-text {
+        font-size: 0.7rem;
+        margin-top: 1px;
+    }
+    
+    .receipt-total-row {
+        margin-top: 10px;
+        padding-top: 6px;
+    }
+    
+    .receipt-footer-section {
+        padding: 8px 12px;
+    }
+    
+    .footer-content p {
+        margin: 1px 0;
         font-size: 0.8rem;
     }
     
     /* Adjust label width for very small screens */
-    .modal-overlay .receipt-container .receipt-row .receipt-label {
-        width: 120px !important;
-        min-width: 120px !important;
-        max-width: 120px !important;
+    .modal-overlay .modal-container .receipt-container .receipt-row .receipt-label {
+        width: 110px;
+        min-width: 110px;
+        max-width: 110px;
     }
 }

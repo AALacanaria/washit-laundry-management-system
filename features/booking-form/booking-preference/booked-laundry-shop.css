@@ -157,11 +157,35 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .booked-laundry-shop-indicator {
+        margin: 0 auto 15px auto;
+    }
+    
     .shop-indicator-content {
         flex-direction: column;
-        text-align: center;
         gap: 12px;
-        padding: 18px 16px;
+        padding: 16px;
+        align-items: stretch;
+    }
+    
+    /* Create a container for logo and info */
+    .shop-indicator-content {
+        position: relative;
+    }
+    
+    .shop-indicator-logo {
+        position: absolute;
+        top: 25px;
+        left: 16px;
+        width: 48px;
+        height: 48px;
+        flex-shrink: 0;
+    }
+    
+    .shop-indicator-info {
+        margin-left: 64px; /* Logo width + gap */
+        text-align: left;
+        padding-top: 2px;
     }
 
     .shop-indicator-info h3,
@@ -169,15 +193,35 @@
         white-space: normal;
         overflow: visible;
         text-overflow: initial;
+        text-align: left;
     }
-
-    .shop-indicator-logo {
-        width: 52px;
-        height: 52px;
+    
+    .shop-indicator-info h3 {
+        font-size: 1rem;
+        margin-bottom: 3px;
+        font-weight: 600;
+    }
+    
+    .shop-indicator-info p {
+        font-size: 0.82rem;
+        margin: 1px 0;
+        line-height: 1.3;
     }
 
     .shop-logo-fallback {
         font-size: 20px;
+    }
+    
+    .shop-indicator-actions {
+        margin-top: 8px;
+        margin-left: 64px; /* Align with info text */
+        display: flex;
+        justify-content: flex-start;
+    }
+    
+    .btn-link {
+        padding: 8px 16px;
+        font-size: 0.85rem;
     }
 
     .booked-laundry-shop-badge {

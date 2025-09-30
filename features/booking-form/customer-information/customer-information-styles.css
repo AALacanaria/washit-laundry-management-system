@@ -199,25 +199,65 @@ input.input-invalid {
 
 /* Responsive Auto-fill Banner */
 @media (max-width: 768px) {
+    .auto-fill-banner {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
     .auto-fill-content {
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
         text-align: center;
+    }
+    
+    .auto-fill-text {
+        font-size: 0.85rem;
     }
     
     .auto-fill-actions {
         justify-content: center;
         width: 100%;
+        gap: 6px;
     }
     
     .auto-fill-btn {
         flex: 1;
-        min-width: 100px;
+        min-width: 80px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
     
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    label {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+    
+    input, select {
+        padding: 6px 8px;
+        margin-bottom: 12px;
+        margin-top: 3px;
+        font-size: 0.9rem;
+    }
+    
+    .pickup-route-details {
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        gap: 8px;
+    }
+    
+    #specialInstructions {
+        min-height: 50px;
+    }
+    
+    #pickupMap {
+        margin-bottom: 12px;
     }
 }
 

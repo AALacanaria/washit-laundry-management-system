@@ -309,21 +309,44 @@
 /* Responsive Time Slots */
 @media (max-width: 768px) {
     .time-slots-group {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        justify-content: flex-start;
+        max-width: 100%;
     }
     
     .time-slot {
-        padding: 10px 6px;
-        min-height: 45px;
+        padding: 4px;
+        width: 60px;
+        height: 80px;
+        font-size: 0.6rem;
+        border-radius: 6px;
+        flex: 0 0 auto;
+        box-sizing: border-box;
     }
     
     .time-slot .time-label {
-        font-size: 1rem;
+        font-size: 0.65rem;
+        margin-bottom: 1px;
+        line-height: 1;
     }
     
     .time-slot .slot-count {
-        font-size: 0.7rem;
+        font-size: 0.5rem;
+        margin-top: 1px;
+        line-height: 1;
+    }
+    
+    .am-pm-divider {
+        width: 100%;
+        margin: 4px 0;
+        height: 14px;
+    }
+    
+    .am-pm-divider span {
+        font-size: 0.75rem;
+        padding: 0 6px;
     }
 }
 

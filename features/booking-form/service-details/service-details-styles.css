@@ -125,28 +125,40 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .service-selection-label {
+        margin-bottom: 16px;
+        font-size: 1rem;
+    }
+    
     .service-options-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
     }
     
     .service-card {
-        padding: 16px;
+        padding: 12px 8px;
+        text-align: center;
     }
     
     .service-icon {
-        font-size: 1.8rem;
-        height: 40px;
-        margin-bottom: 8px;
-    }
-    
-    .service-card h4 {
-        font-size: 1rem;
+        font-size: 1.2rem;
+        height: 30px;
         margin-bottom: 6px;
     }
     
+    .service-card h4 {
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+        line-height: 1.2;
+        color: #000;
+        font-weight: 500;
+    }
+    
     .service-card p {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
+        line-height: 1.3;
+        margin: 0;
     }
 }
 

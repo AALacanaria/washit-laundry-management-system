@@ -226,6 +226,13 @@
 
 /* Responsive styles for mobile */
 @media (max-width: 640px) {
+    /* .pickup-header: Reduce font size for mobile */
+    .pickup-header {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        padding: 8px 0;
+    }
+    
     /* .toggle-container: Responsive adjustments for toggle container */
     .toggle-container {
         margin-bottom: 20px;
@@ -233,11 +240,26 @@
         border-radius: 12px;
     }
     
-    /* .toggle-option: Responsive adjustments for toggle option */
+    /* .toggle-option: More compact responsive adjustments for toggle option */
     .toggle-option {
-        padding: 14px 12px;
-        min-height: 75px;
-        gap: 4px;
+        padding: 12px 10px;
+        min-height: 65px;
+        gap: 3px;
+        font-size: 0.9rem;
+    }
+    
+    /* .toggle-option h3: Reduce heading size in toggle buttons */
+    .toggle-option h3 {
+        font-size: 0.95rem;
+        margin: 0;
+        font-weight: 600;
+    }
+    
+    /* .toggle-option p: Reduce subtitle size in toggle buttons */
+    .toggle-option p {
+        font-size: 0.8rem;
+        margin: 0;
+        opacity: 0.8;
     }
     
     /* .toggle-option:not(.active): Responsive tap highlight for inactive toggle */
@@ -252,22 +274,36 @@
         opacity: 0.9;
     }
     
-    /* .booking-details: Responsive padding for booking details */
+    /* .booking-details: More compact responsive padding for booking details */
     .booking-details {
-        padding: 16px;
-    }
-    
-    /* .detail-item: Responsive layout for detail item */
-    .detail-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
+        padding: 12px;
         margin-bottom: 16px;
+        border-radius: 6px;
     }
     
-    /* .detail-label, .detail-value: Responsive font size for detail items */
+    /* .detail-item: More compact responsive layout for detail item */
+    .detail-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    /* .detail-label, .detail-value: More compact responsive font size for detail items */
     .detail-label,
     .detail-value {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+    
+    .detail-label {
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+    
+    .detail-value {
+        text-align: right;
+        font-weight: 500;
     }
 }

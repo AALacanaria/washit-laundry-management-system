@@ -805,7 +805,7 @@ function placeShopMarker(shop) {
     const address = shop && shop.address ? shop.address : null;
     const barangay = shop && shop.barangay ? shop.barangay : null;
 
-    const popupLines = [`<div style="text-align: center; font-family: inherit;">`, `<strong>🏢 ${name}</strong>`];
+    const popupLines = [`<div style="text-align: center; font-family: inherit;">`, `<strong>${name}</strong>`];
 
     if (barangay) {
         popupLines.push(`<br><small>${barangay}, Baguio City</small>`);
@@ -813,7 +813,6 @@ function placeShopMarker(shop) {
         popupLines.push(`<br><small>${address}</small>`);
     }
 
-    popupLines.push(`<br><small>Lat: ${coords.lat.toFixed(6)}<br>Lng: ${coords.lng.toFixed(6)}</small>`);
     popupLines.push('</div>');
 
     shopMarker.bindPopup(popupLines.join(''));
